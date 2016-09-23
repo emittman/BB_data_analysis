@@ -1,0 +1,9 @@
+Colin - MLE with identified wearout (Stan)
+
+Eric - KM plot truncation adjustment : 2 functions
+
+Eric - posterior predictive : 1 function
+
+Eric - run newest model
+
+Colin - Wald Bands (facified?)
