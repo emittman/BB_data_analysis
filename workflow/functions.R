@@ -5,7 +5,7 @@ prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0){
   overview  <- readRDS("../BB_data/overview.rds")
   dat       <- readRDS("../BB_data/clean_unit_summaries.rds")
   #subsetting
-  id        <- with(overview, which(f >= lb_fails & late_f & lb_late_fails & early_f >= lb_early_fails))
+  id        <- with(overview, which(f >= lb_fails & late_f >= lb_late_fails & early_f >= lb_early_fails))
   dat$model <- as.integer(dat$model)
   df <- with(subset(dat, model %in% id),
                data.frame(endtime = end_time,
@@ -19,9 +19,7 @@ prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0){
 
 run_mcmc <- function(dataset, chains = 4, iter = 2000, warmup = iter/2, p = c(.5,.1)){
   require(rstan)
-  rstan_options(auto_write = TRUE)
-  options(mc.cores = parallel::detectCores())
-  #format for Stan
+  # options(mc.cores = parallel::detectCores())#format for Stan
   stan_data <- with(dataset,
                     list(M = length(unique(model)),
                          N_obs = sum(!censored),
@@ -32,11 +30,13 @@ run_mcmc <- function(dataset, chains = 4, iter = 2000, warmup = iter/2, p = c(.5
                          endtime_cens = log(endtime[censored]+1),
                          dm_obs = model[!censored],
                          dm_cens = model[censored],
-                         p = p))
+                         p = p)
+  )
   
   m <- stan_model(file = "../stan_models/glfp.stan")
-  s <- sampling(m, stan_data = stan_data, chains = chains, iter = iter, warmup = warmup)
+  s <- sampling(obj = m, stan_data = stan_data, chains = chains, iter = iter, warmup = warmup)
   return(s)
+  # return(stan_data)
 }
 
 count_divergences <- function(fit) {
