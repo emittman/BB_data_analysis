@@ -4,3 +4,4 @@
 .Ruserdata
 *.Rproj
 stan_models/*.rda
+/workflow/.remake/**

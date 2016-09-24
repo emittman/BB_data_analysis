@@ -34,7 +34,7 @@ run_mcmc <- function(dataset, chains = 4, iter = 2000, warmup = iter/2, p = c(.5
   )
   
   m <- stan_model(file = "../stan_models/glfp.stan")
-  s <- sampling(obj = m, stan_data = stan_data, chains = chains, iter = iter, warmup = warmup)
+  s <- sampling(obj = m, data = stan_data, chains = chains, iter = iter, warmup = warmup)
   return(s)
   # return(stan_data)
 }
