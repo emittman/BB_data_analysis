@@ -3,6 +3,10 @@ library(rstan)
 library(plyr)
 library(dplyr)
 
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+mixmle <- stan_model(file = "MLE_gflp.stan")
+
 #Get Data Ready.  Note: Two Years is 17520 hours
 
 prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0,wear=0){
@@ -27,11 +31,14 @@ prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0,wea
 #8 total failures, 1 early, and 2 years is wearout 
 dat<-prepare_data(8,1,0,17520)
 
-#Test This One 1 dataset
-df<-subset(dat,model==6)
+#Stan MLE Function for One Drive Brand Model
 
-#Get Data Ready for Stan
-stan_dats <- with(df,
+mle_stan<-function(brand,start){
+  
+  df<-subset(dat,model==brand)
+  
+  #Get Data Ready for Stan
+  stan_dats <- with(df,
                   list(M = 1,
                        N_obs = sum(!(censored) & !(mode2)),
                        N_cens = sum((censored) & !(mode2)),
@@ -50,7 +57,20 @@ stan_dats <- with(df,
                        model_obs2 = model[!(censored)& (mode2)],
                        model_cens2 = model[(censored) & (mode2)],
                        p = c(.5, .2)))
+  
+  o <- optimizing(object = mixmle, data = stan_dats,algorithm="BFGS", init = start, hessian=TRUE)
+  return(o)
+  
+}
+  
+inits <- list(log_tp1=4,
+              log_tp2=10,
+              log_sigma1=.25,
+              log_sigma2=-.5,
+              pi=.1)
 
+#Run for Model 6
+mle_stan(6,inits)
 
 #Grid Search: 243 combinations
 grid<-expand.grid(log_tp1=c(2,4,6), log_tp2=c(9,11,13),

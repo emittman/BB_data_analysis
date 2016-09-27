@@ -19,13 +19,21 @@ functions {
 data {
   int N_obs;
   int N_cens;
+  int N_obs2;
+  int N_cens2;
   int M;
   real endtime_obs[N_obs];
   real endtime_cens[N_cens];
   real starttime_obs[N_obs];
   real starttime_cens[N_cens];
+  real endtime_obs2[N_obs2];
+  real endtime_cens2[N_cens2];
+  real starttime_obs2[N_obs2];
+  real starttime_cens2[N_cens2];
   int<lower=1, upper=M> model_obs[N_obs];
   int<lower=1, upper=M> model_cens[N_cens];
+  int<lower=1, upper=M> model_obs2[N_obs2];
+  int<lower=1, upper=M> model_cens2[N_cens2];
   vector<lower=0, upper=1>[2] p;
 }
 transformed data{
@@ -116,20 +124,35 @@ model{
     target += tmp[1] - tmp[2];
   }
   
-  // Remove Priors for MLE
-  // log_tp1_raw ~ student_t(5, 0,1);
-  // log_tp2_raw ~ student_t(5, 0,1);
-  // log_sigma1_raw ~ normal(0,1);
-  // log_sigma2_raw ~ normal(0,1);
+  //Likelihood terms for known Mode 2 (wearout) failures
   
-  // pi ~ beta(a, b);
-  // eta_ltp1 ~ normal(7, 1);
-  // eta_ls1  ~ normal(0, 1);
-  // eta_ltp2 ~ normal(9, 2);
-  // eta_ls2  ~ normal(0, 1);
-  // tau_ltp1 ~ normal(0, 1);
-  // tau_ltp2 ~ normal(0, 1);
-  // tau_ls1  ~ normal(0, .5);
-  // tau_ls2  ~ normal(0, .5);
+    for(i in 1:N_obs2){
+    m = model_obs2[i];
+    mu_2 = mu2[m];
+    ls_2 = log_sigma2[m];
+    
+    // numerator:   = log(f2) 
+    tmp[1] = sev_logpdf(endtime_obs2[i], mu_2, ls_2);
+    
+    // denominator:  log(1 - F2)
+    tmp[2] = sev_logccdf(starttime_obs2[i], mu_2, ls_2);
+             
+    target += tmp[1] - tmp[2];
+  }
+  
+  // Likelihood terms for known Mode 2 (wearout) censored observations
+  
+    for(i in 1:N_cens2){
+    m = model_cens2[i];
+    mu_2 = mu2[m];
+    ls_2 = log_sigma2[m];
+  
+    // numerator:   log(1 - F2)
+    tmp[1] = sev_logccdf(endtime_cens2[i], mu_2, ls_2);
+    // denominator:  log(1 - F2)
+    tmp[2] = sev_logccdf(starttime_cens2[i], mu_2, ls_2);
+             
+    target += tmp[1] - tmp[2];
+  }
 
 }
