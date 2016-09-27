@@ -39,8 +39,7 @@ mle_stan<-function(brand,start){
   
   #Get Data Ready for Stan
   stan_dats <- with(df,
-                  list(M = 1,
-                       N_obs = sum(!(censored) & !(mode2)),
+                  list(N_obs = sum(!(censored) & !(mode2)),
                        N_cens = sum((censored) & !(mode2)),
                        N_obs2 = sum(!(censored) & (mode2)),
                        N_cens2= sum((censored) & (mode2)),
@@ -52,10 +51,6 @@ mle_stan<-function(brand,start){
                        starttime_cens2 = log(starttime[(censored) & (mode2)]+1),
                        endtime_obs2 = log(endtime[!(censored) & (mode2)]+1),
                        endtime_cens2 = log(endtime[(censored) & (mode2)]+1),
-                       model_obs = model[!(censored) & !(mode2)],
-                       model_cens = model[(censored) & !(mode2)],
-                       model_obs2 = model[!(censored)& (mode2)],
-                       model_cens2 = model[(censored) & (mode2)],
                        p = c(.5, .2)))
   
   o <- optimizing(object = mixmle, data = stan_dats,algorithm="BFGS", init = start, hessian=TRUE)
@@ -70,7 +65,7 @@ inits <- list(log_tp1=4,
               pi=.1)
 
 #Run for Model 6
-mle_stan(6,inits)
+test=mle_stan(6,inits)
 
 #Grid Search: 243 combinations
 grid<-expand.grid(log_tp1=c(2,4,6), log_tp2=c(9,11,13),
