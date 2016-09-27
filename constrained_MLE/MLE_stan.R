@@ -7,29 +7,31 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 mixmle <- stan_model(file = "MLE_gflp.stan")
 
-#Get Data Ready.  Note: Two Years is 17520 hours
+#Get Data Ready.  Note: Two Years is 17520 hours; 1 Year is 8760
+#For OverView early is less than 1 year, late is greater than 2 years.
 
-prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0,wear=0){
+prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0,infant=0){
   #load data
   overview  <- readRDS("../BB_data/overview.rds")
   dat       <- readRDS("../BB_data/clean_unit_summaries.rds")
   #subsetting
   id        <- with(overview, which(f >= lb_fails & late_f >= lb_late_fails & early_f >= lb_early_fails))
   dat$model <- as.integer(dat$model)
-  dat$mode2<-ifelse(dat$end_time>wear, 1, 0)
+  #dat$mode2<-ifelse(dat$end_time>wear, 1, 0)
+  dat$mode1<-ifelse(dat$end_time<infant, 1, 0)
   df <- with(subset(dat, model %in% id),
              data.frame(endtime = end_time,
                         starttime = start_time,
                         censored = failed == 0,
-                        mode2 = mode2 == 1,
+                        mode1 = mode1 == 1,
                         model = as.integer(factor(model)))
   )
   # return(overview)
   return(df)
 }
 
-#8 total failures, 1 early, and 2 years is wearout 
-dat<-prepare_data(8,1,0,17520)
+#8 total failures, 1 early, and < 1 year is infant. 
+dat<-prepare_data(8,1,0,8760)
 
 #Stan MLE Function for One Drive Brand Model
 
@@ -39,19 +41,16 @@ mle_stan<-function(brand,start){
   
   #Get Data Ready for Stan
   stan_dats <- with(df,
-                  list(N_obs = sum(!(censored) & !(mode2)),
-                       N_cens = sum((censored) & !(mode2)),
-                       N_obs2 = sum(!(censored) & (mode2)),
-                       N_cens2= sum((censored) & (mode2)),
-                       starttime_obs = log(starttime[!(censored) & !(mode2)]+1),
-                       starttime_cens = log(starttime[(censored) & !(mode2)]+1),
-                       endtime_obs = log(endtime[!(censored) & !(mode2)]+1),
-                       endtime_cens = log(endtime[(censored) & !(mode2)]+1),
-                       starttime_obs2 = log(starttime[!(censored) & (mode2)]+1),
-                       starttime_cens2 = log(starttime[(censored) & (mode2)]+1),
-                       endtime_obs2 = log(endtime[!(censored) & (mode2)]+1),
-                       endtime_cens2 = log(endtime[(censored) & (mode2)]+1),
-                       p = c(.5, .2)))
+                  list(N_obs = sum(!(censored) & !(mode1)),
+                       N_cens = sum((censored)),
+                       N_obs1 = sum(!(censored) & (mode1)),
+                       starttime_obs = log(starttime[!(censored) & !(mode1)]+1),
+                       starttime_cens = log(starttime[(censored)]+1),
+                       endtime_obs = log(endtime[!(censored) & !(mode1)]+1),
+                       endtime_cens = log(endtime[(censored)]+1),
+                       starttime_obs1 = log(starttime[!(censored) & (mode1)]+1),
+                       endtime_obs1 = log(endtime[!(censored) & (mode1)]+1),
+                       p = c(.5, .1)))
   
   o <- optimizing(object = mixmle, data = stan_dats,algorithm="BFGS", init = start, hessian=TRUE)
   return(o)
@@ -59,13 +58,18 @@ mle_stan<-function(brand,start){
 }
   
 inits <- list(log_tp1=4,
-              log_tp2=10,
+              log_tp2=9,
               log_sigma1=.25,
               log_sigma2=-.5,
-              pi=.1)
+              pi=.01)
 
-#Run for Model 6
-test=mle_stan(6,inits)
+
+#All Models Seem OK except for 18, which has only 1 early failure
+out<-matrix(nrow=22,ncol=7)
+for (i in 1:22){
+test=mle_stan(i,inits)
+out[i,]<-test$par
+}
 
 #Grid Search: 243 combinations
 grid<-expand.grid(log_tp1=c(2,4,6), log_tp2=c(9,11,13),
@@ -76,15 +80,13 @@ mlegrid<-matrix(nrow=243,ncol=6) #Matrix
 colnames(mlegrid)<-c('log_tp1','log_tp2','log_sigma1','log_sigma2','pi','likelihood')
 
 #Run Search
-grid_mle<-function(model){
-  m<-model
+  m<-8
   for (i in 1:243){
   fit<-mle_stan(m,grid[i,])
   mlegrid[i,1:5]<-fit$par[1:5]
   mlegrid[i,6]<-fit$value
 }
-  return(mlegrid)
-}
+
 
 #Run Grid Search on Models with Lots of Failures: 6,7,13,20,29,49,
 grid_out<-list()
