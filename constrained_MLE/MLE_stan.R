@@ -66,6 +66,7 @@ inits <- list(log_tp1=4,
 
 #All Models Seem OK except for 18, which has only 1 early failure
 out<-matrix(nrow=22,ncol=7)
+colnames(out)<-c('log_tp1','log_tp2','log_sigma1','log_sigma2','pi','mu1','mu2')
 for (i in 1:22){
 test=mle_stan(i,inits)
 out[i,]<-test$par
@@ -79,7 +80,7 @@ grid<-expand.grid(log_tp1=c(2,4,6), log_tp2=c(9,11,13),
 mlegrid<-matrix(nrow=243,ncol=6) #Matrix
 colnames(mlegrid)<-c('log_tp1','log_tp2','log_sigma1','log_sigma2','pi','likelihood')
 
-#Run Search
+#Run Search for Model 8, which is pretty stable
   m<-8
   for (i in 1:243){
   fit<-mle_stan(m,grid[i,])
