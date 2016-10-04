@@ -101,19 +101,6 @@ colnames(mlegrid)<-c('log_tp1','log_tp2','log_sigma1','log_sigma2','pi','likelih
 }
 
 
-#Run Grid Search on Models with Lots of Failures: 6,7,13,20,29,49,
-grid_out<-list()
-subfail<-c(6,7,13,20,29,49)
-for (i in subfail){
-  est<-grid_mle(i)
-  grid_out[i]<-est
-}
-
-m6_grid<-grid_mle(6)
-m7_grid<-grid_mle(7)
-m13_grid<-grid_mle(13)
-m29_grid<-grid_mle(29)
-
 #Model 20 is pretty stable; let's get MLE and Standard Errors for mu and sigma.
 inits <- list(log_tp1=4,
               log_tp2=10,
@@ -127,7 +114,7 @@ inits <- list(log_tp1=4,
   est <- mle$par
   cov <- solve(-mle$hessian) #est. covariance for (log_tp1, log_tp2,log_sigma1,log_sigma2,pi)
   sev1<-log(-log(1-.5)) #estimating at .5 quantile for early failure
-  sev2<-log(-log(1-.2)) #estimating at .2 quantile for wearout
+  sev2<-log(-log(1-.1)) #estimating at .2 quantile for wearout
   D<-matrix(c(1,0,0,0,0,0,1,0,0,0,-exp(est[3])*sev1,0,exp(est[3]),0,0,0,-exp(est[4])*sev2,0,exp(est[4]),0,0,0,0,0,1),nrow=5,ncol=5)
   cov2 <- D %*% cov %*% t(D)   #est. covariance for (mu1,mu2, sigma1,sigma2,pi);
   out <- list(est=est, cov=cov, cov2=cov2) #note: point estimates are still in original scale
@@ -135,8 +122,8 @@ inits <- list(log_tp1=4,
   return(out)
   }
   
-#Get MLE for Model 20  
-db20<-get_mle_stan(29,inits)
+#Get MLE for Model 3  
+db3<-get_mle_stan(3,inits)
 #Wald Bands for F(t); Section 8.4.3 Meeker
   
 #SEV for standardized time
@@ -176,26 +163,36 @@ db20<-get_mle_stan(29,inits)
             gs1=(mle$est["pi"])*psev(z2,lower.tail = FALSE)*dsev(z1)*((log(time)-mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2)),
             gs2=(1-mle$est["pi"]*psev(z1,lower.tail = TRUE))*dsev(z2)*((log(time)-mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2)),
             gp=-psev(z1)+(psev(z1)*psev(z2)),
-            se_g=(as.matrix(cbind(gm1,gm2,gs1,gs2,gp)) %*% mle$cov2 %*% t((as.matrix(cbind(gm1,gm2,gs1,gs2,gp))))) ^ 0.5)
-            #dF<-(mle$est["pi]*dsev(z1)*(1/exp(mle$est["log_sigma1"])))-(mle$est["pi]*dsev(z1)*psev(z2)*(1/exp(mle$est["log_sigma1"])))+dsev(z2)*(1/exp(mle$est["log_sigma2"]))-mle$est["pi]*dsev(z2)*(1/exp(mle$est["log_sigma2"]))*psev(z1)
+            see=(as.matrix(cbind(gm1,gm2,gs1,gs2,gp)) %*% mle$cov2 %*% t((as.matrix(cbind(gm1,gm2,gs1,gs2,gp))))) ^ 0.5,
+            dF=(mle$est["pi"]*dsev(z1)*(1/exp(mle$est["log_sigma1"])))*(psev(z2,lower.tail=FALSE))+(dsev(z2)*(1/exp(mle$est["log_sigma2"]))*(1-mle$est["pi"]*psev(z1,lower.tail = TRUE))))  #Pg 169 (Hong & Meeker) df/dlog(t)= 1/sigma1*f1*(1-F2)+f2*(1/sigma2)*(1-p*F1)
     
     
-    b$lower = with(b, g - qnorm(1-alpha/2) * se_g)
-    b$upper = with(b, g + qnorm(1-alpha/2) * se_g)
-    #b$yl=with(b,log(time)-(qnorm(1-alpha/2) * se_g)/dF)
-    #b$yu=with(b,log(time)+(qnorm(1-alpha/2) * se_g)/dF)
+    b$lower = with(b, g - qnorm(1-alpha/2) * see)
+    b$upper = with(b, g + qnorm(1-alpha/2) * see)
+    b$yl=with(b,exp(log(time)-((qnorm(1-alpha/2) * see)/dF)))
+    b$yu=with(b,exp(log(time)+((qnorm(1-alpha/2) * see)/dF)))
     
     b
   }
 
 #Meeker Bands that Respect Parameter Space
-
+  
+#Lets make Function for Standardized GFLP CDF: F-hat(exp(yl),Fhat(exp(yu)))
+gfp<-function(time,mle){
+  z1     = (log(time) - mle$est["mu1"]) / exp(mle$est["log_sigma1"])
+  z2     = (log(time) - mle$est["mu2"]) / exp(mle$est["log_sigma2"])
+  g=1-((1-mle$est["pi"]*psev(z1,lower.tail = TRUE))*(psev(z2,lower.tail=FALSE)))
+  return(g)
+}
+  
+gfp((check$yl),db3)
+gfp((check$yu),db3)
                                                                                                                                                                                                                                                                                                                                
                                                                                                                                                                                                           
 
 #Test on Model 20
-df20=dat[dat$model==20,]  
-check=WaldBand_mle(db20,alpha=.05,begin = min(df20$end_time[df20$failed==1])*.9, end = max(df20$end_time[df20$failed==1])*1.1)
+df3=dat[dat$model==3,]  
+check=WaldBand_mle(db3,alpha=.05,begin = min(df3$endtime[df3$censored==1])*.9, end = max(df3$endtime[df3$censored==1])*1.1)
 plot(check$g,ylab="CDF")
 lines(check$lower)
 lines(check$upper)
