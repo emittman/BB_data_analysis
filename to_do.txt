@@ -4,6 +4,6 @@ Eric - KM plot truncation adjustment : 2 functions
 
 Eric - posterior predictive : 1 function
 
-Eric - run newest model
+Eric - run newest model (running)
 
-Colin - Wald Bands (facified?)
+Colin - Wald Bands (fancified?)
