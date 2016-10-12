@@ -160,11 +160,11 @@ db3<-get_mle_stan(3,inits)
             g=1-((1-mle$est["pi"]*psev(z1,lower.tail = TRUE))*(psev(z2,lower.tail=FALSE))),
             gm1=-(mle$est["pi"])*dsev(z1)*(1/exp(mle$est["log_sigma1"]))+(mle$est["pi"]*dsev(z1)*psev(z2,lower.tail=TRUE)*(1/exp(mle$est["log_sigma1"]))),
             gm2=-dsev(z2)*(1/exp(mle$est["log_sigma2"]))+((mle$est["pi"])*psev(z1,lower.tail=TRUE)*dsev(z2)*(1/exp(mle$est["log_sigma2"]))),
-            gs1=-(mle$est["pi"])*psev(z2,lower.tail = FALSE)*dsev(z1)*((-log(time)+mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2))+(mle$est["pi"]*dsev(z1)*psev(z2,lower.tail=FALSE)*((-log(time)+mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2))),
-            gs2=dsev(z2)*((-log(time)+mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2))-(mle$est["pi"]*psev(z1,lower.tail=FALSE)*dsev(z2)*((-log(time)+mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2))),
+            gs1=-(mle$est["pi"])*psev(z2,lower.tail = TRUE)*dsev(z1)*((-log(time)+mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2))+(mle$est["pi"]*dsev(z1)*psev(z2,lower.tail=TRUE)*((-log(time)+mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2))),
+            gs2=dsev(z2)*((-log(time)+mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2))-(mle$est["pi"]*psev(z1,lower.tail=TRUE)*dsev(z2)*((-log(time)+mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2))),
             gp=psev(z1)-(psev(z1)*psev(z2)),
             see=(as.matrix(cbind(gm1,gm2,gs1,gs2,gp)) %*% mle$cov2 %*% t((as.matrix(cbind(gm1,gm2,gs1,gs2,gp))))) ^ 0.5,
-            dF=(mle$est["pi"]*dsev(z1)*(1/exp(mle$est["log_sigma1"])))*(psev(z2,lower.tail=TRUE))+(dsev(z2)*(1/exp(mle$est["log_sigma2"]))*(1-mle$est["pi"]*psev(z1,lower.tail = FALSE))))  #Pg 169 (Hong & Meeker) df/dlog(t)= 1/sigma1*f1*(1-F2)*p+f2*(1/sigma2)*(1-p*F1)
+            dF=(mle$est["pi"]*dsev(z1)*(1/exp(mle$est["log_sigma1"])))*(psev(z2,lower.tail=TRUE))+(dsev(z2)*(1/exp(mle$est["log_sigma2"]))*(1-mle$est["pi"]*psev(z1,lower.tail = TRUE))))  #Pg 169 (Hong & Meeker) df/dlog(t)= 1/sigma1*f1*(1-F2)*p+f2*(1/sigma2)*(1-p*F1)
     
     
     b$lower = with(b, g - qnorm(1-alpha/2) * see)
