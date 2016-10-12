@@ -47,7 +47,7 @@ parameters{
   vector[M] log_sigma1_raw;
   vector[M] log_sigma2_raw;
   real<lower=0, upper=1> mu_pi;
-  real<lower=1> phi_pi;
+  real log_phi_pi;
   real<lower=0, upper=1> pi[M];
 }
 
@@ -62,8 +62,8 @@ transformed parameters{
   log_sigma2 = eta_ls2 + tau_ls2 * log_sigma2_raw;
   mu1 = (eta_ltp1 + tau_ltp1 * log_tp1_raw) - (exp(log_sigma1) * z_corr[1]);
   mu2 = (eta_ltp2 + tau_ltp2 * log_tp2_raw) - (exp(log_sigma2) * z_corr[2]);
-  alpha = mu_pi * phi_pi;
-  beta = (1-mu_pi) * phi_pi;
+  alpha = mu_pi * exp(log_phi_pi);
+  beta = (1-mu_pi) * exp(log_phi_pi);
 }
 
 model{
@@ -117,6 +117,8 @@ model{
              
     target += tmp[1] - tmp[2];
   }
+  
+  log_phi_pi ~ normal(4, 1);
   
   log_tp1_raw ~ student_t(5, 0,1);
   log_tp2_raw ~ student_t(5, 0,1);
