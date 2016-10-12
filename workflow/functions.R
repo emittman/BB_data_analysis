@@ -19,7 +19,8 @@ prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0){
 
 run_mcmc <- function(dataset, chains = 4, iter = 2000, warmup = iter/2, p = c(.5,.1)){
   require(rstan)
-  # options(mc.cores = parallel::detectCores())#format for Stan
+  rstan_options(auto_write = TRUE)
+  options(mc.cores = parallel::detectCores())#format for Stan
   stan_data <- with(dataset,
                     list(M = length(unique(model)),
                          N_obs = sum(!censored),
@@ -34,7 +35,7 @@ run_mcmc <- function(dataset, chains = 4, iter = 2000, warmup = iter/2, p = c(.5
   )
   
   m <- stan_model(file = "../stan_models/glfp.stan")
-  s <- sampling(obj = m, data = stan_data, chains = chains, iter = iter, warmup = warmup)
+  s <- sampling(obj = m, data = stan_data, chains = chains, iter = iter, warmup = warmup, control = list(adapt_delta = .95), init=0)
   return(s)
   # return(stan_data)
 }
