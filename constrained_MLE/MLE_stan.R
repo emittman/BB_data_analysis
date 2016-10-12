@@ -114,7 +114,7 @@ inits <- list(log_tp1=4,
   est <- mle$par
   cov <- solve(-mle$hessian) #est. covariance for (log_tp1, log_tp2,log_sigma1,log_sigma2,pi)
   sev1<-log(-log(1-.5)) #estimating at .5 quantile for early failure
-  sev2<-log(-log(1-.1)) #estimating at .2 quantile for wearout
+  sev2<-log(-log(1-.1)) #estimating at .1 quantile for wearout
   D<-matrix(c(1,0,0,0,0,0,1,0,0,0,-exp(est[3])*sev1,0,exp(est[3]),0,0,0,-exp(est[4])*sev2,0,exp(est[4]),0,0,0,0,0,1),nrow=5,ncol=5)
   cov2 <- D %*% cov %*% t(D)   #est. covariance for (mu1,mu2, sigma1,sigma2,pi);
   out <- list(est=est, cov=cov, cov2=cov2) #note: point estimates are still in original scale
@@ -158,13 +158,13 @@ db3<-get_mle_stan(3,inits)
             z1     = (log(time) - mle$est["mu1"]) / exp(mle$est["log_sigma1"]),
             z2     = (log(time) - mle$est["mu2"]) / exp(mle$est["log_sigma2"]),
             g=1-((1-mle$est["pi"]*psev(z1,lower.tail = TRUE))*(psev(z2,lower.tail=FALSE))),
-            gm1=(mle$est["pi"])*psev(z2,lower.tail = FALSE)*dsev(z1)*(1/exp(mle$est["log_sigma1"])),
-            gm2=(1-(mle$est["pi"]*psev(z1,lower.tail=TRUE)))*dsev(z2)*(-1/exp(mle$est["log_sigma2"])),
-            gs1=(mle$est["pi"])*psev(z2,lower.tail = FALSE)*dsev(z1)*((log(time)-mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2)),
-            gs2=(1-mle$est["pi"]*psev(z1,lower.tail = TRUE))*dsev(z2)*((log(time)-mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2)),
-            gp=-psev(z1)+(psev(z1)*psev(z2)),
+            gm1=-(mle$est["pi"])*dsev(z1)*(1/exp(mle$est["log_sigma1"]))+(mle$est["pi"]*dsev(z1)*psev(z2,lower.tail=TRUE)*(1/exp(mle$est["log_sigma1"]))),
+            gm2=-dsev(z2)*(1/exp(mle$est["log_sigma2"]))+((mle$est["pi"])*psev(z1,lower.tail=TRUE)*dsev(z2)*(1/exp(mle$est["log_sigma2"]))),
+            gs1=-(mle$est["pi"])*psev(z2,lower.tail = FALSE)*dsev(z1)*((-log(time)+mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2))+(mle$est["pi"]*dsev(z1)*psev(z2,lower.tail=FALSE)*((-log(time)+mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2))),
+            gs2=dsev(z2)*((-log(time)+mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2))-(mle$est["pi"]*psev(z1,lower.tail=FALSE)*dsev(z2)*((-log(time)+mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2))),
+            gp=psev(z1)-(psev(z1)*psev(z2)),
             see=(as.matrix(cbind(gm1,gm2,gs1,gs2,gp)) %*% mle$cov2 %*% t((as.matrix(cbind(gm1,gm2,gs1,gs2,gp))))) ^ 0.5,
-            dF=(mle$est["pi"]*dsev(z1)*(1/exp(mle$est["log_sigma1"])))*(psev(z2,lower.tail=FALSE))+(dsev(z2)*(1/exp(mle$est["log_sigma2"]))*(1-mle$est["pi"]*psev(z1,lower.tail = TRUE))))  #Pg 169 (Hong & Meeker) df/dlog(t)= 1/sigma1*f1*(1-F2)+f2*(1/sigma2)*(1-p*F1)
+            dF=(mle$est["pi"]*dsev(z1)*(1/exp(mle$est["log_sigma1"])))*(psev(z2,lower.tail=TRUE))+(dsev(z2)*(1/exp(mle$est["log_sigma2"]))*(1-mle$est["pi"]*psev(z1,lower.tail = FALSE))))  #Pg 169 (Hong & Meeker) df/dlog(t)= 1/sigma1*f1*(1-F2)*p+f2*(1/sigma2)*(1-p*F1)
     
     
     b$lower = with(b, g - qnorm(1-alpha/2) * see)
