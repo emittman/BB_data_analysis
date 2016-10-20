@@ -6,18 +6,32 @@ library(dplyr)
 overview <- ddply(dat, .(model), summarise,
                   n=length(model),
                   f=sum(failed>0),
-                  early_f = sum(failed>0 & end_time<365*24*1),
-                  late_f = sum(failed>0 & end_time>365*24*2))
+                  early_f = sum(failed>0 & endtime<365*24*1),
+                  late_f = sum(failed>0 & endtime>365*24*2))
 # id <- unique(dat$model)
 id <- with(overview, which(overview$late_f >= 1 & f >=8))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
-s <- readRDS("../workflow/samples_10_7.rds")
+s <- readRDS("../workflow/log_odds_10_14.rds")
 samp <- extract(s)
 
 plot(s, pars="pi")
 pairs(s, pars=c("mu_pi","log_phi_pi", "lp__"))
+
+plot(s, pars="log_sigma1")
+pairs(s, pars=c("eta_ls1", "tau_ls1", "lp__"))
+
+plot(s, pars="mu1")
+pairs(s, pars=c("eta_ltp1","tau_ltp1", "lp__"))
+
+plot(s, pars="log_sigma2")
+pairs(s, pars=c("eta_ls2", "tau_ls2", "lp__"))
+
+plot(s, pars="mu2")
+pairs(s, pars=c("eta_ltp2","tau_ltp2", "lp__"))
+
+
 
 filter(overview, stan_id==5)
 filter(dat, model==id[5]) %>% ggplot(aes(x=start_time, y=end_time)) + geom_point()
@@ -31,8 +45,6 @@ summary(s)$summary[c("mu1[14]","mu2[14]","log_sigma1[14]", "log_sigma2[14]", "pi
 
 
 source("../plotting_fns/KM_plot.R")
-names(dat)[c(5,6)] <- c("endtime","starttime")
-dat$censored <- dat$failed == 0
 
 filter(dat, model==id[1]) %>%
   KM_plot("weibull")

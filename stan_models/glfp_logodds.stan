@@ -122,13 +122,13 @@ model{
   log_sigma1_raw ~ normal(0,1);
   log_sigma2_raw ~ normal(0,1);
   logit_pi_raw   ~ normal(0,1);
-  eta_ltp1       ~ normal(7, 1);
+  eta_ltp1       ~ normal(7, 2);
   eta_ls1        ~ normal(0, 1);
   eta_ltp2       ~ normal(9, 2);
   eta_ls2        ~ normal(0, 1);
-  tau_ltp1       ~ normal(0, 1);
-  tau_ltp2       ~ normal(0, 1);
-  tau_ls1        ~ normal(0, .5);
-  tau_ls2        ~ normal(0, .5);
-  tau_pi         ~ normal(0, 5);
+  tau_ltp1       ~ cauchy(0, 2.5);
+  tau_ltp2       ~ cauchy(0, 2.5);
+  tau_ls1        ~ cauchy(0, 2.5);
+  tau_ls2        ~ cauchy(0, 2.5);
+  tau_pi         ~ cauchy(0, 2.5);
 }
