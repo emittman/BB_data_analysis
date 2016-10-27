@@ -123,7 +123,7 @@ inits <- list(log_tp1=4,
   }
   
 #Get MLE for Model 3  
-db3<-get_mle_stan(3,inits)
+db3<-get_mle_stan(1,inits)
 #Wald Bands for F(t); Section 8.4.3 Meeker
   
 #SEV for standardized time
@@ -191,11 +191,11 @@ x2=gfp((check$yu),db3)
                                                                                                                                                                                                           
 
 #Test on Model 20
-df3=dat[dat$model==3,]  
+df3=dat[dat$model==1,]  
 check=WaldBand_mle(db3,alpha=.05,begin = min(df3$endtime[df3$censored==1])*.9, end = max(df3$endtime[df3$censored==1])*1.1)
-plot(check$g,ylab="CDF")
-lines(check$lower)
-lines(check$upper)
+plot(check$time,check$g,ylab="CDF",ylim=c(-.1,.5))
+lines(check$time,check$lower)
+lines(check$time,check$upper)
 
                                                                                                            ###Ignore Below ###  
   
@@ -238,6 +238,36 @@ for (j in id){
   betamle <- rbind(betamle,data.frame(model=j, b1=b1,b2=b2,se1=se1,se2=se2))
   rownames(betamle) <- NULL
 }  
+
+#Check Analytical Derivatives to Numerical Ones#
+library(numDeriv)
+gfp<-function(time,mu1,mu2,p,sig1,sig2){
+  z1     = (log(time) - mu1) / sig1
+  z2     = (log(time) - mu2) / sig2
+  g=1-((1-p*psev(z1,lower.tail = TRUE))*(psev(z2,lower.tail=FALSE)))
+  return(g)
+}
+
+mu1=6
+mu2=12
+sig1=1
+sig2=2
+p=.06
+time=5
+
+
+f <- function(x) {
+1-((1-p*psev((x - mu1) / sig1,lower.tail = TRUE))*(psev((x - mu2) / sig2,lower.tail=FALSE)))
+}
+
+grad(f,c(6,12,1,2,.06,1.609438))
+check1=-.06*dsev((log(time)-mu1)/sig1)*(1/sig1)+p*dsev((log(time)-mu1)/sig1)*psev(log(time)-mu2/sig2)*(1/sig1)
+check2=-dsev((log(time)-mu2)/sig2)*(1/sig2)+p*psev((log(time)-mu1)/sig1)*dsev(log(time)-mu2/sig2)*(1/sig2)
+check3=-p*psev(log(time)-mu2/sig2,lower.tail = TRUE)*dsev(log(time)-mu1/sig1)*((-log(time)+mu1)/((sig1)^2))+(p*dsev(log(time)-mu1/sig1)*((-log(time)+mu1)/(sig1^2)))
+check4=dsev(z2)*((-log(time)+mu2)/(sig2^2))-(p*psev(z1,lower.tail=TRUE)*dsev(z2)*((-log(time)+mu2)/((sig2)^2)))
+check5=psev(log(time)-mu1/sig1)-(psev(log(time)-mu1/sig1)*psev(log(time)-mu2/sig2))
+check6=p*dsev(z1)*(1-psev(z2))*(1/sig1)+(dsev(z2)*(1-p*psev(z1))*(1/sig2))
+
 
 
 
