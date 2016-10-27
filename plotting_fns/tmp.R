@@ -3,6 +3,7 @@ dat$model <- as.integer(dat$model)
 
 library(plyr)
 library(dplyr)
+library(rstan)
 overview <- ddply(dat, .(model), summarise,
                   n=length(model),
                   f=sum(failed>0),
@@ -13,16 +14,16 @@ id <- with(overview, which(overview$late_f >= 1 & f >=8))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
-s <- readRDS("../workflow/log_odds_10_14.rds")
+s <- readRDS("../workflow/log_odds_1014.rds")
 samp <- extract(s)
 
-plot(s, pars="pi")
-pairs(s, pars=c("mu_pi","log_phi_pi", "lp__"))
+plot(s, pars="logit_pi_raw")
+pairs(s, pars=c("eta_pi","tau_pi", "lp__"))
 
 plot(s, pars="log_sigma1")
 pairs(s, pars=c("eta_ls1", "tau_ls1", "lp__"))
 
-plot(s, pars="mu1")
+plot(s, pars="log_tp1_raw")
 pairs(s, pars=c("eta_ltp1","tau_ltp1", "lp__"))
 
 plot(s, pars="log_sigma2")
@@ -34,9 +35,9 @@ pairs(s, pars=c("eta_ltp2","tau_ltp2", "lp__"))
 
 
 filter(overview, stan_id==5)
-filter(dat, model==id[5]) %>% ggplot(aes(x=start_time, y=end_time)) + geom_point()
-pairs(s, pars=c("pi[5]", "mu1[5]","mu2[5]","log_sigma1[5]", "log_sigma2[5]"))
-summary(s)$summary[c("mu1[5]","mu2[5]","log_sigma1[5]", "log_sigma2[5]", "pi[5]"),]
+filter(dat, model==id[5]) %>% ggplot(aes(x=starttime, y=endtime)) + geom_point()
+pairs(s, pars=c("logit_pi_raw[5]", "log_tp1_raw[5]","log_tp2_raw[5]","log_sigma1_raw[5]", "log_sigma2_raw[5]"))
+summary(s)$summary[c("mu1[5]","mu2[5]","log_sigma1[5]", "log_sigma2[5]", "log_pi[5]"),]
 
 filter(overview, stan_id==14)
 filter(dat, model==id[14]) %>% ggplot(aes(x=starttime, y=endtime)) + geom_point()
