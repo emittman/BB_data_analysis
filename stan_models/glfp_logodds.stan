@@ -117,8 +117,8 @@ model{
     target += tmp[1] - tmp[2];
   }
   
-  log_tp1_raw    ~ student_t(5, 0,1);
-  log_tp2_raw    ~ student_t(5, 0,1);
+  log_tp1_raw    ~ normal(0,1);
+  log_tp2_raw    ~ normal(0,1);
   log_sigma1_raw ~ normal(0,1);
   log_sigma2_raw ~ normal(0,1);
   logit_pi_raw   ~ normal(0,1);
