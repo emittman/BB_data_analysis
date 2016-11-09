@@ -126,9 +126,10 @@ model{
   eta_ltp2       ~ normal(9, 2);
   eta_ls1        ~ normal(0, 1);
   eta_ls2        ~ normal(0, 1);
-  tau_ltp1       ~ student_t(3, 0, 1);
-  tau_ltp2       ~ student_t(3, 0, 1);
-  tau_ls1        ~ student_t(3, 0, 1);
-  tau_ls2        ~ student_t(3, 0, 1);
-  tau_pi         ~ student_t(3, 0, 2);
+  eta_pi         ~ normal(-3, 1);
+  tau_ltp1       ~ exponential(1);
+  tau_ltp2       ~ exponential(1);
+  tau_ls1        ~ exponential(1);
+  tau_ls2        ~ exponential(1);
+  tau_pi         ~ exponential(1);
 }
