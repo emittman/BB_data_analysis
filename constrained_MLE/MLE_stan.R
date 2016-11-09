@@ -64,18 +64,19 @@ inits <- list(log_tp1=4,
               pi=.01)
 
 
-#All Models Seem OK except for 18, which has only 1 early failure
+#All Models Seem OK except for 18, which Never converges
 out<-matrix(nrow=22,ncol=7)
-colnames(out)<-c('log_tp1','log_tp2','log_sigma1','log_sigma2','pi','likelihood','grid')
-#dbs<-seq(1,22,1)
-#dbs<-dbs[-18]
+colnames(out)<-c('mu1','mu2','log_sigma1','log_sigma2','pi','likelihood','grid')
+dbs<-seq(1,22,1)
+dbs<-dbs[-18]
 for (i in dbs){
   mlegrid<-matrix(nrow=243,ncol=6) #Matrix
-  colnames(mlegrid)<-c('log_tp1','log_tp2','log_sigma1','log_sigma2','pi','likelihood')
+  colnames(mlegrid)<-c('mu1','mu2','log_sigma1','log_sigma2','pi','likelihood')
   m<-i
   for (j in 1:243){
     fit<-mle_stan(m,grid[j,])
-    mlegrid[j,1:5]<-fit$par[1:5]
+    mlegrid[j,1:2]<-fit$par[6:7]
+    mlegrid[j,3:5]<-fit$par[3:5]
     mlegrid[j,6]<-fit$value
   }
   out[i,c(1:6)]<-mlegrid[which.max(mlegrid[,6]),]
@@ -88,26 +89,6 @@ for (i in dbs){
 grid<-expand.grid(log_tp1=c(2,4,6), log_tp2=c(9,11,13),
                   log_sigma1=c(.05,.15,.25),log_sigma2=c(-.8,-.6,-.2),pi=c(.01,.05,.10)) 
 
-#Store Results
-mlegrid<-matrix(nrow=243,ncol=6) #Matrix
-colnames(mlegrid)<-c('log_tp1','log_tp2','log_sigma1','log_sigma2','pi','likelihood')
-
-#Run Search for Model 8, which is pretty stable
-  m<-1
-  for (i in 1:243){
-  fit<-mle_stan(m,grid[i,])
-  mlegrid[i,1:5]<-fit$par[1:5]
-  mlegrid[i,6]<-fit$value
-}
-
-
-#Model 20 is pretty stable; let's get MLE and Standard Errors for mu and sigma.
-inits <- list(log_tp1=4,
-              log_tp2=10,
-              log_sigma1=.25,
-              log_sigma2=-.5,
-              pi=.1
-)
 
   get_mle_stan<-function(model,initial){
   mle<-mle_stan(model,initial) #this step gets data, too.
@@ -122,8 +103,9 @@ inits <- list(log_tp1=4,
   return(out)
   }
   
-#Get MLE for Model 3  
-db3<-get_mle_stan(1,inits)
+#Get MLE for Model 6  
+  
+db6<-get_mle_stan(6,grid[195,])
 #Wald Bands for F(t); Section 8.4.3 Meeker
   
 #SEV for standardized time
@@ -185,59 +167,23 @@ gfp<-function(time,mle){
   return(g)
 }
   
-x1=gfp((check$yl),db3)
-x2=gfp((check$yu),db3)
+x1=gfp((check$yl),db6)
+x2=gfp((check$yu),db6)
                                                                                                                                                                                                                                                                                                                                
                                                                                                                                                                                                           
 
-#Test on Model 20
-df3=dat[dat$model==1,]  
-check=WaldBand_mle(db3,alpha=.05,begin = min(df3$endtime[df3$censored==1])*.9, end = max(df3$endtime[df3$censored==1])*1.1)
-plot(check$time,check$g,ylab="CDF",ylim=c(-.1,.5))
-lines(check$time,check$lower)
-lines(check$time,check$upper)
+#Test on Model 6
+df6=dat[dat$model==6,]  
+check=WaldBand_mle(db6,alpha=.05,begin = 1000, end = 50000)
+plot(check$time,check$g,ylab="CDF",type="l")
+lines(check$time,check$lower,lty=3)
+lines(check$time,check$upper,lty=3)
 
                                                                                                            ###Ignore Below ###  
   
   
-#Get MLE and SE for p; looks like SE is not on constrained space, but p is.
-p<-NULL
-db<-NULL
-se<-NULL
-for (j in id){
-  fit<-mle_stan(j,inits)
-  er=tryCatch(sqrt(diag(solve(-fit$hessian))),error=function(e) NA)
-  p<-append(p,fit$par[13])
-  db<-append(db,j)
-  se<-append(se,er[13])
-}  
-d = data.frame(db, p,se)
 
-#Tranform Interval with Inv Logit
-ivlog<-function(x){
-  return(exp(x)/(1+exp(x)))
-}
 
-#Get 95% CI 
-pu=sapply(d[,2],function(x) log(x/(1-x)))
-lb=pu-1.96*d$se
-ub=pu+1.96*d$se
-d$lb<-ivlog(lb)
-d$ub<-ivlog(ub)
-
-#Extract log sigma 1 and 2
-#Get MLE and SE for p; looks like SE is not on constrained space, but p is.
-betamle<-NULL
-for (j in id){
-  fit<-mle_stan(j,inits)
-  er=tryCatch(sqrt(diag(solve(-fit$hessian))),error=function(e) NA)
-  b1<-1/exp(fit$par[16])
-  b2<-1/exp(fit$par[17])
-  se1=er[11]
-  se2=er[12]
-  betamle <- rbind(betamle,data.frame(model=j, b1=b1,b2=b2,se1=se1,se2=se2))
-  rownames(betamle) <- NULL
-}  
 
 #Check Analytical Derivatives to Numerical Ones#
 library(numDeriv)
@@ -270,4 +216,46 @@ check6=p*dsev(z1)*(1-psev(z2))*(1/sig1)+(dsev(z2)*(1-p*psev(z1))*(1/sig2))
 
 
 
+#Compare MLEs to Bayes Point Estimtes for 10/13
+mles<-readRDS("mle_infant1year.rds")
+
+#Extract Bayes Parameters
+s <- readRDS("samples1013.rds")
+
+bayesout <- matrix(ncol=5, nrow=22)
+for (i in 1:22){
+    num=i
+    spi <- paste0("pi[",num,"]",collapse="")
+    smu1 <- paste0("mu1[",num,"]",collapse="")
+    smu2 <- paste0("mu2[",num,"]",collapse="")
+    slogsig1 <- paste0("log_sigma1[",num,"]",collapse="")
+    slogsig2 <- paste0("log_sigma2[",num,"]",collapse="")
+    pi <- summary(s)$summary[spi,"50%"]
+    mu1 <- summary(s)$summary[smu1,"50%"]
+    mu2 <- summary(s)$summary[smu2,"50%"]
+    logsig1 <- summary(s)$summary[slogsig1,"50%"]
+    logsig2 <- summary(s)$summary[slogsig2,"50%"]
+    
+
+  bayesout[i,1]<-mu1
+  bayesout[i,2]<-mu2 
+  bayesout[i,3]<-logsig1
+  bayesout[i,4]<-logsig2
+  bayesout[i,5]<-pi
+}
+bayesout.dat<-as.data.frame(bayesout)
+colnames(bayesout.dat) <- c("mu1_b","mu2_b","log_sigma1_b","log_sigma2_b","pi_b")
+colnames(out)<- c("mu1_f","mu2_f","log_sigma1_f","log_sigma2_f","pi_f","LL","Grid")
+out<-as.data.frame(out)
+#Combine Bayes and MLE estimates
+combo_parm <- data.frame("mu1_b" = bayesout.dat$mu1_b, "mu_1f" = out$mu1_f,
+                         "mu2_b"=bayesout.dat$mu2_b,"mu2_f"=out$mu2_f,
+                         "log_sigma1_b"=bayesout.dat$log_sigma1_b,"log_sigma1_f"=out$log_sigma1_f,
+                         "log_sigma2_b"=bayesout.dat$log_sigma2_b,"log_sigma2_f"=out$log_sigma2_f,
+                         "pi_b"=bayesout.dat$pi_b,"pi_f"=out$pi_f)
+
+saveRDS(combo_parm,"bayesmle.rds")
+
+#Lets Look at SE for One Model and Parameters
+mod6<-get_mle_stan(6,grid[195,])
 

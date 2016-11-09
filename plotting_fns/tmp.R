@@ -14,7 +14,7 @@ id <- with(overview, which(overview$late_f >= 1 & f >=8))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
-s <- readRDS("../workflow/log_odds_1014.rds")
+s <- readRDS("../workflow/samples1013.rds")
 samp <- extract(s)
 
 plot(s, pars="logit_pi_raw")
@@ -47,7 +47,7 @@ summary(s)$summary[c("mu1[14]","mu2[14]","log_sigma1[14]", "log_sigma2[14]", "lo
 
 source("../plotting_fns/KM_plot.R")
 
-filter(dat, model==id[1]) %>%
+filter(dat, model==id[6]) %>%
   KM_plot("weibull")
 
 mods <- subset(dat, model %in% id)
@@ -60,8 +60,7 @@ for(j in 1:length(id)){
   loc2_j = samp$mu2[max_id,j]
   scl1_j = exp(samp$log_sigma1[max_id,j])
   scl2_j = exp(samp$log_sigma2[max_id,j])
-  adj <- with(subset(mods, model == orig_id),
-              get_tr_adj(min(starttime), pi_j, loc1_j, scl1_j, loc2_j, scl2_j))
+  adj <- with(subset(mods, model == orig_id),get_tr_adj(min(starttime), pi_j, loc1_j, scl1_j, loc2_j, scl2_j))
   
   kmp <- subset(mods, model == orig_id) %>%
     KM_plot(model="weibull", tr_adj = adj, fixed=T)
@@ -79,7 +78,8 @@ for(j in 1:length(id)){
   
   plot_list[[j]] <- kmp + geom_line(data = band_df, inherit.aes = FALSE, aes(x, y), lty=2) +
     geom_ribbon(data = band_df, inherit.aes = FALSE,
-                aes(x=x, y=y, ymin=lower, ymax=upper), fill="red", alpha=.2)
+                aes(x=x, y=y, ymin=lower, ymax=upper), fill="red", alpha=.2) #+
+    #geom_ribbon(data=check,aes(x=time,y=g,ymin=lower,ymax=upper),fill="green") #Add MLE Wald Bands; look funny though for mod 6
   
     
 }
