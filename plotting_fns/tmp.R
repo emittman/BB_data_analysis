@@ -41,8 +41,8 @@ summary(s)$summary[c("mu1[5]","mu2[5]","log_sigma1[5]", "log_sigma2[5]", "log_pi
 
 filter(overview, stan_id==14)
 filter(dat, model==id[14]) %>% ggplot(aes(x=starttime, y=endtime)) + geom_point()
-pairs(s, pars=c("pi[14]", "mu1[14]","mu2[14]","log_sigma1[14]", "log_sigma2[14]"))
-summary(s)$summary[c("mu1[14]","mu2[14]","log_sigma1[14]", "log_sigma2[14]", "pi[14]"),]
+pairs(s, pars=c("logit_pi_raw[14]", "log_tp1_raw[14]","log_tp2_raw[14]","log_sigma1_raw[14]", "log_sigma2_raw[14]"))
+summary(s)$summary[c("mu1[14]","mu2[14]","log_sigma1[14]", "log_sigma2[14]", "log_pi[14]"),]
 
 
 source("../plotting_fns/KM_plot.R")
