@@ -55,8 +55,10 @@ transformed parameters{
   vector[M] mu1;
   vector[M] mu2;
   vector[M] log_pi;
-  mu1 = (eta_ltp1 + tau_ltp1 * log_tp1_raw) - (sigma1 * z_corr[1]);
-  mu2 = (eta_ltp2 + tau_ltp2 * log_tp2_raw) - (sigma2 * z_corr[2]);
+  for(m in 1:M){
+    mu1 = (eta_ltp1 + tau_ltp1 * log_tp1_raw[m]) - (sigma1[m] * z_corr[1]);
+    mu2 = (eta_ltp2 + tau_ltp2 * log_tp2_raw[m]) - (sigma2[m] * z_corr[2]);
+  }
   for(m in 1:M)
     log_pi[m] = log_inv_logit(eta_pi + tau_pi * logit_pi_raw[m]);
 }
