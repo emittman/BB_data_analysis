@@ -62,13 +62,13 @@ run_mcmc_logodds <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p 
   # return(stan_data)
 }
 
-count_divergences <- function(fit) {
-  sampler_params <- get_sampler_params(fit, inc_warmup=FALSE)
-  sum(sapply(sampler_params, function(x) c(x[,'divergent__']))[,1])
+count_divergences <- function(fit, chain, inc_warmup) {
+  sampler_params <- get_sampler_params(fit, inc_warmup=inc_warmup)
+  sum(sapply(sampler_params, function(x) c(x[,'divergent__']))[,chain])
 }
 
-hist_treedepth <- function(fit) {
-  sampler_params <- get_sampler_params(fit, inc_warmup=FALSE)
-  hist(sapply(sampler_params, function(x) c(x[,'treedepth__']))[,1], breaks=0:20, main="", xlab="Treedepth")
+hist_treedepth <- function(fit, chain, inc_warmup) {
+  sampler_params <- get_sampler_params(fit, inc_warmup=inc_warmup)
+  hist(sapply(sampler_params, function(x) c(x[,'treedepth__']))[,chain], breaks=0:20, main="", xlab="Treedepth")
   abline(v=10, col=2, lty=1)
 }

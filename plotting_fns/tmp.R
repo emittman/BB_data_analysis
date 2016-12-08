@@ -50,12 +50,17 @@ source("../plotting_fns/KM_plot.R")
 filter(dat, model==id[6]) %>%
   KM_plot("weibull")
 
+filter(dat, model==id[6]) %>%
+  KM_plot("weibull") + theme(axis.text=element_blank(),
+                             axis.title = element_blank(),
+                             axis.ticks = element_blank())
+
 mods <- subset(dat, model %in% id)
 max_id <- which.max(samp$lp__)
 plot_list <-NULL
 for(j in 1:length(id)){
   orig_id <- id[j]
-  pi_j = samp$pi[max_id,j]
+  pi_j = exp(samp$log_pi[max_id,j])
   loc1_j = samp$mu1[max_id,j]
   loc2_j = samp$mu2[max_id,j]
   scl1_j = exp(samp$log_sigma1[max_id,j])
@@ -69,7 +74,7 @@ for(j in 1:length(id)){
                                              length.out=25))) %>%
     ddply(.(x), function(g){
       Fp <- sapply(1:1000, function(i) {
-        1 -  (1 - samp$pi[i,j] * my_pweibull(g$x, samp$mu1[i,j], exp(samp$log_sigma1[i,j]))) *
+        1 -  (1 - exp(samp$log_pi[i,j]) * my_pweibull(g$x, samp$mu1[i,j], exp(samp$log_sigma1[i,j]))) *
           (1 - my_pweibull(g$x, samp$mu2[i,j], exp(samp$log_sigma2[i,j])))
       })
       q <- quantile(Fp, c(.05, .5, .95))
@@ -83,3 +88,9 @@ for(j in 1:length(id)){
   
     
 }
+
+gridExtra::grid.arrange(plot_list[[1]], plot_list[[2]], plot_list[[3]], plot_list[[4]], plot_list[[5]],
+                        plot_list[[6]], plot_list[[7]], plot_list[[8]], plot_list[[9]], plot_list[[10]],
+                        plot_list[[11]], plot_list[[12]], plot_list[[13]], plot_list[[14]], plot_list[[15]],
+                        plot_list[[16]], plot_list[[17]], plot_list[[18]], plot_list[[19]], plot_list[[20]], 
+                        plot_list[[21]], plot_list[[22]], nrow=5, ncol=5)

@@ -127,8 +127,8 @@ model{
   
   pi ~ beta(alpha, beta);
   eta_ltp1 ~ normal(7, 1);
-  eta_ls1  ~ normal(0, 1);
   eta_ltp2 ~ normal(9, 2);
+  eta_ls1  ~ normal(0, 1);
   eta_ls2  ~ normal(0, 1);
   tau_ltp1 ~ normal(0, 1);
   tau_ltp2 ~ normal(0, 1);
