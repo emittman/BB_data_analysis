@@ -82,15 +82,15 @@ model{
     // numerator:   log( p * f1 * (1 - F2) + f2 * (1 - p * F1) )
     //            = log( exp(log(p) + log(f1) + log(1 - F2)) + exp(log(f2) + log(1 - exp(log(p) + log(F1)))) )
     tmp[1] = log_sum_exp(logpi + sev_logpdf(endtime_obs[i], mu_1, sig_1) +
-               sev_logccdf(endtime_obs[i], mu_2, ls_2),
-               sev_logpdf( endtime_obs[i], mu_2, ls_2) + 
+               sev_logccdf(endtime_obs[i], mu_2, sig_2),
+               sev_logpdf( endtime_obs[i], mu_2, sig_2) + 
                log1m_exp(logpi + sev_logcdf(endtime_obs[i], mu_1, sig_1)
                )
              );
     // denominator:  log((1 - p * F1) * (1 - F2))
     //            =  log(1 - p * F1) + log(1 - F2)
     tmp[2] = log1m_exp(logpi + sev_logcdf(starttime_obs[i], mu_1, sig_1)) + 
-             sev_logccdf(starttime_obs[i], mu_2, ls_2);
+             sev_logccdf(starttime_obs[i], mu_2, sig_2);
              
     target += tmp[1] - tmp[2];
   }
@@ -100,17 +100,17 @@ model{
     logpi = log_pi[m];
     mu_1 = mu1[m];
     mu_2 = mu2[m];
-    sig_1 = log_sigma1[m];
-    ls_2 = log_sigma2[m];
+    sig_1 = sigma1[m];
+    sig_2 = sigma2[m];
   
     // numerator:   log((1 - p * F1) * (1 - F2))
     //            =  log(1 - p * F1) + log(1 - F2)
     tmp[1] = log1m_exp(logpi + sev_logcdf(endtime_cens[i], mu_1, sig_1)) + 
-             sev_logccdf(endtime_cens[i], mu_2, ls_2);
+             sev_logccdf(endtime_cens[i], mu_2, sig_2);
     // denominator:  log((1 - p * F1) * (1 - F2))
     //            =  log(1 - p * F1) + log(1 - F2)
     tmp[2] = log1m_exp(logpi + sev_logcdf(starttime_cens[i], mu_1, sig_1)) + 
-             sev_logccdf(starttime_cens[i], mu_2, ls_2);
+             sev_logccdf(starttime_cens[i], mu_2, sig_2);
              
     target += tmp[1] - tmp[2];
   }
