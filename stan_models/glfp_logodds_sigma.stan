@@ -46,8 +46,8 @@ parameters{
   real<lower=0> tau_pi;
   vector[M] log_tp1_raw;
   vector[M] log_tp2_raw;
-  real<lower=0>[M] sigma1;
-  real<lower=0>[M] sigma2;
+  real<lower=0> sigma1[M];
+  real<lower=0> sigma2[M];
   vector[M] logit_pi_raw;
 }
 
