@@ -7,12 +7,12 @@ targets:
     - analyses
   datasets:
     depends:
-    - data_107
+    - data_10_14
   analyses:
     depends:
-    - samples_data_107
-  data_107:
+    - samples_logodds_12_8_data_10_14
+  data_10_14:
     command: prepare_data(lb_fails = 8, lb_late_fails = 1, lb_early_fails = 0)
-  samples_data_107:
-    command: run_mcmc(data_107, chains = 4, iter = 8000, warmup = 2000)
+  samples_logodds_12_8_data_10_14:
+    command: run_mcmc_logodds(data_10_14, chains = 4, iter = 2500, warmup = 1000)
 
