@@ -47,7 +47,7 @@ parameters{
   vector[M] log_tp1_raw;
   vector[M] log_tp2_raw;
   real<lower=0> sigma1[M];
-  real<lower=0> sigma2[M];
+  real<lower=0, upper=1> sigma2[M];
   vector[M] logit_pi_raw;
 }
 
