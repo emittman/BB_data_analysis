@@ -16,7 +16,7 @@ prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0){
   return(df)
 }
 
-run_mcmc <- function(dataset, chains = 4, iter = 2000, warmup = iter/2, p = c(.5,.1)){
+run_mcmc <- function(dataset, chains = 4, iter = 2000, warmup = iter/2, p = c(.5,.2)){
   require(rstan)
   rstan_options(auto_write = TRUE)
   options(mc.cores = parallel::detectCores())#format for Stan
@@ -39,7 +39,7 @@ run_mcmc <- function(dataset, chains = 4, iter = 2000, warmup = iter/2, p = c(.5
   # return(stan_data)
 }
 
-run_mcmc_logodds <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p = c(.5,.1)){
+run_mcmc_logodds <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p = c(.5,.15)){
   require(rstan)
   rstan_options(auto_write = TRUE)
   options(mc.cores = parallel::detectCores())#format for Stan
@@ -57,7 +57,7 @@ run_mcmc_logodds <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p 
   )
   
   m <- stan_model(file = "../stan_models/glfp_logodds_sigma.stan")
-  s <- sampling(obj = m, data = stan_data, chains = chains, iter = iter, warmup = warmup, control = list(adapt_delta = .99), init=0)
+  s <- sampling(obj = m, data = stan_data, chains = chains, iter = iter, warmup = warmup, control = list(adapt_delta = .9999), init=0)
   return(s)
   # return(stan_data)
 }
