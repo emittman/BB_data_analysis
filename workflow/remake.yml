@@ -10,9 +10,9 @@ targets:
     - data_10_14
   analyses:
     depends:
-    - samples_logodds_12_8_data_10_14
+    - samples_logodds_1_22_data_10_14
   data_10_14:
-    command: prepare_data(lb_fails = 8, lb_late_fails = 1, lb_early_fails = 0)
-  samples_logodds_12_8_data_10_14:
-    command: run_mcmc_logodds(data_10_14, chains = 4, iter = 2500, warmup = 1000)
+    command: prepare_data(lb_fails = 8, lb_late_fails = 4, lb_early_fails = 4)
+  samples_logodds_1_22_data_10_14:
+    command: run_mcmc_logodds(data_10_14, chains = 8, iter = 3000, warmup = 1500)
 

@@ -125,9 +125,9 @@ model{
   eta_s1        ~ normal(1, 1);
   eta_s2        ~ normal(0, 1);
   eta_pi         ~ normal(-3, 1);
-  tau_ltp1       ~ rgamma(2,2);
-  tau_ltp2       ~ rgamma(2,2);
-  tau_s1        ~ rgamma(2,2);
-  tau_s2        ~ rgamma(2,2);
-  tau_pi         ~ rgamma(2,2);
+  tau_ltp1       ~ gamma(2,2);
+  tau_ltp2       ~ gamma(2,2);
+  tau_s1        ~  gamma(2,2);
+  tau_s2        ~  gamma(2,2);
+  tau_pi         ~ gamma(2,2);
 }
