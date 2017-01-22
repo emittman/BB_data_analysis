@@ -122,12 +122,12 @@ model{
   logit_pi_raw   ~ normal(0,1);
   eta_ltp1       ~ normal(7, 2);
   eta_ltp2       ~ normal(9, 2);
-  eta_s1        ~ normal(0, 1);
+  eta_s1        ~ normal(1, 1);
   eta_s2        ~ normal(0, 1);
   eta_pi         ~ normal(-3, 1);
-  tau_ltp1       ~ exponential(1);
-  tau_ltp2       ~ exponential(1);
-  tau_s1        ~ exponential(1);
-  tau_s2        ~ exponential(1);
-  tau_pi         ~ exponential(1);
+  tau_ltp1       ~ rgamma(2,2);
+  tau_ltp2       ~ rgamma(2,2);
+  tau_s1        ~ rgamma(2,2);
+  tau_s2        ~ rgamma(2,2);
+  tau_pi         ~ rgamma(2,2);
 }

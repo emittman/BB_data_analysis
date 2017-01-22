@@ -10,7 +10,7 @@ overview <- ddply(dat, .(model), summarise,
                   early_f = sum(failed>0 & endtime<365*24*1),
                   late_f = sum(failed>0 & endtime>365*24*2))
 # id <- unique(dat$model)
-id <- with(overview, which(overview$late_f >= 1 & f >=8))
+id <- with(overview, which(overview$early >= 4, overview$late_f >= 4 & f >=8))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
@@ -20,14 +20,14 @@ samp <- extract(s)
 plot(s, pars="logit_pi_raw")
 pairs(s, pars=c("eta_pi","tau_pi", "lp__"))
 
-plot(s, pars="log_sigma1")
-pairs(s, pars=c("eta_ls1", "tau_ls1", "lp__"))
+plot(s, pars="sigma1")
+pairs(s, pars=c("eta_s1", "tau_s1", "lp__"))
 
 plot(s, pars="log_tp1_raw")
 pairs(s, pars=c("eta_ltp1","tau_ltp1", "lp__"))
 
-plot(s, pars="log_sigma2")
-pairs(s, pars=c("eta_ls2", "tau_ls2", "lp__"))
+plot(s, pars="sigma2")
+pairs(s, pars=c("eta_s2", "tau_s2", "lp__"))
 
 plot(s, pars="mu2")
 pairs(s, pars=c("eta_ltp2","tau_ltp2", "lp__"))
@@ -47,10 +47,10 @@ summary(s)$summary[c("mu1[14]","mu2[14]","log_sigma1[14]", "log_sigma2[14]", "lo
 
 source("../plotting_fns/KM_plot.R")
 
-filter(dat, model==id[6]) %>%
+filter(dat, model==id[14]) %>%
   KM_plot("weibull")
 
-filter(dat, model==id[6]) %>%
+filter(dat, model==id[14]) %>%
   KM_plot("weibull") + theme(axis.text=element_blank(),
                              axis.title = element_blank(),
                              axis.ticks = element_blank())
