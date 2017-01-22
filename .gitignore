@@ -7,4 +7,5 @@ stan_models/*.rda
 workflow/.remake/**
 workflow/Makefile
 workflow/remake.yml
+workflow/old_samples/
 constrained_MLE/*.rda
