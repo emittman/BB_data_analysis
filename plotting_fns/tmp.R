@@ -10,7 +10,7 @@ overview <- ddply(dat, .(model), summarise,
                   early_f = sum(failed>0 & endtime<365*24*1),
                   late_f = sum(failed>0 & endtime>365*24*2))
 # id <- unique(dat$model)
-id <- with(overview, which(overview$early >= 4, overview$late_f >= 4 & f >=8))
+id <- with(overview, which(overview$early >= 4 & overview$late_f >= 4 & f >=8))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 

@@ -56,7 +56,7 @@ transformed parameters{
   vector[M] mu2;
   vector[M] log_pi;
   for(m in 1:M){
-    mu1[m] = (eta_ltp1 + tau_ltp1 * log_tp1_raw[m]) - (sigma1[m] * z_corr[1]);
+    mu1[m] = (eta_ltp1 + tau_ltp1 * log_tp1_raw[m]) - (sigma1[m] * z_corr[1]); //change
     mu2[m] = (eta_ltp2 + tau_ltp2 * log_tp2_raw[m]) - (sigma2[m] * z_corr[2]);
   }
   for(m in 1:M)
@@ -115,19 +115,19 @@ model{
     target += tmp[1] - tmp[2];
   }
   
-  log_tp1_raw    ~ normal(0,1);
-  log_tp2_raw    ~ normal(0,1);
+  log_tp1_raw    ~ normal(0, 1);
+  log_tp2_raw    ~ normal(0, 1);
   sigma1 ~ lognormal(eta_s1, tau_s1);
   sigma2 ~ lognormal(eta_s2, tau_s2);
-  logit_pi_raw   ~ normal(0,1);
-  eta_ltp1       ~ normal(7, 2);
+  logit_pi_raw   ~ normal(0, 1);
+  eta_ltp1       ~ normal(7, 1);
   eta_ltp2       ~ normal(9, 2);
-  eta_s1        ~ normal(1, 1);
-  eta_s2        ~ normal(0, 1);
-  eta_pi         ~ normal(-3, 1);
-  tau_ltp1       ~ gamma(2,2);
-  tau_ltp2       ~ gamma(2,2);
-  tau_s1        ~  gamma(2,2);
-  tau_s2        ~  gamma(2,2);
-  tau_pi         ~ gamma(2,2);
+  eta_s1        ~ normal(0, 0.5);
+  eta_s2        ~ normal(-0.75, 0.5);
+  eta_pi         ~ normal(-3, 0.5);
+  tau_ltp1       ~ gamma(1,2);
+  tau_ltp2       ~ gamma(1,2);
+  tau_s1        ~  gamma(1,2);
+  tau_s2        ~  gamma(1,2);
+  tau_pi         ~ gamma(1,2);
 }
