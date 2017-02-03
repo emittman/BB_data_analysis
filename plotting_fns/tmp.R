@@ -10,20 +10,20 @@ overview <- ddply(dat, .(model), summarise,
                   early_f = sum(failed>0 & endtime<365*24*1),
                   late_f = sum(failed>0 & endtime>365*24*2))
 # id <- unique(dat$model)
-id <- with(overview, which(overview$early >= 4 & overview$late_f >= 4 & f >=8))
+id <- with(overview, which(overview$early >= 1 & overview$late_f >= 1 & f >=5))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
-s <- readRDS("../workflow/samples1013.rds")
+s <- readRDS("../workflow/samples_2_1.rds")
 samp <- extract(s)
 
-plot(s, pars="logit_pi_raw")
+plot(s, pars="log_pi")
 pairs(s, pars=c("eta_pi","tau_pi", "lp__"))
 
 plot(s, pars="sigma1")
 pairs(s, pars=c("eta_s1", "tau_s1", "lp__"))
 
-plot(s, pars="log_tp1_raw")
+plot(s, pars="mu1")
 pairs(s, pars=c("eta_ltp1","tau_ltp1", "lp__"))
 
 plot(s, pars="sigma2")
@@ -47,10 +47,10 @@ summary(s)$summary[c("mu1[14]","mu2[14]","log_sigma1[14]", "log_sigma2[14]", "lo
 
 source("../plotting_fns/KM_plot.R")
 
-filter(dat, model==id[14]) %>%
+filter(dat, model==id[8]) %>%
   KM_plot("weibull")
 
-filter(dat, model==id[14]) %>%
+filter(dat, model==id[8]) %>%
   KM_plot("weibull") + theme(axis.text=element_blank(),
                              axis.title = element_blank(),
                              axis.ticks = element_blank())
@@ -63,8 +63,8 @@ for(j in 1:length(id)){
   pi_j = exp(samp$log_pi[max_id,j])
   loc1_j = samp$mu1[max_id,j]
   loc2_j = samp$mu2[max_id,j]
-  scl1_j = exp(samp$log_sigma1[max_id,j])
-  scl2_j = exp(samp$log_sigma2[max_id,j])
+  scl1_j = samp$sigma1[max_id,j]
+  scl2_j = samp$sigma2[max_id,j]
   adj <- with(subset(mods, model == orig_id),get_tr_adj(min(starttime), pi_j, loc1_j, scl1_j, loc2_j, scl2_j))
   
   kmp <- subset(mods, model == orig_id) %>%
@@ -74,10 +74,10 @@ for(j in 1:length(id)){
                                              length.out=25))) %>%
     ddply(.(x), function(g){
       Fp <- sapply(1:1000, function(i) {
-        1 -  (1 - exp(samp$log_pi[i,j]) * my_pweibull(g$x, samp$mu1[i,j], exp(samp$log_sigma1[i,j]))) *
-          (1 - my_pweibull(g$x, samp$mu2[i,j], exp(samp$log_sigma2[i,j])))
+        1 -  (1 - exp(samp$log_pi[i,j]) * my_pweibull(g$x, samp$mu1[i,j], samp$sigma1[i,j])) *
+          (1 - my_pweibull(g$x, samp$mu2[i,j], samp$sigma2[i,j]))
       })
-      q <- quantile(Fp, c(.05, .5, .95))
+      q <- quantile(Fp, c(.025, .5, .975))
       data.frame(y = q[2], lower = max(.0001,q[1]), upper = q[3])
     })
   
@@ -93,4 +93,4 @@ gridExtra::grid.arrange(plot_list[[1]], plot_list[[2]], plot_list[[3]], plot_lis
                         plot_list[[6]], plot_list[[7]], plot_list[[8]], plot_list[[9]], plot_list[[10]],
                         plot_list[[11]], plot_list[[12]], plot_list[[13]], plot_list[[14]], plot_list[[15]],
                         plot_list[[16]], plot_list[[17]], plot_list[[18]], plot_list[[19]], plot_list[[20]], 
-                        plot_list[[21]], plot_list[[22]], nrow=5, ncol=5)
+                        plot_list[[21]], nrow=5, ncol=5)
