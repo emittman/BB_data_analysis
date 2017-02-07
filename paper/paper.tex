@@ -1,0 +1,130 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx,psfrag,epsf,float}
+\graphicspath{C:/Users/Colin/Documents/GitHub/BB_data_analysis/plots}
+\usepackage{enumerate}
+\usepackage{natbib}
+\usepackage{url} % not crucial - just used below for the URL
+ 
+\newcommand{\myequation}{\begin{equation}}
+\newcommand{\myendequation}{\end{equation}}
+\let\[\myequation
+\let\]\myendequation
+
+
+\pdfminorversion=4
+% NOTE: To produce blinded version, replace "0" with "1" below.
+\newcommand{\blind}{0}
+
+% DON'T change margins - should be 1 inch all around.
+\addtolength{\oddsidemargin}{-.5in}%
+\addtolength{\evensidemargin}{-.5in}%
+\addtolength{\textwidth}{1in}%
+\addtolength{\textheight}{1.3in}%
+\addtolength{\topmargin}{-.8in}%
+
+
+\begin{document}
+
+%\bibliographystyle{natbib}
+
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\if0\blind
+{
+  \title{\bf A Hierarchical Bayesian Approach for Modeling Infant-Mortality and Wearout Failure Modes}
+  \author{Eric Mittman 1\thanks{
+    The authors gratefully acknowledge Bill Meeker for his comments and suggestions}\hspace{.2cm}\\
+    Department of Statistics, Iowa State University\\
+    and \\
+    Colin Lewis-Beck \\
+    Department of Statistics, Iowa State University}
+  \maketitle
+} \fi
+
+\if1\blind
+{
+  \bigskip
+  \bigskip
+  \bigskip
+  \begin{center}
+    {\LARGE\bf Title}
+\end{center}
+  \medskip
+} \fi
+
+\bigskip
+\begin{abstract}
+The text of your abstract.  100 or fewer words.
+\end{abstract}
+
+\noindent%
+{\it Keywords:}  3 to 6 keywords, (don't reuse words appearing in title)
+\vfill
+
+\newpage
+\spacingset{1.45} % DON'T change the spacing!
+\section{Introduction}
+\subsection{Background}
+This section will follow last paper.
+ 
+\subsection{Motivation}
+This section will follow last paper.
+
+\subsection{Overview}
+This section will follow last paper.
+
+\section{Lifetime Model}
+\subsection{GFLP Model}
+I think we introduce the general GFLP model much like in Meeker and Chan.   
+\subsection{Weibull Lifetime Distribution}
+We introduce the specific Weibull lifetime distribution and write out the pdf, cdf, and interpretation of the parameters. 
+\subsection{Censoring and Truncation}
+Similar to last paper, review the issues due to left truncation and write truncation.
+\subsection{Data}
+Introduce the data and show some summary statistics, but NOT box plots.  Perhaps show an adjusted Kaplan Meier plot to show a Weibull lifetime distribution could be reasonable.
+     
+\section{Weibull Model}
+\subsection{Likelihood}
+Write out the likelihood for the single Weibull with censoring and right truncation.  This can come from the previous paper.  Also mention why MLE model alone by brand has its limitations.
+\subsection{Hierarchical Model}
+Write out the model, priors, etc for the single Weibull Distribution model.
+\subsection{Comparison of Approaches}
+Compare MLE estimates to Weibull and show improved precision due to pooling of information.  This can follow the last paper in terms of the plots.  I think this section should be shorter, however, since we are just warming up for the GFLP Model.
+\section{GFLP Model}
+\subsection{Motivation}
+Point out limitation of single failure mode model (perhaps show a drive model with a kink in the distribution) and then present the GFLP Model.  Could also discuss the bathtub hazard.  Mention Wayne Nelson.
+\subsection{Model}
+Write out the full Bayes hierarchical model for the GFLP model
+\subsection{Goodness of Fit}
+Show some of the fits of the GFLP Model.  Mention some convergence statistics for the MCMC.  
+\subsection{Brand Comparisons}
+How can we use this model to compare brands?  Present comparisons of Quantiles, other parameters.  Highlight how this model could be used in an applied sense.  
+\section{Concluding Remarks and Extensions}
+Review the advantages of fitting the GFLP model and offer future ideas.  
+
+
+
+
+    
+
+
+\bigskip
+\begin{center}
+{\large\bf SUPPLEMENTARY MATERIAL}
+\end{center}
+
+\begin{description}
+
+\item Put R Stan code here
+
+\end{description}
+
+\bibliographystyle{plain}
+\bibliography{sample}
+
+\end{document}
