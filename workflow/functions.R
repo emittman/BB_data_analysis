@@ -56,7 +56,7 @@ run_mcmc_logodds <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p 
                          p = p)
   )
   
-  m <- stan_model(file = "../stan_models/glfp_logodds_sigma.stan")
+  m <- stan_model(file = "../stan_models/glfp_logodds_sigma_centered.stan")
   s <- sampling(obj = m, data = stan_data, chains = chains, iter = iter, warmup = warmup, control = list(adapt_delta = .9999), init=0)
   return(s)
   # return(stan_data)
