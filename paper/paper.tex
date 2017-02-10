@@ -78,15 +78,14 @@ This section will follow last paper.
 \subsection{Overview}
 This section will follow last paper.
 
-\section{Lifetime Model}
-\subsection{GFLP Model}
-I think we introduce the general GFLP model much like in Meeker and Chan.   
-\subsection{Weibull Lifetime Distribution}
-We introduce the specific Weibull lifetime distribution and write out the pdf, cdf, and interpretation of the parameters. 
-\subsection{Censoring and Truncation}
-Similar to last paper, review the issues due to left truncation and write truncation.
-\subsection{Data}
-Introduce the data and show some summary statistics, but NOT box plots.  Perhaps show an adjusted Kaplan Meier plot to show a Weibull lifetime distribution could be reasonable.
+\section{Data}
+Introduce the data and show some summary statistics, but NOT box plots.  Perhaps show an adjusted Kaplan Meier plots to show a Weibull lifetime distribution could be reasonable.
+
+Possible plots (by drive model):
+avg. time on test vs. proportion failed
+total time on test (histogram)
+total records (by drive model)
+
      
 \section{Weibull Model}
 \subsection{Likelihood}
@@ -95,15 +94,23 @@ Write out the likelihood for the single Weibull with censoring and right truncat
 Write out the model, priors, etc for the single Weibull Distribution model.
 \subsection{Comparison of Approaches}
 Compare MLE estimates to Weibull and show improved precision due to pooling of information.  This can follow the last paper in terms of the plots.  I think this section should be shorter, however, since we are just warming up for the GFLP Model.
+
+
 \section{GFLP Model}
 \subsection{Motivation}
 Point out limitation of single failure mode model (perhaps show a drive model with a kink in the distribution) and then present the GFLP Model.  Could also discuss the bathtub hazard.  Mention Wayne Nelson.
 \subsection{Model}
 Write out the full Bayes hierarchical model for the GFLP model
-\subsection{Goodness of Fit}
-Show some of the fits of the GFLP Model.  Mention some convergence statistics for the MCMC.  
+
+\subsection{Computation}
+
+\section{Data analysis}
+\subsection{Results}
+Show some of the fits of the GFLP Model.  Show parameter estimates with uncertainty. Mention some convergence statistics for the MCMC. 
+\subsection{collapsing \mu_1, \sigma_1}
+Based on posterior plots, we might fit a simpler model...
 \subsection{Brand Comparisons}
-How can we use this model to compare brands?  Present comparisons of Quantiles, other parameters.  Highlight how this model could be used in an applied sense.  
+How can we use this model to compare brands?  Present comparisons of Quantiles, other parameters.  Highlight how this model could be used in an applied sense. Quantiles by brand, etc.
 \section{Concluding Remarks and Extensions}
 Review the advantages of fitting the GFLP model and offer future ideas.  
 
