@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage{amsmath}
+\newcommand{\ind}{\stackrel{ind.}{\sim}}
+\newcommand{\op}{\operatorname}
+
+\begin{document}
+\section{Hierarchical GLFP model}
+Let $T_{d,i}$ be the time of failure for the $i^{th}$ drive of drive-model $d$.
+We assume that $T_{d,1},\ldots T_{d,n_d}$ are independent and have a probability distribution with cdf given by
+\begin{equation*}
+P(T_{d,i}\le t) = 1 - (1-\pi_d\, F_{d1}(t))(1 - F_{d2}(t)),
+\end{equation*}
+where $\pi_d$ is in the interval $(0,1)$.
+
+Our interpretation of this model is that, while all units are prone to a mode of failure which can be approximated by a distribution with cdf $F_{d2}$, a proportion $\pi$ are {\em also} defective, and thus subject to another failure mode ($F_{d1}$).
+
+To borrow strength across models, we further model the scales, $\sigma_j$, and log-locations, $\mu_j$, of the component distributions as follows:
+
+\begin{align*}
+\sigma_{d,j} &\ind \op{Lognormal} \left( \eta_{\sigma,j}, \tau^2_{\sigma,j} \right) \mbox{ for } j=1,2\; d=1,\ldots,D\\
+t_{p_j,d,j} \equiv \mu_{d,j} + \sigma_{d,j}\,\Phi^{-1}(p_j) & \ind \op{Normal} \left(\eta_{t_{p_j},j}, \tau^2_{t_{p_j},j}\right) \mbox{ for } j=1,2\; d=1,\ldots,D\\
+\pi_d &\ind \op{Beta}(\alpha, \beta) \mbox{ for } d=1,\ldots,D.
+\end{align*}
+
+Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribution. The decision to parameterize in terms of a quantile other than the log-location parameter, $\mu = \Phi^{-1}(.5)$, is that lifetime data often features heavy right-censoring where inferences about the location parameter are extrapolations beyond the range of the data. For this data we selected $p_1=0.5,\, p_2 = 0.2$.
+
+\subsection{Priors}
+To complete the full probability model, we need to select priors such that the posterior distribution is proper. We chose informative priors; we argue that doing so helps us identify the model parameters while still allowing for substantial Bayesian learning about the hierarchical distributions.
+
+\begin{align*}
+ \eta_{\sigma ,1} & \sim \op{Normal}(0, 0.5)\\
+ \eta_{\sigma ,2} & \sim \op{Normal}(-0.75, .5)\\
+ \tau_{\sigma ,1} & \sim \op{Gamma}(1, 2)\\
+ \tau_{\sigma ,2} & \sim \op{Gamma}(1, 2)\\
+ \eta_{t_{p_1},1} & \sim \op{Normal}(7, 1)\\
+ \eta_{t_{p_2},2} & \sim \op{Normal}(9, 2)\\
+ \tau_{t_{p_1},1} & \sim \op{Gamma}(1, 2)\\
+ \tau_{t_{p_2},2} & \sim \op{Gamma}(1, 2)
+ \end{align*} 
+ 
+\end{document}
