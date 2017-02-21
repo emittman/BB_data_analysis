@@ -43,18 +43,16 @@ parameters{
   real<lower=0> tau_s2;
   real<lower=0> tau_pi;
   vector[M] log_tp2_raw;
-  vector[M] log_sigma2_raw;
+  real<lower=0, upper=1> sigma2[M];
   vector[M] logit_pi_raw;
 }
 
 transformed parameters{
   real mu1;
   vector[M] mu2;
-  vector[M] sigma2;
   vector[M] log_pi;
   mu1 = log_tp1 - sigma1 * zcorr[1];
   for(m in 1:M){
-    sigma2[m] = exp(eta_s2 + tau_s2 * log_sigma2_raw[m]);
     mu2[m] = (eta_tp2 + tau_tp2 * log_tp2_raw[m]) - (sigma2[m] * z_corr[2]);
   }
   for(m in 1:M)
@@ -112,7 +110,7 @@ model{
   log_tp1        ~ normal(7, 1);
   log_tp2_raw    ~ normal(0, 1);
   sigma1         ~ lognormal(0, 1);
-  log_sigma2_raw ~ normal(0, 1);
+  sigma2         ~ lognormal(eta_s2, tau_s2);
   logit_pi_raw   ~ normal(0, 1);
   eta_ltp2       ~ normal(9, 2);
   eta_s2         ~ normal(-0.75, 0.5);
