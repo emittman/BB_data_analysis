@@ -112,10 +112,10 @@ model{
   sigma1         ~ lognormal(0, 1);
   sigma2         ~ lognormal(eta_s2, tau_s2);
   logit_pi_raw   ~ normal(0, 1);
-  eta_ltp2       ~ normal(9, 2);
+  eta_tp2       ~ normal(9, 2);
   eta_s2         ~ normal(-0.75, 0.5);
   eta_pi         ~ normal(-3, 0.5);
-  tau_ltp2       ~ gamma(1,2);
+  tau_tp2       ~ gamma(1,2);
   tau_s2         ~ gamma(1,2);
   tau_pi         ~ gamma(1,2);
 }
