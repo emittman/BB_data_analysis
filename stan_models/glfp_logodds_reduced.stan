@@ -51,7 +51,7 @@ transformed parameters{
   real mu1;
   vector[M] mu2;
   vector[M] log_pi;
-  mu1 = log_tp1 - sigma1 * zcorr[1];
+  mu1 = log_tp1 - sigma1 * z_corr[1];
   for(m in 1:M){
     mu2[m] = (eta_tp2 + tau_tp2 * log_tp2_raw[m]) - (sigma2[m] * z_corr[2]);
   }
