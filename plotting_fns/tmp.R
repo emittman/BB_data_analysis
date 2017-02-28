@@ -94,3 +94,61 @@ gridExtra::grid.arrange(plot_list[[1]], plot_list[[2]], plot_list[[3]], plot_lis
                         plot_list[[11]], plot_list[[12]], plot_list[[13]], plot_list[[14]], plot_list[[15]],
                         plot_list[[16]], plot_list[[17]], plot_list[[18]], plot_list[[19]], plot_list[[20]], 
                         plot_list[[21]], nrow=5, ncol=5)
+s2 <- readRDS("../workflow/samples_logodds_reduced_2_26.rds")
+samp2 <- extract(s2)
+
+plot(s2, pars="log_pi")
+pairs(s, pars=c("eta_pi","tau_pi", "lp__"))
+
+plot(s2, pars="sigma1")
+pairs(s, pars=c("eta_s1", "tau_s1", "lp__"))
+
+plot(s2, pars="mu1")
+pairs(s2, pars=c("eta_ltp1","tau_ltp1", "lp__"))
+
+plot(s2, pars="sigma2")
+pairs(s2, pars=c("eta_s2", "tau_s2", "lp__"))
+
+plot(s, pars="mu2")
+pairs(s, pars=c("eta_ltp2","tau_ltp2", "lp__"))
+
+
+
+max_id2 <- which.max(samp2$lp__)
+
+plot_list2 <-NULL
+for(j in 1:length(id)){
+  orig_id <- id[j]
+  pi_j = exp(samp2$log_pi[max_id2,j])
+  loc1_j = samp2$mu1[max_id2]
+  loc2_j = samp2$mu2[max_id2,j]
+  scl1_j = samp2$sigma1[max_id2]
+  scl2_j = samp2$sigma2[max_id2,j]
+  adj <- with(subset(mods, model == orig_id),get_tr_adj(min(starttime), pi_j, loc1_j, scl1_j, loc2_j, scl2_j))
+  kmp <- subset(mods, model == orig_id) %>%
+    KM_plot(model="weibull", tr_adj = adj, fixed=T)
+  band_df <- data.frame(x = exp(seq.int(log(1000),
+                                        log(50000),
+                                        length.out=25))) %>%
+    ddply(.(x), function(g){
+      Fp <- sapply(1:1000, function(i) {
+        1 -  (1 - exp(samp2$log_pi[i,j]) * my_pweibull(g$x, samp2$mu1[i], samp2$sigma1[i])) *
+          (1 - my_pweibull(g$x, samp2$mu2[i,j], samp2$sigma2[i,j]))
+      })
+      q <- quantile(Fp, c(.025, .5, .975))
+      data.frame(y = q[2], lower = max(.0001,q[1]), upper = q[3])
+    })
+  
+  plot_list2[[j]] <- kmp + geom_line(data = band_df, inherit.aes = FALSE, aes(x, y), lty=2) +
+    geom_ribbon(data = band_df, inherit.aes = FALSE,
+                aes(x=x, y=y, ymin=lower, ymax=upper), fill="red", alpha=.2) #+
+  #geom_ribbon(data=check,aes(x=time,y=g,ymin=lower,ymax=upper),fill="green") #Add MLE Wald Bands; look funny though for mod 6
+  
+  
+}
+
+gridExtra::grid.arrange(plot_list2[[1]], plot_list2[[2]], plot_list2[[3]], plot_list2[[4]], plot_list2[[5]],
+                        plot_list2[[6]], plot_list2[[7]], plot_list2[[8]], plot_list2[[9]], plot_list2[[10]],
+                        plot_list2[[11]], plot_list2[[12]], plot_list2[[13]], plot_list2[[14]], plot_list2[[15]],
+                        plot_list2[[16]], plot_list2[[17]], plot_list2[[18]], plot_list2[[19]], plot_list2[[20]], 
+                        plot_list2[[21]], nrow=5, ncol=5)
