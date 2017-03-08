@@ -8,9 +8,9 @@ options(mc.cores = parallel::detectCores())
 mixmle <- stan_model(file = "MLE_gflp.stan")
 
 #Get Data Ready.  Note: Two Years is 17520 hours; 1 Year is 8760
-#For OverView early is less than 1 year, late is greater than 2 years.
+#For overview, the definitions are: early is less than 1 year, late is greater than 2 years.
 
-prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0,infant=0){
+prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0, infant=0){
   #load data
   overview  <- readRDS("../BB_data/overview.rds")
   dat       <- readRDS("../BB_data/clean_unit_summaries.rds")
@@ -30,15 +30,14 @@ prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0,inf
   return(df)
 }
 
-#8 total failures, 1 early, and < 1 year is infant. 
-dat<-prepare_data(8,1,0,8760)
+
+dat <- prepare_data(5,1,1,8760)  # 5 total failures, 1 early, 1 late, Less than 1 Year is Mode 1 (infant)
 
 #Stan MLE Function for One Drive Brand Model
 
-mle_stan<-function(brand,start){
+mle_stan <- function(brand,start){
   
   df<-subset(dat,model==brand)
-  
   #Get Data Ready for Stan
   stan_dats <- with(df,
                   list(N_obs = sum(!(censored) & !(mode1)),
@@ -50,62 +49,48 @@ mle_stan<-function(brand,start){
                        endtime_cens = log(endtime[(censored)]+1),
                        starttime_obs1 = log(starttime[!(censored) & (mode1)]+1),
                        endtime_obs1 = log(endtime[!(censored) & (mode1)]+1),
-                       p = c(.5, .1)))
+                       p = c(.5, .2)))
   
   o <- optimizing(object = mixmle, data = stan_dats,algorithm="BFGS", init = start, hessian=TRUE)
   return(o)
-  
 }
   
-inits <- list(log_tp1=4,
+
+#Initial Values Based on Bayes Posteriors
+inits <- list(log_tp1=7,
               log_tp2=9,
               log_sigma1=.25,
               log_sigma2=-.5,
-              pi=.01)
+              pi=.02)
 
-
-#All Models Seem OK except for 18, which Never converges
-out<-matrix(nrow=22,ncol=7)
-colnames(out)<-c('mu1','mu2','log_sigma1','log_sigma2','pi','likelihood','grid')
-dbs<-seq(1,22,1)
-dbs<-dbs[-18]
-for (i in dbs){
-  mlegrid<-matrix(nrow=243,ncol=6) #Matrix
-  colnames(mlegrid)<-c('mu1','mu2','log_sigma1','log_sigma2','pi','likelihood')
-  m<-i
-  for (j in 1:243){
-    fit<-mle_stan(m,grid[j,])
-    mlegrid[j,1:2]<-fit$par[6:7]
-    mlegrid[j,3:5]<-fit$par[3:5]
-    mlegrid[j,6]<-fit$value
-  }
-  out[i,c(1:6)]<-mlegrid[which.max(mlegrid[,6]),]
-  out[i,7]<-(which.max(mlegrid[,6]))
-}
-
-
-
-#Grid Search: 243 combinations
-grid<-expand.grid(log_tp1=c(2,4,6), log_tp2=c(9,11,13),
-                  log_sigma1=c(.05,.15,.25),log_sigma2=c(-.8,-.6,-.2),pi=c(.01,.05,.10)) 
-
-
-  get_mle_stan<-function(model,initial){
-  mle<-mle_stan(model,initial) #this step gets data, too.
+#Get MLE from Stan and Standard Errors in Terms of mu1, mu2, sigma1, sigma2, pi
+get_mle_stan <- function(model,initial){
+  mle <- mle_stan(model,initial) #this step gets data, too.
   est <- mle$par
   cov <- solve(-mle$hessian) #est. covariance for (log_tp1, log_tp2,log_sigma1,log_sigma2,pi)
-  sev1<-log(-log(1-.5)) #estimating at .5 quantile for early failure
-  sev2<-log(-log(1-.1)) #estimating at .1 quantile for wearout
-  D<-matrix(c(1,0,0,0,0,0,1,0,0,0,-exp(est[3])*sev1,0,exp(est[3]),0,0,0,-exp(est[4])*sev2,0,exp(est[4]),0,0,0,0,0,(1/(1+exp(-est[5])))*((exp(-est[5]))/(1+exp(-est[5])))),nrow=5,ncol=5)
+  sev1 <- log(-log(1-.5)) #estimating at .5 quantile for early failure
+  sev2 <- log(-log(1-.2)) #estimating at .2 quantile for wearout
+  D <- matrix(c(1,0,0,0,0,0,1,0,0,0,-exp(est[3])*sev1,0,exp(est[3]),0,0,0,-exp(est[4])*sev2,0,exp(est[4]),0,0,0,0,0,(1/(1+exp(-est[5])))*((exp(-est[5]))/(1+exp(-est[5])))),nrow=5,ncol=5)
   cov2 <- D %*% cov %*% t(D)   #est. covariance for (mu1,mu2, sigma1,sigma2,pi);
   out <- list(est=est, cov=cov, cov2=cov2) #note: point estimates are still in original scale
   attr(out,"model") <- model
   return(out)
   }
   
-#Get MLE for Model 6  
-  
-db6<-get_mle_stan(6,grid[195,])
+#Return Parameters and CI for MLE, i diag of cov2 (mu1,mu2, sigma1,sigma2,pi).
+bandsmle <- function(out,alpha, pm, i){
+  lb = out$est[pm] - qnorm(ci)*out$cov2[i,i]
+  mean = out$est[pm] 
+  ub = out$est[pm] + qnorm(ci)*out$cov2[i,i]
+  return(cbind(lb,mean,ub))
+}
+
+#Example, Get 95% CI for mu1 
+bandsmle(test,.975,"mu1",1)  
+
+
+#Write Function to Get CI for Quantile?
+
 #Wald Bands for F(t); Section 8.4.3 Meeker
   
 #SEV for standardized time
@@ -133,7 +118,7 @@ db6<-get_mle_stan(6,grid[195,])
 
     
 
-#Delta Method Here to Get Wald Bands on the CDF
+#Delta Method Here to Get Wald Bands on the GFLP CDF
   WaldBand_mle <- function(mle, alpha, begin, end, length.out=100){
     b <- data.frame(time = seq(begin, end, length.out=length.out)) %>%
       ddply(.(time), summarise,
@@ -179,12 +164,11 @@ plot(check$time,check$g,ylab="CDF",type="l")
 lines(check$time,check$lower,lty=3)
 lines(check$time,check$upper,lty=3)
 
-                                                                                                           ###Ignore Below ###  
+
+
+###Ignore Below ###  
   
   
-
-
-
 #Check Analytical Derivatives to Numerical Ones#
 library(numDeriv)
 gfp<-function(time,mu1,mu2,p,sig1,sig2){
@@ -217,10 +201,14 @@ check6=p*dsev(z1)*(1-psev(z2))*(1/sig1)+(dsev(z2)*(1-p*psev(z1))*(1/sig2))
 
 
 #Compare MLEs to Bayes Point Estimtes for 10/13
-mles<-readRDS("mle_infant1year.rds")
+mles <- readRDS("mle_infant1year.rds")
 
 #Extract Bayes Parameters
-s <- readRDS("samples1013.rds")
+s <- readRDS("../MCMC_draws/samples_logodds_reduced_2_26.rds")
+samp <- extract(s)
+
+#Get Parameters for a Specific Model
+summary(s)$summary[c("mu1[1]","mu2[1]","sigma1[1]", "sigma2[1]", "log_pi[1]"),]
 
 bayesout <- matrix(ncol=5, nrow=22)
 for (i in 1:22){
@@ -243,10 +231,12 @@ for (i in 1:22){
   bayesout[i,4]<-logsig2
   bayesout[i,5]<-pi
 }
+
 bayesout.dat<-as.data.frame(bayesout)
 colnames(bayesout.dat) <- c("mu1_b","mu2_b","log_sigma1_b","log_sigma2_b","pi_b")
 colnames(out)<- c("mu1_f","mu2_f","log_sigma1_f","log_sigma2_f","pi_f","LL","Grid")
 out<-as.data.frame(out)
+
 #Combine Bayes and MLE estimates
 combo_parm <- data.frame("mu1_b" = bayesout.dat$mu1_b, "mu_1f" = out$mu1_f,
                          "mu2_b"=bayesout.dat$mu2_b,"mu2_f"=out$mu2_f,
@@ -256,6 +246,5 @@ combo_parm <- data.frame("mu1_b" = bayesout.dat$mu1_b, "mu_1f" = out$mu1_f,
 
 saveRDS(combo_parm,"bayesmle.rds")
 
-#Lets Look at SE for One Model and Parameters
-mod6<-get_mle_stan(6,grid[195,])
+
 
