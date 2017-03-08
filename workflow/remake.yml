@@ -14,5 +14,5 @@ targets:
   data_2_21:
     command: prepare_data(lb_fails = 5, lb_late_fails = 1, lb_early_fails = 1)
   samples_logodds_reduced_2_21_data_2_21:
-    command: run_mcmc_logodds(data_2_21, chains = 16, iter = 3000, warmup = 1500)
+    command: run_mcmc_logodds(data_2_21, chains = 4, iter = 4000, warmup = 1000)
 
