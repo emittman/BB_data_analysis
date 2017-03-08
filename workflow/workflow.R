@@ -6,7 +6,7 @@ datasets = commands(
 
 analyses = analyses(
   commands = commands(
-    samples_logodds_reduced_2_21 = run_mcmc_logodds(..dataset.., chains = 4, iter = 4000, warmup = 1000)
+    samples_logodds_reduced_3_8 = run_mcmc_logodds(..dataset.., chains = 16, iter = 3000, warmup = 1500)
   ),
   datasets = datasets
 )
