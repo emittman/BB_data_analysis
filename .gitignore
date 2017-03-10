@@ -9,3 +9,8 @@ workflow/Makefile
 workflow/remake.yml
 workflow/old_samples/
 constrained_MLE/*.rda
+paper/*.pdf
+paper/*.gz
+paper/*.log
+paper/*.aux
+workflow/*.rds

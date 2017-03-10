@@ -1,6 +1,6 @@
 ## Load In Samples ##
 
-#s <- readRDS("samples_logodds_reduced_2_26.rds")
+# s <- readRDS("reduce_relaxed.rds")
 s <- readRDS("samples_2_1.rds")
 samp <- extract(s)
 
@@ -44,14 +44,14 @@ bfcn2 <- function(model, b, samp, quantiles = c(.025, .5, .975)){
 }
 
 #Run this Function for All Models.  Note:  Should be a quick way to combine this with first function.
-# df_reduced <- NULL
-# for (j in 1:21){
-#   df_reduced <- rbind(df_reduced,bfcn2(j,.1))
-# }
+df_reduced <- NULL
+for (j in 1:21){
+  df_reduced <- rbind(df_reduced,bfcn2(j,.1, samp))
+}
 
 df <- NULL
 for (j in 1:21){
   df <- rbind(df,bfcn(j,.1, samp))
 }
 
-xtable(cbind(df, df_reduced))
+xtable::xtable(cbind(df, df_reduced), digits = 0)
