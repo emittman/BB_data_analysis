@@ -37,7 +37,7 @@ dat <- prepare_data(5,1,1,8760)  # 5 total failures, 1 early, 1 late, Less than 
 
 mle_stan <- function(brand,start){
   
-  df<-subset(dat,model==brand)
+  df <- subset(dat,model==brand)
   #Get Data Ready for Stan
   stan_dats <- with(df,
                   list(N_obs = sum(!(censored) & !(mode1)),
@@ -75,7 +75,9 @@ get_mle_stan <- function(model,initial){
   out <- list(est=est, cov=cov, cov2=cov2) #note: point estimates are still in original scale
   attr(out,"model") <- model
   return(out)
-  }
+}
+
+mod2 <- get_mle_stan(2,inits)
   
 #Return Parameters and CI for MLE, i diag of cov2 (mu1,mu2, sigma1,sigma2,pi).
 bandsmle <- function(out,alpha, pm, i){

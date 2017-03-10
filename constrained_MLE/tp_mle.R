@@ -79,14 +79,21 @@ tp_bounds <- function(mle, tp, se, alpha){
   return(out)
 }
 
-## Test the Series of Functions for Model 2 ##
+## Run for All Models ##
+
+tp_all <- matrix(NA, ncol=4, nrow=21)
+
+for (i in 1:21){
+  mod <- i
+  mlefit <- get_mle_stan(mod, inits)  #get MLE estimate
+  tp_mle <- mletp(mlefit,.10)     #use MLE point estimates for tp
+  idev <- impli_deriv(mlefit, tp_mle) #get implicit derivative of GFLP at log(tp)
+  se_ylog <- se_tp(idev, mlefit) #se for log(tp)
+  tp.bounds <- tp_bounds(mlefit, tp_mle, se_ylog, .05) #get 95% tp CI
+  tp_all[i,2:4] <- tp.bounds
+  tp_all[i, 1] <- mod
+}
 
 
-mod2 <- get_mle_stan(2,inits)  #get MLE estimate
-tp_mod2 <- mletp(mod2,.10)     #use MLE point estimates for tp
-idev_mod2 <- impli_deriv(mod2, tp_mod2) #get implicit derivative of GFLP at log(tp)
-se_mod2 <- se_tp(idev_mod2,mod2) #se for log(tp)
-mod2_bounds <- tp_bounds(mod2, tp_mod2, se_mod2, .05) #get 95% tp CI
-mod2_bounds
 
 
