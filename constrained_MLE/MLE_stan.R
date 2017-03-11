@@ -47,8 +47,8 @@ mle_stan <- function(brand,start){
                        starttime_cens = log(starttime[(censored)]+1),
                        endtime_obs = log(endtime[!(censored) & !(mode1)]+1),
                        endtime_cens = log(endtime[(censored)]+1),
-                       starttime_obs1 = log(starttime[!(censored) & (mode1)]+1),
-                       endtime_obs1 = log(endtime[!(censored) & (mode1)]+1),
+                       starttime_obs1 = as.array(log(starttime[!(censored) & (mode1)]+1)),
+                       endtime_obs1 = as.array(log(endtime[!(censored) & (mode1)]+1)),
                        p = c(.5, .2)))
   
   o <- optimizing(object = mixmle, data = stan_dats,algorithm="BFGS", init = start, hessian=TRUE)
@@ -77,7 +77,7 @@ get_mle_stan <- function(model,initial){
   return(out)
 }
 
-mod2 <- get_mle_stan(2,inits)
+mod2 <- get_mle_stan(19,inits)
   
 #Return Parameters and CI for MLE, i diag of cov2 (mu1,mu2, sigma1,sigma2,pi).
 bandsmle <- function(out,alpha, pm, i){
