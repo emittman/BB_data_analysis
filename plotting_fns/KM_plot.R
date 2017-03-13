@@ -77,7 +77,7 @@ get_tr_adj <- function(starttime, pi, loc1, scl1, loc2, scl2){
 
 ## ggplot object containing Weibull probability plot with point estimate and optional credible band
 KM_plot <- function(data, model, tr_adj = 0, title = NULL,
-                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000), ylimits=c(.0001, .9999)){
+                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000), ylimits=c(.0001, .9999), verbose=F){
   require(ggplot2)
   require(plyr)
   require(dplyr)
@@ -101,6 +101,10 @@ KM_plot <- function(data, model, tr_adj = 0, title = NULL,
   df$Ft <- (1 - df$St) * (1 - tr_adj) + tr_adj
   df <- df[which(df$Ft < 1),]
   
+  if(verbose){
+    print(df)
+  }
+  
   p <- df %>%
     ggplot(aes(t, Ft)) + geom_point()
   
@@ -121,6 +125,35 @@ KM_plot <- function(data, model, tr_adj = 0, title = NULL,
   p <- p +
     theme_bw(base_size = 14) + ggtitle(title)+xlab("Hours")+ylab("Fraction Failing")
   p
+}
+
+KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95), x_logscale=T, n=30, verbose=F){
+  total_iter <- dim(samp[[1]])[1]
+  iter <- floor(total_iter/n_iter) * 1:n_iter
+  
+  if(x_logscale){
+    x <- exp(seq(log(xlim[1]), log(xlim[2]), length.out=n))
+  } else{
+    x <- seq(xlim[1], xlim[2], length.out=n)
+  }
+  
+  band <- data.frame(x=x) %>%
+    ddply(.(x), function(g){
+      Fp <- sapply(iter, function(i) {
+        1 -  (1 - exp(samp$log_pi[i,id]) * my_pweibull(g$x, samp$mu1[id], samp$sigma1[id])) *
+          (1 - my_pweibull(g$x, samp$mu2[i,j], samp$sigma2[i,j]))
+      })
+      q <- quantile(Fp, quantiles)
+      data.frame(y = q[2], lower = max(ylim[1],q[1]), upper = min(ylim[2],q[3]))
+    })
+  if(verbose) print(band)
+  geom_ribbon(data = band, inherit.aes = FALSE, aes(x=x, ymin=lower, ymax=upper), fill="red", alpha=.2)
+}
+
+KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_adj, xlimits, ylimits, fixed=T, linear_axes=F, verbose=F, model="weibull"){
+  p <- KM_plot(data = data, model = model, tr_adj = tr_adj, title=title, fixed=fixed, linear_axes = linear_axes, xlimits=xlimits, ylimits=ylimits, verbose)
+  q <- KM_band(id, samp, n_iter, xlimits, ylimits, quantiles, !linear_axes, n, verbose)
+  p + q
 }
 
 # # No truncation example
