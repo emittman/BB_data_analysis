@@ -49,16 +49,16 @@ impli_deriv <- function(mle, tp){
     gF2  = -(1 - mle$est["pi"]*psev(z1,lower.tail=TRUE))
     F1yp = dsev(z1)*(1/exp(mle$est["log_sigma1"]))
     F2yp = dsev(z2)*(1/exp(mle$est["log_sigma2"]))
-    F1m1 = -dsev(z1)*(1/exp(mle$est["log_sigma1"]))
+    F1mu1 = -dsev(z1)*(1/exp(mle$est["log_sigma1"]))
     F1s1 = dsev(z1)*((-log(tp) + mle$est["mu1"])/((exp(mle$est["log_sigma1"]))^2))
-    F2m2 = -dsev(z2)*(1/exp(mle$est["log_sigma2"]))
+    F2mu2 = -dsev(z2)*(1/exp(mle$est["log_sigma2"]))
     F2s2 = dsev(z2)*((-log(tp) + mle$est["mu2"])/((exp(mle$est["log_sigma2"]))^2))
     denom = gF1*F1yp + gF2*F2yp
-    l1 = -gF1*F1m1/denom
-    l2 = -gF2*F2m2/denom
-    ls1 = -gF1*F1s1/denom
-    ls2 = -gF2*F2s2/denom
-    lp = 0
+    l1 = (-gF1*F1mu1)/denom
+    l2 = (-gF2*F2mu2)/denom
+    ls1 = (-gF1*F1s1)/denom
+    ls2 = (-gF2*F2s2)/denom
+    lp = 0 #note: p is not a parameter in the individual failure distributions
     out <- cbind(l1,l2,ls1,ls2,lp)
     rownames(out) <- NULL
     return(out)
@@ -73,9 +73,9 @@ se_tp <- function(impl, mle){
 #Get CI for tp using Delta Plug in Method
 tp_bounds <- function(mle, tp, se, alpha){
   lb <- exp(log(tp) - qnorm(1-alpha/2)*se)
-  med <- tp
+  mle.est <- tp
   ub  <- exp(log(tp) + qnorm(1-alpha/2)*se)
-  out <- cbind(lb,med,ub)
+  out <- cbind(lb, mle.est, ub)
   return(out)
 }
 
