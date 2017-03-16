@@ -1,6 +1,7 @@
 # Functions for use with remakeGenerator
 
 prepare_data <- function(dm = NULL, lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0){
+  require(dplyr)
   #load data
   overview  <- readRDS("../BB_data/overview.rds")
   dat       <- readRDS("../BB_data/clean_unit_summaries.rds")
