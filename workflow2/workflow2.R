@@ -33,8 +33,8 @@ analyses = analyses(
 
 targets = targets(datasets = datasets, analyses = analyses)
 
-workflow(targets, sources = "../workflow/functions.R", packages = "rstan", command = "make", args = "--jobs=4",
+workflow(targets, sources = "../workflow/functions.R", packages = "rstan", command = "make", args = "--jobs=8",
          prepend = c(
            "SHELL=srun",
-           ".SHELLFLAGS= -t 200:00:00 -N 1 -n 4 --nice=-19 bash -c"))
+           ".SHELLFLAGS= -t 20:00:00 -N 1 -n 4 bash -c"))
 

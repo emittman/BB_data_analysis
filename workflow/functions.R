@@ -71,7 +71,7 @@ run_mcmc_logodds <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p 
 run_mcmc_logodds_nopool <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p = c(.5,.2)){
   require(rstan)
   rstan_options(auto_write = TRUE)
-  # options(mc.cores = parallel::detectCores())#format for Stan
+  options(mc.cores = 4)#format for Stan
   stan_data <- with(dataset,
                     list(N_obs = sum(!censored),
                          N_cens = sum(censored),
