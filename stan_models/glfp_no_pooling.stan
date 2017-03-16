@@ -47,7 +47,7 @@ transformed parameters{
   vector[M] log_pi;
   for(m in 1:M){
     mu1[m] = log_tp1[m] - (sigma1[m] * z_corr[1]); //change
-    mu2[m] = log_tp2[m]) - (sigma2[m] * z_corr[2]);
+    mu2[m] = log_tp2[m] - (sigma2[m] * z_corr[2]);
   }
   for(m in 1:M)
     log_pi[m] = log_inv_logit(logit_pi[m]);
