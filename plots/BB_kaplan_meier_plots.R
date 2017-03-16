@@ -1,3 +1,4 @@
+#setwd("workflow/")
 dat <- readRDS("../BB_data/clean_unit_summaries.rds")
 dat$model <- as.integer(dat$model)
 
@@ -19,14 +20,6 @@ samp <- extract(s)
 
 source("../plotting_fns/KM_plot.R")
 
-filter(dat, model==id[1]) %>%
-  KM_plot("weibull") + xlim(c(200,50000))
-
-filter(dat, model==id[8]) %>%
-  KM_plot("weibull") + theme(axis.text=element_blank(),
-                             axis.title = element_blank(),
-                             axis.ticks = element_blank())
-
 mods <- subset(dat, model %in% id)
 max_id <- which.max(samp$lp__)
 plot_list <-NULL
@@ -42,7 +35,7 @@ for(j in 1:length(id)){
   dat_tmp <- subset(mods, model == orig_id)
 
   kmb <- KM_with_band(data = dat_tmp, id =j, samp = samp, n_iter = 200, n = 50, quantiles = c(.05,.5,.95), tr_adj = adj,
-                      xlimits = c(20,50000), ylimits = c(.001,.8), fixed = T, linear_axes = F, verbose = F, model = "weibull")
+                      xlimits = c(0,50000), ylimits = c(0,.9), fixed = T, linear_axes = T, verbose = F, model = "weibull")
   
   plot_list[[j]] <- kmb
 }
