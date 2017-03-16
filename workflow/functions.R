@@ -1,6 +1,6 @@
 # Functions for use with remakeGenerator
 
-prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0){
+prepare_data <- function(dm = NULL, lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0){
   #load data
   overview  <- readRDS("../BB_data/overview.rds")
   dat       <- readRDS("../BB_data/clean_unit_summaries.rds")
@@ -12,6 +12,10 @@ prepare_data <- function(lb_fails = 0, lb_late_fails = 0, lb_early_fails = 0){
                           censored = censored,
                           model = as.integer(factor(model)))
   )
+  if(!is.null(dm)){
+    if(sum(df$model==dm) == 0) stop("There are no drive models matching the argument")
+    df <- filter(df, model == dm)
+  }
   # return(overview)
   return(df)
 }
@@ -66,17 +70,14 @@ run_mcmc_logodds <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p 
 run_mcmc_logodds_nopool <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p = c(.5,.2)){
   require(rstan)
   rstan_options(auto_write = TRUE)
-  options(mc.cores = parallel::detectCores())#format for Stan
+  # options(mc.cores = parallel::detectCores())#format for Stan
   stan_data <- with(dataset,
-                    list(M = length(unique(model)),
-                         N_obs = sum(!censored),
+                    list(N_obs = sum(!censored),
                          N_cens = sum(censored),
                          starttime_obs = log(starttime[!censored]+1),
                          starttime_cens = log(starttime[censored]+1),
                          endtime_obs = log(endtime[!censored]+1),
                          endtime_cens = log(endtime[censored]+1),
-                         dm_obs = model[!censored],
-                         dm_cens = model[censored],
                          p = p)
   )
   
