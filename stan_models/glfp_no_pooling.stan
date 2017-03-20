@@ -89,4 +89,9 @@ model{
              
     target += tmp[1] - tmp[2];
   }
+  //priors
+  log_tp1 ~ normal(7, 1);
+  log_tp2 ~ normal(9, 2);
+  sigma1 ~ lognormal(0, 1);
+  sigma2 ~ lognormal(0, 1);
 }
