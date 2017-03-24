@@ -11,11 +11,11 @@ overview <- ddply(dat, .(model), summarise,
                   early_f = sum(failed>0 & endtime<365*24*1),
                   late_f = sum(failed>0 & endtime>365*24*2))
 # id <- unique(dat$model)
-id <- with(overview, which(overview$early >= 1 & overview$late_f >= 1 & f >=5))
+id <- with(overview, which(overview$early >= 0 & overview$late_f >= 0 & f >=3))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
-s <- readRDS("../workflow/reduced_relaxed_21dms.rds")
+s <- readRDS("../workflow/samples_lor_only3fails.rds")
 samp <- extract(s)
 
 source("../plotting_fns/KM_plot.R")

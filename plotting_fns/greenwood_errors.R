@@ -1,5 +1,6 @@
 KM_plot_NP <- function(data, model, tr_adj = 0, title = NULL,
-                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000), ylimits=c(.0001, .9999), verbose=F){
+                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000),
+                    ylimits=c(.0001, .9999), conf=.95, verbose=F){
   require(ggplot2)
   require(plyr)
   require(dplyr)
@@ -13,6 +14,7 @@ KM_plot_NP <- function(data, model, tr_adj = 0, title = NULL,
          ytrans <- "qgev"},
          {stop("`model' must be one of lnorm, weibull, frechet")})
   
+  zcrit <- qnorm(1-(1-conf)/2)
   # df <- with(data, data.frame(time = endtime[!censored]))
   df <- data.frame(t = sort(unique(data$endtime[!(data$censored)]))) %>%
     ddply(.(t), summarise,
@@ -21,8 +23,8 @@ KM_plot_NP <- function(data, model, tr_adj = 0, title = NULL,
     mutate(p = (n-d)/n)
   df$St <- cumprod(df$p)
   df$Vt <- with(df, St * cumsum(d/(n*(n-d))))
-  df$lowS <- with(df, St - 1.96*sqrt(Vt))
-  df$uprS <- with(df, St + 1.96*sqrt(Vt))
+  df$lowS <- with(df, St - zcrit*sqrt(Vt))
+  df$uprS <- with(df, St + zcrit*sqrt(Vt))
   
   df$Ft <- (1 - df$St) * (1 - tr_adj) + tr_adj
   df$lowFt <- pmax((1 - df$uprS) * (1 - tr_adj) + tr_adj,1e-5)
@@ -36,8 +38,8 @@ KM_plot_NP <- function(data, model, tr_adj = 0, title = NULL,
   
   p <- df %>%
     ggplot(aes(t, Ft)) + geom_point() +
-    geom_line(aes(y=lowFt), color="red", lty=2)+
-    geom_line(aes(y=uprFt), color="red", lty=2)
+    geom_line(aes(y=lowFt), color="green", lty=2)+
+    geom_line(aes(y=uprFt), color="green", lty=2)
     
   
   if(!linear_axes){

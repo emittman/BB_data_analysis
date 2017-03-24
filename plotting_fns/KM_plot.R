@@ -140,8 +140,8 @@ KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95)
   band <- data.frame(x=x) %>%
     ddply(.(x), function(g){
       Fp <- sapply(iter, function(i) {
-        1 -  (1 - exp(samp$log_pi[i,id]) * my_pweibull(g$x, samp$mu1[id], samp$sigma1[id])) *
-          (1 - my_pweibull(g$x, samp$mu2[i,j], samp$sigma2[i,j]))
+        1 -  (1 - exp(samp$log_pi[i+total_iter*(id-1)]) * my_pweibull(g$x, samp$mu1[id], samp$sigma1[id])) *
+          (1 - my_pweibull(g$x, samp$mu2[i+total_iter*(id-1)], samp$sigma2[i+total_iter*(id-1)]))
       })
       q <- quantile(Fp, quantiles)
       data.frame(y = q[2], lower = max(ylim[1],q[1]), upper = min(ylim[2],q[3]))

@@ -14,3 +14,5 @@ paper/*.gz
 paper/*.log
 paper/*.aux
 workflow/*.rds
+workflow2/*.rds
+plots/*.png
