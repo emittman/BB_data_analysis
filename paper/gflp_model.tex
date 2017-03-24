@@ -12,7 +12,15 @@ P(T_{d,i}\le t) = 1 - (1-\pi_d\, F_{d1}(t))(1 - F_{d2}(t)),
 \end{equation*}
 where $\pi_d$ is in the interval $(0,1)$.
 
-Our interpretation of this model is that, while all units are prone to a mode of failure which can be approximated by a distribution with cdf $F_{d2}$, a proportion $\pi$ are {\em also} defective, and thus subject to another failure mode ($F_{d1}$).
+Our interpretation of this model is that,
+\begin{enumerate}
+\item All units of a given drive-model are exchangable
+\item All units of drive-model $d$ have a primary failure mode
+  which can be approximated by a distribution with cdf $F_{d2}$
+\item A fraction of units of drive-model $d$, $\pi_d$, are defective,
+  and thus subject to another failure mode. This failure mode can be
+  approximated by a distribution, $F_{d1}$.
+\end{enumerate}
 
 To borrow strength across models, we further model the scales, $\sigma_j$, and log-locations, $\mu_j$, of the component distributions as follows:
 
@@ -28,14 +36,12 @@ Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribut
 To complete the full probability model, we need to select priors such that the posterior distribution is proper. We chose informative priors; we argue that doing so helps us identify the model parameters while still allowing for substantial Bayesian learning about the hierarchical distributions.
 
 \begin{align*}
- \eta_{\sigma ,1} & \sim \op{Normal}(0, 0.5)\\
- \eta_{\sigma ,2} & \sim \op{Normal}(-0.75, .5)\\
- \tau_{\sigma ,1} & \sim \op{Gamma}(1, 2)\\
- \tau_{\sigma ,2} & \sim \op{Gamma}(1, 2)\\
- \eta_{t_{p_1},1} & \sim \op{Normal}(7, 1)\\
- \eta_{t_{p_2},2} & \sim \op{Normal}(9, 2)\\
- \tau_{t_{p_1},1} & \sim \op{Gamma}(1, 2)\\
- \tau_{t_{p_2},2} & \sim \op{Gamma}(1, 2)
+  \eta_{\pi} & \sim \op{Normal}(-3, 1)\\
+  \tau_{\pi} & \sim \op{Cauchy}^+(0, 1)\\
+  \eta_{\sigma ,2} & \sim \op{Normal}(0, 2)\\
+  \tau_{\sigma ,2} & \sim \op{Cauchy}^+(0, 1)\\
+  \eta_{t_{p_2},2} & \sim \op{Normal}(9, 2)\\
+  \tau_{t_{p_2},2} & \sim \op{Cauchy}^+(0, 1)
  \end{align*} 
  
 \end{document}
