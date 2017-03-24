@@ -7,7 +7,8 @@ datasets = commands(
 
 analyses = analyses(
   commands = commands(
-    samples_logodds_reduced_3_8 = run_mcmc_logodds(..dataset.., chains = 16, iter = 3000, warmup = 1500)
+    samples_logodds_reduced_3_8 = run_mcmc_logodds(..dataset.., chains = 16, iter = 3000, warmup = 1500),
+    samples_extreme_relaxation_3_24 = run_mcmc_extreme(data_3_10, chains = 16, iter = 3000, warmup = 1500)
   ),
   datasets = datasets
 )
