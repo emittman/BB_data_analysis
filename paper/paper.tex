@@ -1,7 +1,7 @@
 \documentclass[12pt]{article}
 \usepackage{amsmath}
 \usepackage{graphicx,psfrag,epsf,float}
-\graphicspath{C:/Users/Colin/Documents/GitHub/BB_data_analysis/plots}
+\graphicspath{C:/Users/Colin/Documents/GitHub/BB_data_analysis/paper}
 \usepackage{enumerate}
 \usepackage{natbib}
 \usepackage{url} % not crucial - just used below for the URL
@@ -70,13 +70,16 @@ The text of your abstract.  100 or fewer words.
 \spacingset{1.45} % DON'T change the spacing!
 \section{Introduction}
 \subsection{Background}
-This section will follow last paper.
+Hard drive failure is the primary cause of data loss and or damage \cite{harris}.  In addition to the cost of repairing a broken hard drive, lost or corrupted data can have major economic consequences for businesses, researchers, and consumers \cite{smith}.  To protect against hard drive failure multiple companies now offer backup storage.  One of the major online backup companies is Backblaze.  While selling storage space is Backblaze's main business, since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive brands and models.  The hard drives continuously spin in controlled storage pods where they run until failure.  When a hard drive fails it is permanently removed, and new hard drives are regularly added to the storage pods.  In addition, the number of storage pods is increasing as Backblaze adds new hard drive brands to the sample.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}.  In addition, Backblaze publishes summary statistics of the different hard drive models currently operating.  No other analysis or modeling of the failure data is provided; however, Backblaze does encourage the public to further analyze its data, which for this paper goes through the first quarter of 2016.
+ 
  
 \subsection{Motivation}
-This section will follow last paper.
+The goal of this paper is to model, and compare, the lifetime distribution of the various hard drive brands using parametric lifetime models.  There are numerous features of the data, however, that make standard estimation approaches problematic.  The first issue is many hard drives have been running for quite some time before entering the sample.  Even hard drives starting after 2013 appear in the data after hundreds of hours of operation.  Also, although we have four years of data, hard drives rarely fail so many units are still in service.  Thus, we have both left truncation and right censoring.  The other challenge is each hard drive model varies in number units in operation and total time on test.  Some models have hundreds of units in service; others have as few as two.  Combined with the truncation this makes stable maximum likelihood (ML) estimates difficult to obtain for many models. \\
+
+Another issue is many product populations contain a mixture of defective and nondefective units.  The hazard function for this type of population is often described as a bathtub curve: the beginning of the curve corresponds to defective units failing early, followed by a constant hazard, and then and upswing as units fail from wearout.  Ignoring this hazard structure, which is known to exist for computer disk drives, could lead to spurious inference when comparing the reliability of hard drive brand models \cite{chan}.  A model that generalizes fitting a single failure mode distribution is the general limited failure population model (GFLP) that combines multiple failure time distributions; for example, one failure mode for defective units (infant mortality) and a second mode for wearout \cite{chan}.  Unfortunately, as often the case with lifetime data, the true causes of failure for the hard drives are unknown, which presents challenges for parameter identification in the GFLP model as discussed in Chan and Meeker (1999).  Therefore, we propose to fit the GFLP model using a hierarchical Bayesian approach.  With over 60 brand drive models in testing a hierarchical framework is advantageous as it pools information from across brands to get more precise estimates of the individual parameters.  This is especially helpful for the Backblaze data as there are many drive models with fewer than 5 failures.
 
 \subsection{Overview}
-This section will follow last paper.
+The structure of the paper is as follows.  Section 1 presents the Backblaze data and the unique modeling challenges it presents, such as multiple failure modes, right censoring and left truncation.  Section 2 introduces the GFLP model as a mixture of two Weibull distributions.  Using the Backblaze data, in Section 3 we fit a 5 parameter GFLP model that allows for separate Weibull terms for each failure mode and estimates $p$, the proportion of units subject to infant mortality.  In Section 4 we discuss computational and modeling issues that results in us selecting a final model with a common Weibull distribution for defective units and individual Weibull distributions for the wearout failure mode.  In Section 5 we compare hard drive brand models based on our final model.  In Section 6  we examine the posterior distributions of the model parameters to assess goodness of fit for the hierarchical model.  Finally, in Section 7 we review the final model and propose extensions of the GFLP model. 
 
 \section{Data}
 Introduce the data and show some summary statistics, but NOT box plots.  Perhaps show an adjusted Kaplan Meier plots to show a Weibull lifetime distribution could be reasonable.
@@ -87,7 +90,7 @@ total time on test (histogram)
 total records (by drive model)
 
      
-\section{Weibull Model}
+\section{GFLP Model}
 \subsection{Likelihood}
 Write out the likelihood for the single Weibull with censoring and right truncation.  This can come from the previous paper.  Also mention why MLE model alone by brand has its limitations.
 \subsection{Hierarchical Model}
