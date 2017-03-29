@@ -62,11 +62,10 @@ model{
     logpi = log_pi[m];
     // numerator:   log( p * f1 * (1 - F2) + f2 * (1 - p * F1) )
     //            = log( exp(log(p) + log(f1) + log(1 - F2)) + exp(log(f2) + log(1 - exp(log(p) + log(F1)))) )
-    tmp[1] = log_sum_exp(log_pi + sev_logpdf(endtime_obs[i], mu1, sigma1) +
+    tmp[1] = log_sum_exp(logpi + sev_logpdf(endtime_obs[i], mu1, sigma1) +
                sev_logccdf(endtime_obs[i], mu2, sigma2),
                sev_logpdf( endtime_obs[i], mu2, sigma2) + 
-               log1m_exp(logpi + sev_logcdf(endtime_obs[i], mu1, sigma1)
-               )
+               log1m_exp(logpi + sev_logcdf(endtime_obs[i], mu1, sigma1))
              );
     // denominator:  log((1 - p * F1) * (1 - F2))
     //            =  log(1 - p * F1) + log(1 - F2)
