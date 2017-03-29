@@ -69,7 +69,7 @@ The text of your abstract.  100 or fewer words.
 \newpage
 \spacingset{1.45} % DON'T change the spacing!
 \section{Introduction}
-We present a analysis of real hard drive failure data exhibiting heavy multiple right censoring and left truncation. Our analysis includes estimation of a "bathtub" curve for each drive model in the data set which is made possible by the use of hierarchical model to borrow information across drive models. We discuss a principled approach to modeling the data, using Stan.
+We present an approach to modeling failure data with heavy censoring, multiple censoring and multiple truncation. We present the generalized limited failure population model of Meeker and Hong which provides a generative model for failure distributions characterized by a "bathtub" hazard function (citation). This model may provide an adequate fit to failures of complex systems by differentiating between early and late types of failures as well as the propensity toward early failure. We discuss the case where the data are grouped, suggesting that we might expand the model, accounting for differences among groups. We show that by modeling the data hierarchically, we can deal with groups of various sizes by borrowing information across groups. We illustrate our approach on a large set of failure data for hard disk drives made available by Backblaze (citation). 
 
 \subsection{Background}
 
