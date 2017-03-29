@@ -47,8 +47,8 @@ transformed parameters{
   real mu1;
   real mu2;
   vector[M] log_pi;
-  mu1 = log_tp1 - (sigma1[m] * z_corr[1]);
-  mu2 = log_tp2 - (sigma2[m] * z_corr[2]);
+  mu1 = log_tp1 - (sigma1 * z_corr[1]);
+  mu2 = log_tp2 - (sigma2 * z_corr[2]);
   for(m in 1:M)
     log_pi[m] = log_inv_logit(eta_pi + tau_pi * logit_pi_raw[m]);
 }
