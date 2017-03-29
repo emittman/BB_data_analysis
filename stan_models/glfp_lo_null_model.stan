@@ -35,7 +35,7 @@ parameters{
   real log_tp2;
   real<lower=0> sigma1;
   real<lower=0> sigma2;
-  vector logit_pi;
+  real logit_pi;
 }
 
 transformed parameters{
