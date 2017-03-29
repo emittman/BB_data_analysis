@@ -18,8 +18,8 @@ KM_plot_NP <- function(data, model, tr_adj = 0, title = NULL,
   # df <- with(data, data.frame(time = endtime[!censored]))
   df <- data.frame(t = sort(unique(data$endtime[!(data$censored)]))) %>%
     ddply(.(t), summarise,
-          n = sum(data$starttime < t & data$endtime >=t),
-          d = sum(data$starttime < t & data$endtime == t & data$censored == 0)) %>%
+          n = as.numeric(sum(data$starttime < t & data$endtime >=t)),
+          d = as.numeric(sum(data$starttime < t & data$endtime == t & data$censored == 0))) %>%
     mutate(p = (n-d)/n)
   df$St <- cumprod(df$p)
   df$Vt <- with(df, St * cumsum(d/(n*(n-d))))
@@ -45,8 +45,8 @@ KM_plot_NP <- function(data, model, tr_adj = 0, title = NULL,
   if(!linear_axes){
     if(!fixed){
       p <- p +
-        scale_x_continuous(trans = "log", breaks = xbrks(min(df$t), max(df$t))) +
-        scale_y_continuous(trans = ytrans, breaks = ybrks(min(df$Ft), max(df$Ft), model="weibull"))
+        scale_x_continuous(trans = "log", breaks = xbrks(min(df$t), max(df$t)), limits=xlimits) +
+        scale_y_continuous(trans = ytrans, breaks = ybrks(min(df$Ft), max(df$Ft), model="weibull"), limits=ylimits)
       
     } else{
       p <- p +

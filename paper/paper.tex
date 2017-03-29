@@ -69,8 +69,11 @@ The text of your abstract.  100 or fewer words.
 \newpage
 \spacingset{1.45} % DON'T change the spacing!
 \section{Introduction}
+We present a analysis of real hard drive failure data exhibiting heavy multiple right censoring and left truncation. Our analysis includes estimation of a "bathtub" curve for each drive model in the data set which is made possible by the use of hierarchical model to borrow information across drive models. We discuss a principled approach to modeling the data, using Stan.
+
 \subsection{Background}
-Hard drive failure is the primary cause of data loss and or damage \cite{harris}.  In addition to the cost of repairing a broken hard drive, lost or corrupted data can have major economic consequences for businesses, researchers, and consumers \cite{smith}.  To protect against hard drive failure multiple companies now offer backup storage.  One of the major online backup companies is Backblaze.  While selling storage space is Backblaze's main business, since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive brands and models.  The hard drives continuously spin in controlled storage pods where they run until failure.  When a hard drive fails it is permanently removed, and new hard drives are regularly added to the storage pods.  In addition, the number of storage pods is increasing as Backblaze adds new hard drive brands to the sample.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}.  In addition, Backblaze publishes summary statistics of the different hard drive models currently operating.  No other analysis or modeling of the failure data is provided; however, Backblaze does encourage the public to further analyze its data, which for this paper goes through the first quarter of 2016.
+
+Hard drive failure is the primary cause of data loss and or damage \cite{harris}.  In addition to the cost of repairing a broken hard drive, lost or corrupted data can have major economic consequences for businesses, researchers, and consumers \cite{smith}.  To protect against hard drive failure multiple companies now offer backup storage.  One of the major online backup companies is Backblaze.  While selling storage space is Backblaze's main business, since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive brands and models.  The hard drives continuously spin in controlled storage pods where they run until failure.  When a hard drive fails it is permanently removed, and new hard drives are regularly added to the storage pods.  In addition, the number of storage pods is increasing as Backblaze adds new hard drive brands to the sample.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}. In addition, Backblaze publishes summary statistics of the different hard drive models currently operating.  No other analysis or modeling of the failure data is provided; however, Backblaze does encourage the public to further analyze its data, which for this paper goes through the first quarter of 2016.
  
  
 \subsection{Motivation}
@@ -104,7 +107,7 @@ Discuss the MCMC approach, RStan, etc.
 \section{Data analysis}
 \subsection{Results}
 Show some of the fits of the GFLP Model.  Also present the unpooled output for a few models.  Show parameter estimates with uncertainty. Mention some convergence statistics for the MCMC. 
-\subsection{collapsing \mu_1, \sigma_1}
+\subsection{collapsing $\mu_1, \sigma_1$}
 Based on posterior plots, we might fit a simpler model...
 \subsection{Brand Comparisons}
 How can we use this model to compare brands?  Present comparisons of Quantiles, other parameters.  Highlight how this model could be used in an applied sense. Quantiles by brand, etc.
