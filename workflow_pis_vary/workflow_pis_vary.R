@@ -1,0 +1,16 @@
+library(remakeGenerator)
+
+datasets = commands(
+  data_all = prepare_data(lb_fails = 3, lb_late_fails = 0, lb_early_fails = 0)
+)
+
+analyses = analyses(
+  commands = commands(
+    samples_lo_pis_vary_3_28 = run_mcmc_logodds_pis(..dataset.., chains = 4, iter = 3000, warmup = 1500)
+  ),
+  datasets = datasets
+)
+
+targets = targets(datasets = datasets, analyses = analyses)
+
+workflow(targets, sources = "../workflow/functions.R", packages = "rstan")
