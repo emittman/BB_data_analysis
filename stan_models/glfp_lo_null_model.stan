@@ -42,8 +42,8 @@ transformed parameters{
   real mu1;
   real mu2;
   real log_pi;
-  mu1 = log_tp1 - (sigma1[m] * z_corr[1]);
-  mu2 = log_tp2 - (sigma2[m] * z_corr[2]);
+  mu1 = log_tp1 - (sigma1 * z_corr[1]);
+  mu2 = log_tp2 - (sigma2 * z_corr[2]);
   log_pi = log_inv_logit(logit_pi);
 }
 
@@ -59,7 +59,7 @@ model{
              );
     // denominator:  log((1 - p * F1) * (1 - F2))
     //            =  log(1 - p * F1) + log(1 - F2)
-    tmp[2] = log1m_exp(logpi + sev_logcdf(starttime_obs[i], mu1, sigma1)) + 
+    tmp[2] = log1m_exp(log_pi + sev_logcdf(starttime_obs[i], mu1, sigma1)) + 
              sev_logccdf(starttime_obs[i], mu2, sigma2);
              
     target += tmp[1] - tmp[2];
@@ -72,7 +72,7 @@ model{
              sev_logccdf(endtime_cens[i], mu2, sigma2);
     // denominator:  log((1 - p * F1) * (1 - F2))
     //            =  log(1 - p * F1) + log(1 - F2)
-    tmp[2] = log1m_exp(logpi + sev_logcdf(starttime_cens[i], mu1, sigma1)) + 
+    tmp[2] = log1m_exp(log_pi + sev_logcdf(starttime_cens[i], mu1, sigma1)) + 
              sev_logccdf(starttime_cens[i], mu2, sigma2);
              
     target += tmp[1] - tmp[2];
