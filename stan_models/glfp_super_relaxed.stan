@@ -110,8 +110,8 @@ model{
     target += tmp[1] - tmp[2];
   }
   
-  log_tp1_raw    ~ student_t(5, 0, .5); // log_tp1 = raw + eta. Note: qt(.975, 5) = 2.57
-  log_tp2_raw    ~ student_t(5, 0, 1); // log_tp2 = raw * tau + eta
+  log_tp1_raw    ~ student_t(5, 0, .2); // log_tp1 = raw + eta
+  log_tp2_raw    ~ normal(0, 1); // log_tp2 = raw * tau + eta
   sigma1         ~ lognormal(0, 1);
   sigma2         ~ lognormal(eta_s2, tau_s2);
   logit_pi_raw   ~ normal(0, 1);
