@@ -88,12 +88,12 @@ model{
     target += tmp[1] - tmp[2];
   }
   
-  log_tp1        ~ normal(8, 2);
+  log_tp1        ~ normal(8, 1);
   log_tp2        ~ normal(10, 2);
   sigma1         ~ lognormal(0, 2.5);
   sigma2         ~ lognormal(0, 2.5);
   logit_pi_raw   ~ normal(0, 1);
-  eta_pi         ~ normal(-3, 2);
-  tau_pi         ~ cauchy(0, 1);
+  eta_pi         ~ normal(-3, .5);
+  tau_pi         ~ gamma(1, 2);
 
 }
