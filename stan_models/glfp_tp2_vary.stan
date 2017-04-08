@@ -59,6 +59,7 @@ model{
   real m2;
   real s1;
   real s2;
+  int m;
   
   logpi = log_pi;
   m1 = mu1;
