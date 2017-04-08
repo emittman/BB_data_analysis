@@ -106,7 +106,7 @@ run_mcmc_logodds_tp2 <- function(dataset, chains = 4, iter = 10, warmup = iter/2
   )
   
   
-  m <- stan_model(file = "../stan_models/glfp_lo_tp2_vary.stan")
+  m <- stan_model(file = "../stan_models/glfp_tp2_vary.stan")
   s <- sampling(obj = m, data = stan_data, chains = chains, iter = iter, warmup = warmup, control = list(adapt_delta = .99), init=0)
   return(s)
   # return(stan_data)
