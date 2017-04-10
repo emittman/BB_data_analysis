@@ -36,7 +36,7 @@ transformed data{
 parameters{
   real log_tp1;
   real<lower=0> sigma1;
-  real<lower=0> sigma2;
+  real<lower=0, upper=1> sigma2;
   real eta_tp2;
   real<lower=0> tau_tp2;
   vector[M] log_tp2_raw;
