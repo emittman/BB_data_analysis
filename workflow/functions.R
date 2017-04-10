@@ -112,6 +112,31 @@ run_mcmc_logodds_tp2 <- function(dataset, chains = 4, iter = 10, warmup = iter/2
   # return(stan_data)
 }
 
+run_mcmc_generic <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p = c(.5,.2), stanmodel=NULL){
+  if(is.null(stanmodel)) stop("No stanmodel was supplied.")
+  require(rstan)
+  rstan_options(auto_write = TRUE)
+  options(mc.cores = parallel::detectCores())#format for Stan
+  stan_data <- with(dataset,
+                    list(M = length(unique(model)),
+                         N_obs = sum(!censored),
+                         N_cens = sum(censored),
+                         starttime_obs = log(starttime[!censored]+1),
+                         starttime_cens = log(starttime[censored]+1),
+                         endtime_obs = log(endtime[!censored]+1),
+                         endtime_cens = log(endtime[censored]+1),
+                         dm_obs = model[!censored],
+                         dm_cens = model[censored],
+                         p = p)
+  )
+  
+  
+  m <- stan_model(file = stanmodel)
+  s <- sampling(obj = m, data = stan_data, chains = chains, iter = iter, warmup = warmup, control = list(adapt_delta = .99), init=0)
+  return(s)
+  # return(stan_data)
+}
+
 run_mcmc_logodds <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p = c(.5,.2)){
   require(rstan)
   rstan_options(auto_write = TRUE)
