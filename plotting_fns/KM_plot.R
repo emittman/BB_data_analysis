@@ -127,7 +127,8 @@ KM_plot <- function(data, model, tr_adj = 0, title = NULL,
   p
 }
 
-KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95), x_logscale=T, n=30, verbose=F){
+KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95), x_logscale=T, n=30, verbose=F,
+                    pi.free=T, mu1.free=F, sigma1.free=F, mu2.free=T, sigma2.free=T){
   total_iter <- dim(samp[[1]])[1]
   iter <- floor(total_iter/n_iter) * 1:n_iter
   
@@ -140,8 +141,9 @@ KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95)
   band <- data.frame(x=x) %>%
     ddply(.(x), function(g){
       Fp <- sapply(iter, function(i) {
-        1 -  (1 - exp(samp$log_pi[i+total_iter*(id-1)]) * my_pweibull(g$x, samp$mu1[id], samp$sigma1[id])) *
-          (1 - my_pweibull(g$x, samp$mu2[i+total_iter*(id-1)], samp$sigma2[i+total_iter*(id-1)]))
+        1 -  (1 - exp(samp$log_pi[i+pi.free*total_iter*(id-1)]) * 
+                my_pweibull(g$x, samp$mu1[i+mu1.free*total_iter*(id-1)], samp$sigma1[i+sigma1.free*total_iter*(id-1)])) *
+          (1 - my_pweibull(g$x, mu2.free*samp$mu2[i+total_iter*(id-1)], samp$sigma2[i+sigma2.free*total_iter*(id-1)]))
       })
       q <- quantile(Fp, quantiles)
       data.frame(y = q[2], lower = max(ylim[1],q[1]), upper = min(ylim[2],q[3]))
@@ -150,9 +152,10 @@ KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95)
   geom_ribbon(data = band, inherit.aes = FALSE, aes(x=x, ymin=lower, ymax=upper), fill="red", alpha=.2)
 }
 
-KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_adj, xlimits, ylimits, fixed=T, linear_axes=F, verbose=F, model="weibull"){
+KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_adj, xlimits, ylimits, fixed=T,
+                         linear_axes=F, verbose=F, model="weibull", pi.free=T, mu1.free=F, sigma1.free=F, mu2.free=T, sigma2.free=T){
   p <- KM_plot(data = data, model = model, tr_adj = tr_adj, title=title, fixed=fixed, linear_axes = linear_axes, xlimits=xlimits, ylimits=ylimits, verbose)
-  q <- KM_band(id, samp, n_iter, xlimits, ylimits, quantiles, !linear_axes, n, verbose)
+  q <- KM_band(id, samp, n_iter, xlimits, ylimits, quantiles, !linear_axes, n, verbose, pi.free, mu1.free, sigma1.free, mu2.free, sigma2.free)
   p + q
 }
 

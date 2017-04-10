@@ -36,9 +36,11 @@ transformed data{
 parameters{
   real log_tp1;
   real<lower=0> sigma1;
-  real<lower=0> sigma2;
+  real<lower=0> sigma2[M];
   real eta_tp2;
   real<lower=0> tau_tp2;
+  real eta_s2;
+  real<lower=0> tau_s2;
   vector[M] log_tp2_raw;
   real logit_pi;
 }
@@ -48,7 +50,9 @@ transformed parameters{
   vector[M] mu2;
   real log_pi;
   mu1 = log_tp1 - (sigma1 * z_corr[1]); //change
-  mu2 = (tau_tp2*log_tp2_raw + eta_tp2) - (sigma2 * z_corr[2]);
+  for(i in 1:M){
+    mu2[m] = (tau_tp2*log_tp2_raw[m] + eta_tp2) - (sigma2[m] * z_corr[2]);
+  }
   log_pi = log_inv_logit(logit_pi);
 }
 
@@ -64,10 +68,10 @@ model{
   logpi = log_pi;
   m1 = mu1;
   s1 = sigma1;
-  s2 = sigma2;
   for(i in 1:N_obs){
   m = dm_obs[i];
   m2 = mu2[m];
+  s2 = sigma2[m];
     // numerator:   log( p * f1 * (1 - F2) + f2 * (1 - p * F1) )
     //            = log( exp(log(p) + log(f1) + log(1 - F2)) + exp(log(f2) + log(1 - exp(log(p) + log(F1)))) )
     tmp[1] = log_sum_exp(logpi + sev_logpdf(endtime_obs[i], m1, s1) +
@@ -85,8 +89,9 @@ model{
   }
   
   for(i in 1:N_cens){
-     m = dm_cens[i];
+    m = dm_cens[i];
     m2 = mu2[m];
+    s2 = sigma2[m];
     // numerator:   log((1 - p * F1) * (1 - F2))
     //            =  log(1 - p * F1) + log(1 - F2)
     tmp[1] = log1m_exp(logpi + sev_logcdf(endtime_cens[i], m1, s1)) + 
@@ -104,5 +109,6 @@ model{
   eta_tp2     ~ normal(9, 2);
   tau_tp2     ~ cauchy(0, 1);
   sigma1      ~ lognormal(0, 1);
-  sigma2      ~ lognormal(0, 1);
+  sigma2      ~ lognormal(eta_s2, tau_s2);
+  tau_s2      ~ cauchy(0, 1);
 }
