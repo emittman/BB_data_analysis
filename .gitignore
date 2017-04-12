@@ -16,3 +16,11 @@ paper/*.aux
 workflow/*.rds
 workflow2/*.rds
 plots/*.png
+workflow_sig2_and_tp2_vary/*.rds
+workflow_tp2_vary/*.rds
+workflow_tp2_vary/*.sh
+workflow_pis_vary/*.rds
+workflow_pis_vary/*.sh
+workflow_null/*.rds
+workflow_null/*.sh
+
