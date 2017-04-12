@@ -7,18 +7,12 @@ targets:
     - analyses
   datasets:
     depends:
-    - data_2_21
     - data_3_10
   analyses:
     depends:
-    - samples_logodds_reduced_3_8_data_2_21
-    - samples_logodds_reduced_3_8_data_3_10
-  data_2_21:
-    command: prepare_data(lb_fails = 5, lb_late_fails = 1, lb_early_fails = 1)
+    - samples_extreme_relaxation_3_24
   data_3_10:
     command: prepare_data(lb_fails = 3, lb_late_fails = 0, lb_early_fails = 0)
-  samples_logodds_reduced_3_8_data_2_21:
-    command: run_mcmc_logodds(data_2_21, chains = 16, iter = 3000, warmup = 1500)
-  samples_logodds_reduced_3_8_data_3_10:
-    command: run_mcmc_logodds(data_3_10, chains = 16, iter = 3000, warmup = 1500)
+  samples_extreme_relaxation_3_24:
+    command: run_mcmc_extreme(data_3_10, chains = 16, iter = 3000, warmup = 1500)
 

@@ -50,7 +50,7 @@ transformed parameters{
   vector[M] mu2;
   real log_pi;
   mu1 = log_tp1 - (sigma1 * z_corr[1]); //change
-  for(i in 1:M){
+  for(m in 1:M){
     mu2[m] = (tau_tp2*log_tp2_raw[m] + eta_tp2) - (sigma2[m] * z_corr[2]);
   }
   log_pi = log_inv_logit(logit_pi);
@@ -104,11 +104,12 @@ model{
     target += tmp[1] - tmp[2];
   }
   //priors
-  log_tp1     ~ normal(7, 1);
+  log_tp1     ~ normal(7, 2);
   log_tp2_raw ~ normal(0, 1);
   eta_tp2     ~ normal(9, 2);
   tau_tp2     ~ cauchy(0, 1);
   sigma1      ~ lognormal(0, 1);
   sigma2      ~ lognormal(eta_s2, tau_s2);
+  eta_s2      ~ normal(0, 2);
   tau_s2      ~ cauchy(0, 1);
 }

@@ -8,7 +8,7 @@ analyses = analyses(
   commands = commands(
     samples_lo_sig2_and_tp2_vary = run_mcmc_generic(..dataset.., chains = 4,
                                                     iter = 3000, warmup = 1500,
-                                                    stanmodel=I("glfp_sig2_tp2_vary.stan"))
+                                                    stanmodel=I("../stan_models/glfp_sig2_tp2_vary.stan"))
   ),
   datasets = datasets
 )
