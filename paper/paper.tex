@@ -5,7 +5,11 @@
 \usepackage{enumerate}
 \usepackage{natbib}
 \usepackage{url} % not crucial - just used below for the URL
- 
+
+% math macros 
+\newcommand{\ind}{\stackrel{ind.}{\sim}}
+\newcommand{\op}{\operatorname}
+
 \newcommand{\myequation}{\begin{equation}}
 \newcommand{\myendequation}{\end{equation}}
 \let\[\myequation
@@ -94,13 +98,48 @@ For the hard drive data we first estimate the empirical cdf for each model using
 In Figure 2 we plot the Kaplan-Meier adjusted cdf for hard drive model X on Weibull paper.  Each point on the plot corresponds to a hard drive failure.  Censored drives are not plotted.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring around hour Z.  Therefore, fitting a single Weibull model would not be flexible enough to model the failure distribution.     [INSERT FIGURE, Do we Want to Put Greenwood Bands on Too?]
 
 
-\section{GFLP Model}
-\subsection{Model}
-Write out the full Bayes hierarchical model for the GFLP model
-\subsubsection{Varying proportion defective}
-\subsubsection{Varying wearout mode}
-\subsubsection{Varying defective failure model}
+\section{Hierarchical GLFP model}
+For modeling the lifetime of hard-drives, we select the Generalized Limited Failure Population model of \citet{chan}.
+Let $T_{d,i}$ be the time of failure for the $i^{th}$ drive of drive-model $d$.
+We assume that $T_{d,1},\ldots T_{d,n_d}$ are independent and have a probability distribution with cdf given by
+$$P(T_{d,i}\le t) = 1 - (1-\pi_d\, F_{d1}(t))(1 - F_{d2}(t)), \mbox{ for }t>0 \mbox{, and where } \pi_d \mbox{ is in }(0,1).$$
 
+As in \cite{chan}, we assume $F_{dj}$ is a member of the Weibull family of cdfs and parameterize in terms of a log-location parameter $\mu_{dj}$ and log-scale parameter $\sigma_{dj}$ so that
+
+$$F_{dj}(t) = 1 - \exp \left\{ -\exp \left\{ \frac{ \log (t) - \mu_{dj}}{\sigma_{dj}} \right\} \right\},\; t>0, j=1,2$$
+
+For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{d1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." The interpretation of the parameter $\pi_d$ is to represent the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units of the same drive-model are exchangable.
+
+To borrow strength across models, we can either share parameters across drive-models, or model the drive-model specific parameters hierarchically, allowing the data to inform the hyperparameters. For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j} = \Phi^{-1}(\mu_j)$, and proportions, $\pi_d$, of the component distributions as follows:
+
+$$\sigma_{d,j} \ind \op{Lognormal} \left( \eta_{\sigma,j}, \tau^2_{\sigma,j} \right) \mbox{ for } j=1,2\; d=1,\ldots,D$$
+
+$$t_{p_j,d,j} \equiv \mu_{d,j} + \sigma_{d,j}\,\Phi^{-1}(p_j)  \ind \op{Normal} \left(\eta_{t_{p_j},j}, \tau^2_{t_{p_j},j}\right) \mbox{ for } j=1,2\; d=1,\ldots,D$$
+
+$$\op{logit} \pi_d \ind \op{N}(\eta_pi, \tau_pi) \mbox{ for } d=1,\ldots,D.$$
+
+Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribution. The decision to parameterize in terms of a quantile other than the log-location parameter, $\mu = \Phi^{-1}(.5)$, is that lifetime data often features heavy right-censoring where inferences about the location parameter are extrapolations beyond the range of the data. For this data we selected $p_1=0.5,\mbox{ (the median), and } p_2 = 0.2$.
+
+We consider the following set of restrictions:
+
+\begin{enumerate}
+\item[Model 1:] $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1,\quad \mu_{d2} = \mu_2,\quad \sigma_{d2} = \sigma_2$
+\item[Model 2:] $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1,\quad \sigma_{d2} = \sigma_2$
+\item[Model 3:] $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
+\item[Model 4:] $\mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
+\end{enumerate}
+
+\subsection{Priors}
+To complete the full probability model, we need to select prior distributions for the parameters governing the hierarchical model. We select proper priors to ensure a proper posterior. For the scale hyper-parameters we follow the recommendations of \citet{gelman2014bayesian} and use half-Cauchy priors. As for the location hyper-parameters, we selected mildly informative priors consistent with our prior understanding of hard-drives. We believe that using such priors improves the identifiability of the model parameters while still allowing for substantial Bayesian learning about the hierarchical distributions.
+
+\begin{align*}
+  \eta_{\pi} & \sim \op{Normal}(-3, 1)\\
+  \tau_{\pi} & \sim \op{Cauchy}^+(0, 1)\\
+  \eta_{\sigma ,2} & \sim \op{Normal}(0, 2)\\
+  \tau_{\sigma ,2} & \sim \op{Cauchy}^+(0, 1)\\
+  \eta_{t_{p_2},2} & \sim \op{Normal}(9, 2)\\
+  \tau_{t_{p_2},2} & \sim \op{Cauchy}^+(0, 1)
+ \end{align*} 
 
 \subsection{Computation}
 Discuss the MCMC approach, RStan, etc.
@@ -132,7 +171,7 @@ Review the advantages of fitting the GFLP model and offer future ideas.
 
 \end{description}
 
-\bibliographystyle{plain}
+\bibliographystyle{plainnat}
 \bibliography{sample}
 
 \end{document}
