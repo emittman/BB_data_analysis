@@ -1,10 +1,22 @@
+<<<<<<< HEAD
 \begin{thebibliography}{1}
 
 \bibitem{backblaze}
+=======
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[bac()]{backblaze}
+>>>>>>> 0ddddcd8ded15bfd988790c96e5046fcfa84ba89
 Backblaze hard drive data sets.
 \newblock \url{https://www.backblaze.com/b2/hard-drive-test-data.html}.
 \newblock Accessed: 2016-4-1.
 
+<<<<<<< HEAD
 \bibitem{basu}
 Sanjib Basu, Ananda Sen, and Mousumi Banerjee.
 \newblock Bayesian analysis of competing risks with partially masked cause of
@@ -45,5 +57,63 @@ Bruce~W. Turnbull.
   censored and truncated data.
 \newblock {\em Journal of the Royal Statistical Society. Series B
   (Methodological)}, 38(3):290--295, 1976.
+=======
+\bibitem[Basu et~al.(2003)Basu, Sen, and Banerjee]{basu}
+Sanjib Basu, Ananda Sen, and Mousumi Banerjee.
+\newblock Bayesian analysis of competing risks with partially masked cause of
+  failure.
+\newblock \emph{Journal of the Royal Statistical Society. Series C (Applied
+  Statistics)}, 52\penalty0 (1):\penalty0 77--93, 2003.
+\newblock ISSN 00359254, 14679876.
+\newblock URL \url{http://www.jstor.org/stable/3592633}.
+
+\bibitem[Chan and Meeker(1999)]{chan}
+Victor Chan and William~Q Meeker.
+\newblock A failure-time model for infant-mortality and wearout failure modes.
+\newblock \emph{IEEE Transactions on Reliability}, 48\penalty0 (4):\penalty0
+  377--387, 1999.
+
+\bibitem[E.~L.~Kaplan(1958)]{kaplan}
+Paul~Meier E.~L.~Kaplan.
+\newblock Nonparametric estimation from incomplete observations.
+\newblock \emph{Journal of the American Statistical Association}, 53\penalty0
+  (282):\penalty0 457--481, 1958.
+\newblock ISSN 01621459.
+\newblock URL \url{http://www.jstor.org/stable/2281868}.
+
+\bibitem[Gelman et~al.(2014)Gelman, Carlin, Stern, and
+  Rubin]{gelman2014bayesian}
+Andrew Gelman, John~B Carlin, Hal~S Stern, and Donald~B Rubin.
+\newblock \emph{Bayesian data analysis}, volume~2.
+\newblock Chapman \& Hall/CRC Boca Raton, FL, USA, 2014.
+
+\bibitem[Meeker and Escobar(1998)]{meeker}
+W.Q. Meeker and L.A. Escobar.
+\newblock \emph{Statistical Methods for Reliability Data}.
+\newblock Wiley Series in Probability and Statistics. Wiley, 1998.
+\newblock ISBN 9780471673279.
+\newblock URL \url{https://books.google.com/books?id=VQOXGrllkDgC}.
+
+\bibitem[Nelson(2005)]{nelson}
+Wayne~B Nelson.
+\newblock \emph{Applied life data analysis}, volume 577.
+\newblock John Wiley \& Sons, 2005.
+
+\bibitem[Ranjan et~al.(2015)Ranjan, Singh, and Upadhyay]{ranjan}
+Rakesh Ranjan, Sonam Singh, and Satyanshu~K Upadhyay.
+\newblock A bayes analysis of a competing risk model based on gamma and
+  exponential failures.
+\newblock \emph{Reliability Engineering \& System Safety}, 144:\penalty0
+  35--44, 2015.
+
+\bibitem[Turnbull(1976)]{turnbull}
+Bruce~W. Turnbull.
+\newblock The empirical distribution function with arbitrarily grouped,
+  censored and truncated data.
+\newblock \emph{Journal of the Royal Statistical Society. Series B
+  (Methodological)}, 38\penalty0 (3):\penalty0 290--295, 1976.
+\newblock ISSN 00359246.
+\newblock URL \url{http://www.jstor.org/stable/2984980}.
+>>>>>>> 0ddddcd8ded15bfd988790c96e5046fcfa84ba89
 
 \end{thebibliography}
