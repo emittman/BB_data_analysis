@@ -57,11 +57,11 @@ mle_stan <- function(brand,start){
   
 
 #Initial Values Based on Bayes Posteriors
-inits <- list(log_tp1=7,
-              log_tp2=9,
-              log_sigma1=.25,
-              log_sigma2=-.5,
-              pi=.02)
+inits <- list(log_tp1 = 7,
+              log_tp2 = 9,
+              log_sigma1 = .25,
+              log_sigma2 = -.5,
+              pi = .05)
 
 #Get MLE from Stan and Standard Errors in Terms of mu1, mu2, sigma1, sigma2, pi
 get_mle_stan <- function(model,initial){

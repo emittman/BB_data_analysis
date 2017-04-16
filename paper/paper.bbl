@@ -1,3 +1,49 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{backblaze}
+Backblaze hard drive data sets.
+\newblock \url{https://www.backblaze.com/b2/hard-drive-test-data.html}.
+\newblock Accessed: 2016-4-1.
+
+\bibitem{basu}
+Sanjib Basu, Ananda Sen, and Mousumi Banerjee.
+\newblock Bayesian analysis of competing risks with partially masked cause of
+  failure.
+\newblock {\em Journal of the Royal Statistical Society. Series C (Applied
+  Statistics)}, 52(1):77--93, 2003.
+
+\bibitem{chan}
+Victor Chan and William~Q Meeker.
+\newblock A failure-time model for infant-mortality and wearout failure modes.
+\newblock {\em IEEE Transactions on Reliability}, 48(4):377--387, 1999.
+
+\bibitem{kaplan}
+Paul~Meier E.~L.~Kaplan.
+\newblock Nonparametric estimation from incomplete observations.
+\newblock {\em Journal of the American Statistical Association},
+  53(282):457--481, 1958.
+
+\bibitem{meeker}
+W.Q. Meeker and L.A. Escobar.
+\newblock {\em Statistical Methods for Reliability Data}.
+\newblock Wiley Series in Probability and Statistics. Wiley, 1998.
+
+\bibitem{nelson}
+Wayne~B Nelson.
+\newblock {\em Applied life data analysis}, volume 577.
+\newblock John Wiley \& Sons, 2005.
+
+\bibitem{ranjan}
+Rakesh Ranjan, Sonam Singh, and Satyanshu~K Upadhyay.
+\newblock A bayes analysis of a competing risk model based on gamma and
+  exponential failures.
+\newblock {\em Reliability Engineering \& System Safety}, 144:35--44, 2015.
+
+\bibitem{turnbull}
+Bruce~W. Turnbull.
+\newblock The empirical distribution function with arbitrarily grouped,
+  censored and truncated data.
+\newblock {\em Journal of the Royal Statistical Society. Series B
+  (Methodological)}, 38(3):290--295, 1976.
 
 \end{thebibliography}
