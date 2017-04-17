@@ -44,26 +44,26 @@ llfun <- function(i, data, draws){
     log_pi <- draws$log_pi[j]
     mu2 <- draws$mu2[j,model]
     sigma2 <- draws$sigma2[j,model]
-        if (dat$failed==0){
+        if (data$failed==0){
             #log(p * f1 * (1 - F2) + f2 * (1 - p * F1))
-            likenum  <-  log(exp(log_pi + sev_logpdf(dat$endtime, mu1, sigma1) +
-                               sev_logccdf(dat$endtime, mu2, sigma2)) + 
-                             exp(sev_logpdf(dat$endtime, mu2, sigma2) + 
-                               log(1-exp(log_pi + sev_logcdf(dat$endtime, mu1, sigma1)))))
+            likenum  <-  log(exp(log_pi + sev_logpdf(data$endtime, mu1, sigma1) +
+                               sev_logccdf(data$endtime, mu2, sigma2)) + 
+                             exp(sev_logpdf(data$endtime, mu2, sigma2) + 
+                               log(1-exp(log_pi + sev_logcdf(data$endtime, mu1, sigma1)))))
     
             #log(1 - p * F1) + log(1 - F2)
-            likedem <- log(1-exp(log_pi + sev_logcdf(dat$starttime, mu1, sigma1))) + 
-            sev_logccdf(dat$starttime, mu2, sigma2)
+            likedem <- log(1-exp(log_pi + sev_logcdf(data$starttime, mu1, sigma1))) + 
+            sev_logccdf(data$starttime, mu2, sigma2)
             l <- likenum - likedem                
           }
         else{
         #log(1 - p * F1) + log(1 - F2)
-        likenum = log(1-exp(log_pi + sev_logcdf(dat$endtime, mu1, sigma1))) + 
-        sev_logccdf(dat$endtime, mu2, sigma2)
+        likenum = log(1-exp(log_pi + sev_logcdf(data$endtime, mu1, sigma1))) + 
+        sev_logccdf(data$endtime, mu2, sigma2)
   
         #log((1 - p * F1) * (1 - F2))
-        likedem = log(1-exp(log_pi + sev_logcdf(dat$starttime, mu1, sigma1))) + 
-        sev_logccdf(dat$starttime, mu2, sigma2)
+        likedem = log(1-exp(log_pi + sev_logcdf(data$starttime, mu1, sigma1))) + 
+        sev_logccdf(data$starttime, mu2, sigma2)
     
         l <- likenum - likedem 
           }
@@ -72,7 +72,7 @@ llfun <- function(i, data, draws){
   return(ll)
 }
 
-test <- llfun(1, data = d,draws = samp)
+#test <- llfun(1, data = d,draws = samp)
 
 N <- nrow(d)
 log_like_mat <- sapply(1:N, function(i) llfun(i,d[i,,drop=FALSE], samp))
