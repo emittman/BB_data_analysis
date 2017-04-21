@@ -18,7 +18,8 @@ data_all$endtime <- log(data_all$endtime + 1)
 
 llfun <- function(i, data, draws){
   niter <- length(draws$lp__)
-  idata <- data[i,]
+  #idata <- data[i,]
+  idata <- data
   col_idx <- niter*(idata$model-1)  
  
   #Functions for log sev CDF and log sev PDF
