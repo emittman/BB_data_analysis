@@ -48,8 +48,8 @@ llfun <- function(i, data, draws){
                   log(1 - exp(draws$log_pi[1:niter + col_idx*pi.free] + sev_logcdf(endtime, draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free])))))
                     )
     likedem <- with(idata, 
-                    log(1-exp(draws$log_pi[1:niter + col_idx*pi.free] + sev_logcdf(starttime,draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free])) + 
-                      sev_logccdf(starttime, draws$mu2[1:niter + col_idx*mu2.free], draws$sigma2[1:niter + col_idx*sigma2.free]))
+                    log(1-exp(draws$log_pi[1:niter + col_idx*pi.free] + sev_logcdf(starttime,draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free]))) + 
+                      sev_logccdf(starttime, draws$mu2[1:niter + col_idx*mu2.free], draws$sigma2[1:niter + col_idx*sigma2.free])
                       )
   } 
   else{
@@ -85,7 +85,10 @@ N <- nrow(d.augment)
 S <- nrow(samp$lp__)
 
 
-loo_output <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp), cores=1) 
+loo_output <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp)) 
 
-loo_matrix <- sapply(1:N, function(i) llfun(i, d.augment[i,, drop=FALSE], samp))
+loo_matrix <- sapply(1:2000, function(i) llfun(i, d.augment[i,, drop=FALSE], samp))
+
+
+
 
