@@ -15,7 +15,8 @@ id <- with(overview, which(overview$early >= 0 & overview$late_f >= 0 & f >=3))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
-s <- readRDS("../workflow/samples_lor_only3fails.rds")
+# s <- readRDS("../workflow/samples_lor_only3fails.rds")
+s <- readRDS("../workflow_tp2_vary/samples_tp2_vary.rds")
 samp <- extract(s)
 
 source("../plotting_fns/KM_plot.R")
@@ -25,17 +26,18 @@ max_id <- which.max(samp$lp__)
 plot_list <-NULL
 for(j in 1:length(id)){
   orig_id <- id[j]
-  pi_j = exp(samp$log_pi[max_id,j])
+  pi_j = exp(samp$log_pi[max_id])
   loc1_j = samp$mu1[max_id]
   loc2_j = samp$mu2[max_id,j]
   scl1_j = samp$sigma1[max_id]
-  scl2_j = samp$sigma2[max_id,j]
+  scl2_j = samp$sigma2[max_id]
   adj <- with(subset(mods, model == orig_id),get_tr_adj(min(starttime), pi_j, loc1_j, scl1_j, loc2_j, scl2_j))
   
   dat_tmp <- subset(mods, model == orig_id)
 
   kmb <- KM_with_band(data = dat_tmp, id =j, samp = samp, n_iter = 200, n = 50, quantiles = c(.05,.5,.95), tr_adj = adj,
-                      xlimits = c(0,50000), ylimits = c(0,.9), fixed = T, linear_axes = T, verbose = F, model = "weibull")
+                      xlimits = c(0,50000), ylimits = c(0,.9), fixed = T, linear_axes = T, verbose = F, model = "weibull",
+                      pi.free=F, sigma2.free=F)
   
   plot_list[[j]] <- kmb
 }
