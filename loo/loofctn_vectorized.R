@@ -2,13 +2,22 @@
 library(rstan)
 library(loo)
 
-s <- readRDS("MCMC_draws/samples_tp2_vary.rds")
-samp <- extract(s)
+
+
+#Differnt Posterior Draws for Each Model
+s1 <- readRDS("MCMC_draws/samples_null_model_3_29.rds") # Model 1  (all fixed)
+s2 <- readRDS("MCMC_draws/samples_tp2_vary.rds")    #Model 2 (mu2 free)
+s3 <- readRDS("MCMC_draws/samples_lor_only3fails.rds") # Is this Model 3 then?
+s4 <- readRDS("MCMC_draws/samples_vary_s2_and_tp2_4_17.rds") # Model 4 (mu2 free, sigma2 free, pi free)
+
+
+samp <- extract(s2)
 
 
 #Data for Loo: Need To Make Sure We Grab the Same Data Used to Fit the Model as We are Not Using All The Models!
 source("workflow/functions.R")
-data_all = prepare_data(lb_fails = 3, lb_late_fails = 0, lb_early_fails = 0)
+
+data_all = prepare_data(lb_fails = 3, lb_late_fails = 0, lb_early_fails = 0) #Same Data Set for All Models
 
 data_all$starttime <- log(data_all$starttime + 1)  
 data_all$endtime <- log(data_all$endtime + 1)
