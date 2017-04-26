@@ -2,101 +2,102 @@
 library(rstan)
 library(loo)
 
-s <- readRDS("MCMC_draws/samples_lor_only3fails.rds")
-samp <- extract(s)
 
 
+#Differnt Posterior Draws for Each Model
+s1 <- readRDS("MCMC_draws/samples_null_model_3_29.rds") # Model 1  (all fixed)
+s2 <- readRDS("MCMC_draws/samples_tp2_vary.rds")    #Model 2 (mu2 free)
+s3 <- readRDS("MCMC_draws/samples_lor_only3fails.rds") # Is this Model 3 then?
+s4 <- readRDS("MCMC_draws/samples_vary_s2_and_tp2_4_17.rds") # Model 4 (mu2 free, sigma2 free, pi free)
 
 
-#Data for Loo
-d <- readRDS("BB_data/clean_unit_summaries.rds")
-d$model <- as.integer(d$model)
-d$starttime <- log(d$starttime + 1)
-d$endtime <- log(d$endtime + 1)
+samp <- extract(s2)
 
-#Functions for log sev CDF and log sev PDF
-sev_logpdf<- function(y, mu, sigma){
-    z = (y - mu) / sigma
-    return (-log(sigma) + z - exp(z))
-}
 
-sev_logcdf <- function(y, mu, sigma){
-  out = (-exp((y - mu) / sigma))
-  return(log(1-exp(out)))
-}
+#Data for Loo: Need To Make Sure We Grab the Same Data Used to Fit the Model as We are Not Using All The Models!
+source("workflow/functions.R")
 
-sev_logccdf <- function(y, mu, sigma){
-  return (-exp((y - mu) / sigma))
-}
+data_all = prepare_data(lb_fails = 3, lb_late_fails = 0, lb_early_fails = 0) #Same Data Set for All Models
 
+data_all$starttime <- log(data_all$starttime + 1)  
+data_all$endtime <- log(data_all$endtime + 1)
 
 #Function to Take an Observation and Return a Vector of the Likelihood over all Posterior Parameters
 #Need to Add Arguments for Different Models
 
-llfun <- function(i, data, draws, which.model){
-  # which.model is logical vector (pi.free, mu1.free, sigma1.free, mu2.free, sigma2.free)
-  #dat <- data[i,]
+llfun <- function(i, data, draws){
   niter <- length(draws$lp__)
-  col_idx <- n_iter*(data$model-1)
-  model <- data$model
-  idata <- data[i,]
-  if(data$failed==0){
-    likenum <- with(which.model,
-                  log(exp(draws$logpi[1:n_iter + col_idx*pi.free] +
-                  sev_logpdf(idata$endtime, draws$mu1[1:n_iter + col_idx*mu1.free], draws$sigma1[1:n_iter + col_idx*sigma1.free]) +
-                  sev_logccdf(idata$endtime, draws$mu2[1:n_iter + col_idx*mu2.free], draws$sigma2[1:n_iter + col_idx*sigma2.free])) +
-                  exp(sev_logpdf(idata$endtime, draws$mu2[1:n_iter + col_idx*mu2.free], draws$sigma2[1:n_iter + col_idx*sigma2.free])+
-                  log(1 - exp(log_pi + sev_logcdf(idata$endtime, draws$mu1[1:n_iter + col_idx*mu1.free], draws$sigma1[1:n_iter + col_idx*sigma1.free]))))))
-    likedem <- with(which.model, log(1)
-                    )
-  } else{
-    
+  #idata <- data[i,]
+  idata <- data
+  col_idx <- niter*(idata$model-1)  
+ 
+  #Functions for log sev CDF and log sev PDF
+  #Seems like We need this Within the Function for loo to recognize themm
+  sev_logpdf <- function(y, mu, sigma){
+    z = (y - mu) / sigma
+    out= (-log(sigma) + z - exp(z))
+    return(out)
   }
+  
+  sev_logcdf <- function(y, mu, sigma){
+    out = (-exp((y - mu) / sigma))
+    return(log(1-exp(out)))
+  }
+  
+  sev_logccdf <- function(y, mu, sigma){
+    return (-exp((y - mu) / sigma))
+  }
+  
+  if(idata$censored==TRUE){
+    likenum <- with(idata,
+                  log(exp(draws$log_pi[1:niter + col_idx*pi.free] +
+                  sev_logpdf(endtime, draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free]) +
+                  sev_logccdf(endtime, draws$mu2[1:niter + col_idx*mu2.free], draws$sigma2[1:niter + col_idx*sigma2.free])) +
+                  exp(sev_logpdf(endtime, draws$mu2[1:niter + col_idx*mu2.free], draws$sigma2[1:niter + col_idx*sigma2.free]) +
+                  log(1 - exp(draws$log_pi[1:niter + col_idx*pi.free] + sev_logcdf(endtime, draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free])))))
+                    )
+    likedem <- with(idata, 
+                    log(1-exp(draws$log_pi[1:niter + col_idx*pi.free] + sev_logcdf(starttime,draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free]))) + 
+                      sev_logccdf(starttime, draws$mu2[1:niter + col_idx*mu2.free], draws$sigma2[1:niter + col_idx*sigma2.free])
+                      )
+  } 
+  else{
+    likenum <- with(idata, 
+                    log(1-exp(draws$log_pi[1:niter + col_idx*pi.free] + sev_logcdf(endtime,draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free]))) + 
+                    sev_logccdf(endtime,draws$mu2[1:niter + col_idx*mu2.free], draws$sigma2[1:niter + col_idx*sigma2.free])
+                    )
+    
+    likedem <- with(idata, 
+                    log(1-exp(draws$log_pi[1:niter + col_idx*pi.free] + sev_logcdf(starttime, draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free]))) + 
+                    sev_logccdf(starttime,draws$mu2[1:niter + col_idx*mu2.free], draws$sigma2[1:niter + col_idx*sigma2.free])
+                    )
+    }
   return(likenum-likedem)
 }
-  
-  ll <- vector(length=24000)
-  for (j in 1:24000){
-    #Get Parameter Estimates  
-    mu1 <- draws$mu1[j]
-    sigma1 <- draws$sigma1[j]
-    log_pi <- draws$log_pi[j]
-    mu2 <- draws$mu2[j,model]
-    sigma2 <- draws$sigma2[j,model]
-        if (data$failed==0){
-            #log(p * f1 * (1 - F2) + f2 * (1 - p * F1))
-            likenum  <-  log(exp(log_pi + sev_logpdf(data$endtime, mu1, sigma1) +
-                               sev_logccdf(data$endtime, mu2, sigma2)) + 
-                             exp(sev_logpdf(data$endtime, mu2, sigma2) + 
-                               log(1-exp(log_pi + sev_logcdf(data$endtime, mu1, sigma1)))))
-    
-            #log(1 - p * F1) + log(1 - F2)
-            likedem <- log(1-exp(log_pi + sev_logcdf(data$starttime, mu1, sigma1))) + 
-            sev_logccdf(data$starttime, mu2, sigma2)
-            l <- likenum - likedem                
-          }
-        else{
-        #log(1 - p * F1) + log(1 - F2)
-        likenum = log(1-exp(log_pi + sev_logcdf(data$endtime, mu1, sigma1))) + 
-        sev_logccdf(data$endtime, mu2, sigma2)
-  
-        #log((1 - p * F1) * (1 - F2))
-        likedem = log(1-exp(log_pi + sev_logcdf(data$starttime, mu1, sigma1))) + 
-        sev_logccdf(data$starttime, mu2, sigma2)
-    
-        l <- likenum - likedem 
-          }
-      ll[j] <- l
-    }
-  return(ll)
 
 
-#test <- llfun(1, data = d,draws = samp)
 
-N <- nrow(d)
-log_like_mat <- sapply(1:N, function(i) llfun(i,d[i,,drop=FALSE], samp))
 
-#this should be
-#loo_output <- loo(llfun, args = list(data=d, N=N, S=S, draws=samp, which.model=c(T, F, F, T, T)))
-loo_with_mat <- loo(log_like_mat)
-    
+#Make Matrix for Loo Based On Bayes Model with Extra Flag Columns
+data.model.flags <- function(d,pi.free=F, mu1.free=F, sigma1.free=F, mu2.free=F, sigma2.free=F){
+  n <- nrow(d)
+  d$pi.free <- rep(pi.free,n)
+  d$mu1.free <- rep(mu1.free,n)
+  d$sigma1.free <- rep(sigma1.free,n)
+  d$mu2.free <- rep(mu2.free,n)
+  d$sigma2.free <- rep(sigma2.free,n)
+  return(d)
+}
+
+d.augment <- data.model.flags(data_all, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = F)
+N <- nrow(d.augment)
+S <- nrow(samp$lp__)
+
+
+loo_output <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp)) 
+
+loo_matrix <- sapply(1:2000, function(i) llfun(i, d.augment[i,, drop=FALSE], samp))
+
+
+
+
