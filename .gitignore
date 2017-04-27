@@ -23,4 +23,4 @@ workflow_pis_vary/*.rds
 workflow_pis_vary/*.sh
 workflow_null/*.rds
 workflow_null/*.sh
-
+paper/*.gitignore
