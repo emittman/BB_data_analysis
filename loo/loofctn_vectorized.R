@@ -7,8 +7,8 @@ setwd("C:/Users/Colin/Documents/GitHub/BB_data_analysis/MCMC_draws")
 #Differnt Posterior Draws for Each Model
 s1 <- readRDS("samples_null_model_3_29.rds") # Model 1  (all fixed)
 s2 <- readRDS("samples_tp2_vary_new.rds")    #Model 2 (mu2 free)
-s3 <- readRDS("vary_s2_and_tp2_4_17.rds") # Model 3 (mu2 free, sigma2 free, pi fixed)
-s4 <- readRDS("samples_lor_only3fails.rds") # Is this Model 4 (mu2 free, sigma2 free, pi free)
+s3 <- readRDS("vary_s2_and_tp2_4_17.rds") #Model 3 (mu2 free, sigma2 free, pi fixed)
+s4 <- readRDS("samples_lor_only3fails.rds") #Model 4 (mu2 free, sigma2 free, pi free)
 
 
 
@@ -88,7 +88,7 @@ data.model.flags <- function(d,pi.free=F, mu1.free=F, sigma1.free=F, mu2.free=F,
 }
 
 
-#I'm Sure There is a Way to Write This in a Loop or Function
+#Make This a Function
 
 samp = extract(s1)
 d.augment <- data.model.flags(data_all, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F)
@@ -115,8 +115,14 @@ S <- nrow(samp$lp__)
 loo_output_4 <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp))
 
 
-#loo_matrix <- sapply(1:2000, function(i) llfun(i, d.augment[i,, drop=FALSE], samp))
 
+#Load in Loo Output
+setwd("C:/Users/Colin/Documents/GitHub/BB_data_analysis/loo")
+l1 <- readRDS("loomod1.rds")
+l2 <- readRDS("loomod2.rds")
+l3 <- readRDS("loomod3.rds")
+l4 <- readRDS("loomod4.rds")
 
-
+#Difference is Positive if the Expected Predictive Accuracy for the 2nd Model is Higher
+compare(l1,l2)
 
