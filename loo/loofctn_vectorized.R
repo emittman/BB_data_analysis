@@ -1,21 +1,19 @@
 #LOO Model Comparison#
 library(rstan)
 library(loo)
-
+setwd("C:/Users/Colin/Documents/GitHub/BB_data_analysis/MCMC_draws")
 
 
 #Differnt Posterior Draws for Each Model
-s1 <- readRDS("MCMC_draws/samples_null_model_3_29.rds") # Model 1  (all fixed)
-s2 <- readRDS("MCMC_draws/samples_tp2_vary.rds")    #Model 2 (mu2 free)
-s3 <- readRDS("MCMC_draws/samples_lor_only3fails.rds") # Is this Model 3 then?
-s4 <- readRDS("MCMC_draws/samples_vary_s2_and_tp2_4_17.rds") # Model 4 (mu2 free, sigma2 free, pi free)
+s1 <- readRDS("samples_null_model_3_29.rds") # Model 1  (all fixed)
+s2 <- readRDS("samples_tp2_vary_new.rds")    #Model 2 (mu2 free)
+s3 <- readRDS("vary_s2_and_tp2_4_17.rds") # Model 3 (mu2 free, sigma2 free, pi fixed)
+s4 <- readRDS("samples_lor_only3fails.rds") # Is this Model 4 (mu2 free, sigma2 free, pi free)
 
-
-samp <- extract(s2)
 
 
 #Data for Loo: Need To Make Sure We Grab the Same Data Used to Fit the Model as We are Not Using All The Models!
-source("workflow/functions.R")
+source("../workflow/functions.R")
 
 data_all = prepare_data(lb_fails = 3, lb_late_fails = 0, lb_early_fails = 0) #Same Data Set for All Models
 
@@ -89,14 +87,35 @@ data.model.flags <- function(d,pi.free=F, mu1.free=F, sigma1.free=F, mu2.free=F,
   return(d)
 }
 
+
+#I'm Sure There is a Way to Write This in a Loop or Function
+
+samp = extract(s1)
+d.augment <- data.model.flags(data_all, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F)
+N <- nrow(d.augment)
+S <- nrow(samp$lp__)
+loo_output_1 <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp)) 
+
+samp = extract(s2)
 d.augment <- data.model.flags(data_all, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = F)
 N <- nrow(d.augment)
 S <- nrow(samp$lp__)
+loo_output_2 <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp)) 
+
+samp = extract(s3)
+d.augment <- data.model.flags(data_all, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T)
+N <- nrow(d.augment)
+S <- nrow(samp$lp__)
+loo_output_3 <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp))
+
+samp = extract(s4)
+d.augment <- data.model.flags(data_all, pi.free=T, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T)
+N <- nrow(d.augment)
+S <- nrow(samp$lp__)
+loo_output_4 <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp))
 
 
-loo_output <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp)) 
-
-loo_matrix <- sapply(1:2000, function(i) llfun(i, d.augment[i,, drop=FALSE], samp))
+#loo_matrix <- sapply(1:2000, function(i) llfun(i, d.augment[i,, drop=FALSE], samp))
 
 
 
