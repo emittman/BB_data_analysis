@@ -23,6 +23,7 @@ data_all$endtime <- log(data_all$endtime + 1)
 #Function to Take an Observation and Return a Vector of the Likelihood over all Posterior Parameters
 #Need to Add Arguments for Different Models
 
+
 llfun <- function(i, data, draws){
   niter <- length(draws$lp__)
   #idata <- data[i,]
@@ -46,7 +47,7 @@ llfun <- function(i, data, draws){
     return (-exp((y - mu) / sigma))
   }
   
-  if(idata$censored==TRUE){
+  if(idata$censored==FALSE){
     likenum <- with(idata,
                   log(exp(draws$log_pi[1:niter + col_idx*pi.free] +
                   sev_logpdf(endtime, draws$mu1[1:niter + col_idx*mu1.free], draws$sigma1[1:niter + col_idx*sigma1.free]) +
@@ -75,7 +76,6 @@ llfun <- function(i, data, draws){
 
 
 
-
 #Make Matrix for Loo Based On Bayes Model with Extra Flag Columns
 data.model.flags <- function(d,pi.free=F, mu1.free=F, sigma1.free=F, mu2.free=F, sigma2.free=F){
   n <- nrow(d)
@@ -88,7 +88,8 @@ data.model.flags <- function(d,pi.free=F, mu1.free=F, sigma1.free=F, mu2.free=F,
 }
 
 
-#Make This a Function
+#Subset Only Observed Failures to Check Loo
+data_all_fail <- subset(data_all, data_all$censored==FALSE)
 
 samp = extract(s1)
 d.augment <- data.model.flags(data_all, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F)
@@ -114,7 +115,7 @@ N <- nrow(d.augment)
 S <- nrow(samp$lp__)
 loo_output_4 <- loo(llfun, args = list(data=d.augment, N=N, S=S, draws=samp))
 
-
+saveRDS(loo_output_4,file = "loomod4.rds")
 
 #Load in Loo Output
 setwd("C:/Users/Colin/Documents/GitHub/BB_data_analysis/loo")
