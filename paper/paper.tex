@@ -129,7 +129,7 @@ We consider the following set of restrictions:
 \item[Model 4:] $\mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
 \end{enumerate}
 
-The set of models to compare was chosen based on the data, interpretation of the model, as well as estimation considerations.  For all model specifications the location and scale parameter of the first failure mode was fixed across drive brand models.  Partly this was due to a lack of early failures in the data.  Moreover, though, from a consumer or business standpoint, comparing the lifetime distribution of infant mortality across hard drive brand models is not particularly informative.  The more practical questions are: is this hard drive likely to suffer from infant morality? and how long should it expect to run before it fails from wearout?  Assuming a constant failure distribution for infant mortality allows the first question to be answered since $\pi$'s are comparable across brands, which would not be the case if each drive brand model had a unique Weibull distribution fit to the early failure mode.  Flexibility in the parameters for the 2nd failure mode is necessary as initial plots of the data indicate heterogeneity across brands in the right tails of the failure distribution.  Going from a fixed model for all hard drive brands and gradually increasing the complexity of the model, we end up at Model 4, which has the most parameters.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by brand drive model.
+The set of model specifications were chosen based on the data, interpretation of the model, as well as estimation considerations.  For all 4 models the location and scale parameter of the first failure mode was fixed across drive brand models.  Partly this was due to a lack of early failures in the data.  Moreover, though, from a consumer or business standpoint, comparing the lifetime distribution of infant mortality across hard drive brand models is not particularly informative.  The more practical questions are: is this hard drive likely to suffer from infant morality? and how long should it expect to run before failing from wearout?  Fixed failure parameters for infant mortality allows the first question to be answered since $\pi$'s are comparable across brands.  Drive brand specific parameters for the 2nd failure mode seemed reasonable as plots of the data indicate heterogeneity across brands in the right tails of the failure distribution.  Going from a fixed model for all hard drive brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by brand drive model.
 
 \subsection{Priors}
 To complete the full probability model, we need to select prior distributions for the parameters governing the hierarchical model. We select proper priors to ensure a proper posterior. For the scale hyper-parameters we follow the recommendations of \citet{gelman2014bayesian} and use half-Cauchy priors. As for the location hyper-parameters, we selected mildly informative priors consistent with our prior understanding of hard-drives. We believe that using such priors improves the identifiability of the model parameters while still allowing for substantial Bayesian learning about the hierarchical distributions.
@@ -148,11 +148,24 @@ Discuss the MCMC approach, RStan, etc.
 
 \section{Data analysis}
 \subsection{Results}
-Show some of the fits of the GFLP Model.  Also present the unpooled output for a few models.  Show parameter estimates with uncertainty. Mention some convergence statistics for the MCMC. 
-\subsection{collapsing $\mu_1, \sigma_1$}
-Based on posterior plots, we might fit a simpler model...
+Show some of the fits of the GFLP Model.  Also present the unpooled output for a few models.  Show parameter estimates with uncertainty. 
+
+\subsection{Model Comparisons}
+First look at the overlaid posterior credible bands. \\
+
+In addition to graphically examining model fits via posterior credible bands, we compared the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  The predictive accuracy from a fitted Bayesian model can be estimated simply with posterior simulations of the model parameters \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior parameters with the $i$th data point removed.  The final expected point-wise predictive density is the sum over all observations (elpd $=\sum{\logp(y_i|y_{-i}$)}).  To obtain a more stable estimate of elpd, Vehtari et. al suggest using Pareto smoothed importance weights (PSIS) since the tail of the importance weights used to estimate elpd is often long.  We computed the elpd for all 4 models using the R package loo \cite{loopackage}.  When $n$ is large, the distribution of the elpd is approximately normal and models can be statistically compared.  We calculated the difference in expected predictive accuracy for all 4 models as well as the standard error of the difference.  As the model complexity increased, the predictive accuracy improved (Table 1).  Of all the models, Model 4 had the best predictive accuracy and was significantly better than models 1-3.
+
 \subsection{Brand Comparisons}
-How can we use this model to compare brands?  Present comparisons of Quantiles, other parameters.  Highlight how this model could be used in an applied sense. Quantiles by brand, etc.
+Ideas for plots: A graph comparing the pi's for all drive models.
+
+I think a graph looking at the B10 using the full model could be good, too.  Something like the graph below.  Perhaps we could sort drive model based on sample size?
+
+\begin{figure}[H]
+    \centering
+   \includegraphics[width=6.0in]{B10_full.pdf}
+		\caption{B10 in Years for All Drive Models \label{fig:first}} 
+\end{figure}
+
 \section{Concluding Remarks and Extensions}
 Review the advantages of fitting the GFLP model and offer future ideas.  
 
