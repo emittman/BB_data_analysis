@@ -104,7 +104,7 @@ model{
     target += tmp[1] - tmp[2];
   }
   //priors
-  log_tp1     ~ normal(8, 4);
+  log_tp1     ~ normal(8, 2);
   log_tp2_raw ~ normal(0, 1);
   eta_tp2     ~ normal(10, 2);
   tau_tp2     ~ cauchy(0, 1);
