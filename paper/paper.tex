@@ -118,35 +118,37 @@ For the purpose of exposition, we will refer to the probability distributions $F
 
 To borrow strength across models, we can either share parameters across drive-models, or model the drive-model specific parameters hierarchically, allowing the data to inform the hyperparameters. For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j} = \Phi^{-1}(\mu_j)$, and proportions, $\pi_d$, of the component distributions as follows:
 
-$$\sigma_{d,j} \ind \op{Lognormal} \left( \eta_{\sigma,j}, \tau^2_{\sigma,j} \right) \mbox{ for } j=1,2\; d=1,\ldots,D$$
-
+$$\sigma_{d,1} \ind \op{Lognormal} \left( \eta_{\sigma,1}, \tau^2_{\sigma,1} \right) \mbox{ for } d=1,\ldots,D$$
+$$\sigma_{d,2} \ind \op{Truncated-Lognormal} \left( \eta_{\sigma,2}, \tau^2_{\sigma,2} , 0, 1, \right) \mbox{ for } d=1,\ldots,D$$
 $$t_{p_j,d,j} \equiv \mu_{d,j} + \sigma_{d,j}\,\Phi^{-1}(p_j)  \ind \op{Normal} \left(\eta_{t_{p_j},j}, \tau^2_{t_{p_j},j}\right) \mbox{ for } j=1,2\; d=1,\ldots,D$$
 
 $$\op{logit} \pi_d \ind \op{N}(\eta_pi, \tau_pi) \mbox{ for } d=1,\ldots,D.$$
 
-Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribution. The decision to parameterize in terms of a quantile other than the log-location parameter, $\mu = \Phi^{-1}(.5)$, is that lifetime data often features heavy right-censoring where inferences about the location parameter are extrapolations beyond the range of the data. For this data we selected $p_1=0.5,\mbox{ (the median), and } p_2 = 0.2$.
+Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribution. We truncate $\sigma_{d,2}$ at $1$, appealing to the logic that wearout implies an increasing hazard function. The decision to parameterize in terms of a quantile other than the log-location parameter, $\mu = \Phi^{-1}(.5)$, is that lifetime data often features heavy right-censoring where inferences about the location parameter are extrapolations beyond the range of the data. For this data we selected $p_1=0.5,\mbox{ (the median), and } p_2 = 0.2$.
 
-We consider the following set of restrictions:
+We consider the models with the following set of restrictions (from most to least restrictive):
 
 \begin{enumerate}
-\item[Model 1:] $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1,\quad \mu_{d2} = \mu_2,\quad \sigma_{d2} = \sigma_2$
-\item[Model 2:] $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1,\quad \sigma_{d2} = \sigma_2$
-\item[Model 3:] $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
-\item[Model 4:] $\mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
+\item $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1,\quad \mu_{d2} = \mu_2,\quad \sigma_{d2} = \sigma_2$
+\item $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1,\quad \sigma_{d2} = \sigma_2$
+\item $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
+\item $\mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
 \end{enumerate}
 
-The set of model specifications were chosen based on the data, interpretation of the model, as well as estimation considerations.  For all 4 models the location and scale parameter of the first failure mode was fixed across drive brand models.  Partly this was due to a lack of early failures in the data.  Moreover, though, from a consumer or business standpoint, comparing the lifetime distribution of infant mortality across hard drive brand models is not particularly informative.  The more practical questions are: is this hard drive likely to suffer from infant morality? and how long should it expect to run before failing from wearout?  Fixed failure parameters for infant mortality allows the first question to be answered since $\pi$'s are comparable across brands.  Drive brand specific parameters for the 2nd failure mode seemed reasonable as plots of the data indicate heterogeneity across brands in the right tails of the failure distribution.  Going from a fixed model for all hard drive brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by brand drive model.
+The set of model specifications were chosen based on the data, interpretation of the model, as well as estimation considerations. Drive brand specific parameters for the the wearout failure mode $(\mu_{d2},\sigma_{d2})$, and the proportion defective $(\pi_d)$, are considered as a means to account for heterogeneity across brands in the right tails of the failure distribution.  Going from a common model for all hard drive brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by brand drive model.
+
+For all of the models we consider, the parameters for the infant mortality failure mode are held in common across drive brand models. We found that there was insufficient information in the data to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality allows for straightforward interpretation of the quantities like $\frac{\pi_{d}}{\pi_{d'}}$. 
 
 \subsection{Priors}
-To complete the full probability model, we need to select prior distributions for the parameters governing the hierarchical model. We select proper priors to ensure a proper posterior. For the scale hyper-parameters we follow the recommendations of \citet{gelman2014bayesian} and use half-Cauchy priors. As for the location hyper-parameters, we selected mildly informative priors consistent with our prior understanding of hard-drives. We believe that using such priors improves the identifiability of the model parameters while still allowing for substantial Bayesian learning about the hierarchical distributions.
+To complete the full probability model, we need to select prior distributions for the parameters governing the hierarchical model. We select proper priors to ensure a proper posterior. For the scale hyper-parameters we follow the recommendations of \citet{gelman2014bayesian} and use half-Cauchy priors. As for the location hyper-parameters, we select weakly informative priors consistent with our prior information on hard-drives. The prior for $\eta_\pi$ puts 95\% of prior mass on the interval $(0.006, 0.27)$ for the median proportion defective (What justification? Should maybe be lower.) For $\eta_{\sigma, 2}$, 95\% of prior mass is on values greater than $0.037$. Since $\sigma_d$ is the reciprocal of the Weibull shape parameter, this correponds roughly to an assumption that the median Weibull shape parameter is less than $1/0.037 = 27$. The prior for $\eta_{t_{p_2},2}$ implies that the median 20th percentile for non-defective units is less than greater than 3 days and less than 24 years.
 
 \begin{align*}
   \eta_{\pi} & \sim \op{Normal}(-3, 1)\\
   \tau_{\pi} & \sim \op{Cauchy}^+(0, 1)\\
   \eta_{\sigma ,2} & \sim \op{Normal}(0, 2)\\
   \tau_{\sigma ,2} & \sim \op{Cauchy}^+(0, 1)\\
-  \eta_{t_{p_2},2} & \sim \op{Normal}(9, 2)\\
-  \tau_{t_{p_2},2} & \sim \op{Cauchy}^+(0, 1)
+  \eta_{t_{.2_2},2} & \sim \op{Normal}(9, 2)\\
+  \tau_{t_{.2_2},2} & \sim \op{Cauchy}^+(0, 1)
  \end{align*} 
 
 \subsection{Computation}
