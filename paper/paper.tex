@@ -179,7 +179,11 @@ To complete the full probability model, we need to select prior distributions fo
  \end{align*} 
 
 \subsection{Computation}
-Discuss the MCMC approach, RStan, etc.
+Each model was fit in {\t R} \nocite{r} using Hamiltonian Monte Carlo
+\cite{betancourt} as implemented in {\tt
+  rstan}\cite{rstan}. Multiple chain were run with _000 iterations of
+warmup. Convergence was assessed by examining posterior
+plots and checking that Gelman-Rubin diagnostics were close to 1.
 
 \section{Data analysis}
 \subsection{Results}
