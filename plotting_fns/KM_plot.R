@@ -160,6 +160,62 @@ KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_
   p + q[[1]] + q[[2]]
 }
 
+KM_plot_multi <- function(data, prob_model="weibull", tr_adj = 0, title = NULL,
+                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000), ylimits=c(.0001, .9999), verbose=F){
+  require(ggplot2)
+  require(plyr)
+  require(dplyr)
+
+  switch(prob_model,
+         weibull = {   cdf <- my_pweibull
+         ytrans <- "qsev"},
+         lnorm   = {   cdf <- plnorm
+         ytrans <- "qnorm"},
+         frechet = {   cdf <- pfrechet
+         ytrans <- "qgev"},
+         {stop("`model' must be one of lnorm, weibull, frechet")})
+  
+  # df <- with(data, data.frame(time = endtime[!censored]))
+  df <- ddply(data, .(model), function(m){
+              t = sort(unique(m$endtime[!(m$censored)]))
+              return(data.frame(model=m$model[1], t=t))}) %>%
+    group_by(model, t) %>%
+    summarize(
+          n = sum(data$starttime[data$model==model] < t & data$endtime[data$model==model] >=t),
+          d = sum(data$starttime[data$model==model] < t & data$endtime[data$model==model] == t & data$censored[data$model==model] == 0)) %>%
+    mutate(p = (n-d)/n,
+           St = cumprod(p))
+  df$Ft <- (1 - df$St) * (1 - tr_adj) + tr_adj
+  df <- df[which(df$Ft < 1),]
+  
+  df$model <- factor(df$model)
+  
+  if(verbose){
+    print(df)
+  }
+  
+  p <- df %>%
+    ggplot(aes(t, Ft, group=model, color=model)) + geom_line()
+  
+  if(!linear_axes){
+    if(!fixed){
+      p <- p +
+        scale_x_continuous(trans = "log", breaks = xbrks(min(df$t), max(df$t))) +
+        scale_y_continuous(trans = ytrans, breaks = ybrks(min(df$Ft), max(df$Ft), model="weibull"))
+      
+    } else{
+      p <- p +
+        scale_x_continuous(trans = "log", breaks = xbrks(xlimits[1], xlimits[2], prec=0), limits=xlimits) +
+        scale_y_continuous(trans = ytrans, breaks = ybrks(ylimits[1], ylimits[2], model="weibull"), limits=ylimits)
+    }
+  } else{
+    p <- p + scale_x_continuous(limits=xlimits) + scale_y_continuous(limits=ylimits)
+  }
+  p <- p +
+    theme_bw(base_size = 14) + ggtitle(title)+xlab("Hours")+ylab("Fraction Failing")
+  p
+}
+
 # # No truncation example
 # 
 # df <- data.frame(endtime=rweibull(1000, 2))
