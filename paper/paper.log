@@ -1,19 +1,18 @@
-<<<<<<< HEAD
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.6)  2 APR 2017 17:08
-=======
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.8.21)  14 APR 2017 14:08
->>>>>>> 0ddddcd8ded15bfd988790c96e5046fcfa84ba89
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.8.21)  17 MAY 2017 15:11
 entering extended mode
 **paper.tex
 (C:\Users\emittman\Documents\GitHub\BB_data_analysis\paper\paper.tex
 LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, arabic, armenian, assamese, basque, bengali
-, bokmal, bulgarian, catalan, coptic, croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, galic
-ian, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, icelandic, indonesian, interlingua, irish, italian,
- kannada, kurmanji, latin, latvian, lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, ngerman
--x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, romanian, russian, sanskrit, serbian, slovak, sloven
-ian, spanish, swedish, swissgerman, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usenglishmax, w
-elsh, loaded.
+Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
+abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
+croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
+lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
+ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
+ lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
+german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
+an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
+ishmax, welsh, loaded.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\article.cls"
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size12.clo"
@@ -191,114 +190,101 @@ LaTeX Font Info:    ... okay on input line 31.
 ) [1
 Non-PDF special ignored!
 
-<<<<<<< HEAD
-{C:/Users/Colin/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 78--79
-
- []
-
-[2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 88--89
-
- []
-
-[4]
-Underfull \hbox (badness 10000) in paragraph at lines 90--91
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 92--93
-
- []
-
-[5] [6] (C:\Users\Colin\Documents\GitHub\BB_data_analysis\paper\paper.bbl
-Underfull \hbox (badness 10000) in paragraph at lines 4--7
-[]\OT1/cmr/m/n/12 Backblaze hard drive data sets.  $\OT1/cmtt/m/n/12 https : / / www . backblaze . com / b2 /
- []
-
-[7]) [8] (C:\Users\Colin\Documents\GitHub\BB_data_analysis\paper\paper.aux
-
-Package natbib Warning: Citation(s) may have changed.
-(natbib)                Rerun to get citations correct.
-
-) ) 
-Here is how much of TeX's memory you used:
- 2391 strings out of 493921
- 30327 string characters out of 3144876
- 89782 words of memory out of 3000000
- 5681 multiletter control sequences out of 15000+200000
- 11591 words of font info for 42 fonts, out of 3000000 for 9000
- 841 hyphenation exceptions out of 8191
- 30i,13n,20p,1449b,294s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts
-/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Pr
-ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
-blic/amsfonts/cm/cmmi8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files
- (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfont
-s/cm/cmr8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTe
-X 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti12.
-pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on paper.pdf (8 pages, 155820 bytes).
-PDF statistics:
- 77 PDF objects out of 1000 (max. 8388607)
-=======
 {C:/Users/emittman/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 82--83
+Underfull \hbox (badness 10000) in paragraph at lines 112--113
 
  []
 
-[2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 92--93
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 117--118
+
+ []
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 119--120
 
  []
 
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 94--95
+Underfull \hbox (badness 10000) in paragraph at lines 129--130
+
+ []
+
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 131--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 96--97
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
 
  []
 
-[5] [6] [7] [8]
-(C:\Users\emittman\Documents\GitHub\BB_data_analysis\paper\paper.bbl
+<fig/heterogeneity_compare_preliminary.pdf, id=25, 945.5325pt x 419.5675pt>
+File: fig/heterogeneity_compare_preliminary.pdf Graphic file (type pdf)
+
+<use fig/heterogeneity_compare_preliminary.pdf>
+Package pdftex.def Info: fig/heterogeneity_compare_preliminary.pdf used on inpu
+t line 136.
+(pdftex.def)             Requested size: 462.26999pt x 205.12892pt.
+ [6] [7 <C:/Users/emittman/Documents/GitHub/BB_data_analysis/paper/fig/heteroge
+neity_compare_preliminary.pdf>]
+[8] [9]
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 192.
+
+ ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omlcmr.fd"
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <12> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 192.
+
+Underfull \hbox (badness 10000) in paragraph at lines 206--207
+
+ []
+
+[10] <fig/B10_full.pdf, id=55, 578.16pt x 433.62pt>
+File: fig/B10_full.pdf Graphic file (type pdf)
+ <use fig/B10_full.pdf>
+Package pdftex.def Info: fig/B10_full.pdf used on input line 236.
+(pdftex.def)             Requested size: 361.34999pt x 271.01183pt.
+
+[11] (C:\Users\emittman\Documents\GitHub\BB_data_analysis\paper\paper.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 9--12
 []\OT1/cmr/m/n/12 Backblaze hard drive data sets.  $\OT1/cmtt/m/n/12 https : / 
 / www . backblaze . com / b2 /$
  []
 
-[9]) [10] (C:\Users\emittman\Documents\GitHub\BB_data_analysis\paper\paper.aux)
- ) 
+[12 <C:/Users/emittman/Documents/GitHub/BB_data_analysis/paper/fig/B10_full.pdf
+>] [13]) [14]
+(C:\Users\emittman\Documents\GitHub\BB_data_analysis\paper\paper.aux) ) 
 Here is how much of TeX's memory you used:
- 2395 strings out of 493921
- 30305 string characters out of 3144867
- 90991 words of memory out of 3000000
- 5685 multiletter control sequences out of 15000+200000
+ 2455 strings out of 493921
+ 31309 string characters out of 3144867
+ 91487 words of memory out of 3000000
+ 5739 multiletter control sequences out of 15000+200000
  11591 words of font info for 42 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 30i,13n,20p,1449b,294s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C
-:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/
-Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Pr
-ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Progr
-am Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program 
-Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Fil
-es (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files 
-(x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Program Files (x86
-)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/Mi
-KTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKT
-eX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 
-2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX 2.9
-/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
-onts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on paper.pdf (10 pages, 195113 bytes).
+ 30i,13n,20p,1230b,296s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Prog
+ram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Progra
+m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program 
+Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Fi
+les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program File
+s (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Program Files (
+x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files (x86
+)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/M
+iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Program Files (x86)/MiKTeX 2
+.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
+type1/public/amsfonts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
+e1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/
+public/amsfonts/cm/cmti12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
+blic/amsfonts/cm/cmtt12.pfb>
+Output written on paper.pdf (14 pages, 269207 bytes).
 PDF statistics:
- 95 PDF objects out of 1000 (max. 8388607)
->>>>>>> 0ddddcd8ded15bfd988790c96e5046fcfa84ba89
+ 124 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

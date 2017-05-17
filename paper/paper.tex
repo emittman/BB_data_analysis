@@ -124,15 +124,21 @@ We therefore propose to fit the GLFP model using a hierarchical Bayesian approac
 The structure of the paper is as follows.  Section 1 summarizes the Backblaze data and the unique modeling challenges it presents.  Section 2 introduces the GLFP model as a mixture of two Weibull distributions.  In Section 3 we fit multiple specifications of the GLFP model to best describe the Backblaze data.  We also discuss computational and modeling issues that suggest a final model with a common Weibull distribution for defective units and individual Weibull distributions for the wearout failure mode.  In Section 4 we compare hard drive brand models based on our final GLFP model.  Finally, in Section 5, we review the GLFP model and propose future extensions.
 
 \section{Data}
-Backblaze is a company that offers backup storage to protect against hard drive failure.  While selling storage space is Backblaze's main business, since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive brands and models.  The hard drives continuously spin in controlled storage pods where they run until failure.  When a hard drive fails it is permanently removed, and new hard drives are regularly added to the storage pods.  In addition, the number of storage pods is increasing as Backblaze adds new hard drive brands to the sample.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}. In addition, Backblaze publishes summary statistics of the different hard drive models currently operating.  No other analysis or modeling of the failure data is provided; however, Backblaze does encourage the public to further analyze its data, which for this paper goes through the first quarter of 2016.
+Backblaze is a company that offers backup storage to protect against data loss.  While selling storage space is Backblaze's main business, since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive brands and models.  The hard drives continuously spin in controlled storage pods where they run until failure.  When a hard drive fails it is permanently removed, and new hard drives are regularly added to the storage pods.  In addition, the number of storage pods is increasing as Backblaze adds new hard drive brands to the sample.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}. In addition, Backblaze publishes summary statistics of the different hard drive models currently operating.  No other analysis or modeling of the failure data is provided; however, Backblaze does encourage the public to further analyze its data, which for this paper goes through the first quarter of 2016.
 
-As of the first quarter of 2016, Backblaze was collecting data on 63 different hard drive models.  Some drive models have been running since 2013, while others have been added at a later date.  There are a total of 75,297 hard drives running.  The distribution of drives by model varies: some models have only 1 drive in testing; the maximum number of drives running for a specific drive model is 35,860.  We can also look at the distribution of total number of failures and total time on test across all drive models.  As seen below, some drive models contain a lot of information, while others have few failures or a little time in operation. [INSERT FIGURE 1]. \\
+As of the first quarter of 2016, Backblaze was collecting data on 63 different hard drive models.  Some drive models have been running since 2013, while others have been added at a later date.  There are a total of 75,297 hard drives running.  The distribution of drives by model varies: some models have only have a service record for a single drive; the maximum number of service records for a single drive model is 35,860.  We can also look at the distribution of total number of failures and total time on test across all drive models.  As seen below, some drive models contain a lot of information, while others have few failures or a little time in operation. [INSERT FIGURE 1]. \\
 
 Probability plotting is an effective method to check the adequacy of various parametric models to the data.  Identifying whether failure data follows a specific distribution is difficult to do by eye: especially when looking at pdfs or other non-linear plots.  However, if we can linearize the cumulative distribution function it is easier to visually assess a distributional goodness of fit; if a model is appropriate, a non parametric estimate of $\hat{F(t)}$ graphed on linarized probability scales should approximately follow a straight line. \\
 
 For the hard drive data we first estimate the empirical cdf for each model using the Kaplan-Meier estimator \cite{kaplan}.  With left truncation, however, the Kaplan-Meier estimate, $\widehat{F(t)_{KM}}$, is conditional based on hard drive $i$ surviving up to time $\tau_i^L$ where $L$ is the amount of time the hard drive was running before Backblaze starting monitoring the drive.  To get the unconditional distribution we correct the non-parametric estimates using a parametric adjustment outlined by Turnbull, and given in more detail by Meeker and Escobar \cite{turnbull,meeker}.  For each hard drive model we select $\tau_{\text{min}}^L$, the smallest left truncated time in the sample.  Then, using the parametric estimates of the parameters, we calculate $Pr(T>\tau_\text{min}^L)$ the probability a hard drive has survived up to $\tau_{\text{min}}^L$.  We then apply this correction to the non parametric estimates, which results in the unconditional distribution of time to failure.\\
 
-In Figure 2 we plot the Kaplan-Meier adjusted cdf for hard drive model X on Weibull paper.  Each point on the plot corresponds to a hard drive failure.  Censored drives are not plotted.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring around hour Z.  Therefore, fitting a single Weibull model would not be flexible enough to model the failure distribution.
+\begin{figure}
+\includegraphics[width=\textwidth]{fig/heterogeneity_compare_preliminary.pdf}
+\caption{Left: Kaplan-Meier estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, orderered left to right, top to bottom.}
+\label{fig2}
+\end{figure}
+
+In Figure \ref{fig2} we plot the Kaplan-Meier adjusted cdf for hard drive model X on Weibull paper.  Each point on the plot corresponds to a hard drive failure.  Censored drives are not plotted.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring around hour Z.  Therefore, fitting a single Weibull model would not be flexible enough to model the failure distribution.
 
 
 \section{Hierarchical GLFP model}
@@ -185,13 +191,16 @@ To complete the full probability model, we need to select prior distributions fo
 \subsection{Computation}
 Each model was fit in {\t R} \nocite{r} using Hamiltonian Monte Carlo
 \cite{betancourt} as implemented in {\tt
-  rstan}\cite{rstan}. Multiple chain were run with _000 iterations of
-warmup. Convergence was assessed by examining posterior
+  rstan}\cite{rstan}. Multiple chain were run with warmup iterations. Convergence was assessed by examining posterior
 plots and checking that Gelman-Rubin diagnostics were close to 1.
 
 \section{Data analysis}
 \subsection{Results}
-Show some of the fits of the GFLP Model.  Also present the unpooled output for a few models.  Show parameter estimates with uncertainty. 
+The right side of Figure \ref{fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive models; note that, since the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
+
+The lower left panel, representing Model 3, suggests differing shape parameters in the wearout failure mode which mean that the ranking of models with respect to fraction failing differs as a function of time.
+
+Finally, the lower right panel, corresponding to Model 4, shows that, by allowing $\pi_d$ to vary by drive model, there is greater variability in the early rate of failure and, for some drive models, the forecasted fraction failing is adjusted downward. 
 
 \subsection{Model Comparisons}
 First look at the overlaid posterior credible bands. \\
@@ -220,9 +229,11 @@ Ideas for plots: A graph comparing the pi's for all drive models.
 
 I think a graph looking at the B10 using the full model could be good, too.  Something like the graph below.  Perhaps we could sort drive model based on sample size?
 
+This should probably be truncated at something like eight years, since the right tails seem unlikely. Sort by left endpoint?
+
 \begin{figure}[H]
     \centering
-   \includegraphics[width=5.0in]{B10_full.pdf}
+   \includegraphics[width=5.0in]{fig/B10_full.pdf}
 		\caption{B10 in Years for All Drive Models \label{fig:first}} 
 \end{figure}
 

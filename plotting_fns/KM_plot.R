@@ -161,7 +161,8 @@ KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_
 }
 
 KM_plot_multi <- function(data, prob_model="weibull", tr_adj = 0, title = NULL,
-                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000), ylimits=c(.0001, .9999), verbose=F){
+                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000),
+                    ylimits=c(.0001, .9999), verbose=F, grayscale=F){
   require(ggplot2)
   require(plyr)
   require(dplyr)
@@ -193,9 +194,9 @@ KM_plot_multi <- function(data, prob_model="weibull", tr_adj = 0, title = NULL,
   if(verbose){
     print(df)
   }
-  
-  p <- df %>%
-    ggplot(aes(t, Ft, group=model, color=model)) + geom_line()
+
+  p <- df %>% 
+    ggplot(aes(t, Ft, group=model, color=model)) + geom_step()
   
   if(!linear_axes){
     if(!fixed){
@@ -210,6 +211,9 @@ KM_plot_multi <- function(data, prob_model="weibull", tr_adj = 0, title = NULL,
     }
   } else{
     p <- p + scale_x_continuous(limits=xlimits) + scale_y_continuous(limits=ylimits)
+  }
+  if(grayscale){
+    p <- p + scale_colour_grey(start = 0, end = .9) 
   }
   p <- p +
     theme_bw(base_size = 14) + ggtitle(title)+xlab("Hours")+ylab("Fraction Failing")

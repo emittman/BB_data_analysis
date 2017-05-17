@@ -44,7 +44,7 @@ y.scale <- scale_y_continuous(name="Fraction failing", breaks=y.breaks, limits=y
 no_legend <- theme(legend.position="none")
 x_log <- scale_x_continuous(trans="log")
 
-p1 <- KM_plot_multi(df1, linear_axes = T, xlimits = xlimits, ylimits=ylimits)
+p1 <- KM_plot_multi(df1, linear_axes = T, xlimits = xlimits, ylimits=ylimits, grayscale = TRUE)
 
 null_s <- readRDS("../workflow_null/samples_null_model_3_29.rds")
 null_samp <- extract(null_s)
