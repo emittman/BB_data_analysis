@@ -58,20 +58,23 @@ for (j in 1:44){
 
 
 #B10_Model4.rds is in paper folder for future use
-b10 <- readRDS("B10_Model4.rds")
+b10 <- readRDS("paper/B10_Model4.rds")
 colnames(b10) <- c("model","lb","med","ub")
 b10$lb <- b10$lb/(24*365)
 b10$med <- b10$med/(24*365)
 b10$ub <- b10$ub/(24*365)
 
+#Sort by Lower End Point Time
+b10$model <- factor(b10$model,levels=b10$model[order(b10$lb)])  #Sort By Lower End Point
+
 
 #Make Catepillar Plot for B10; Perhaps Sort by Sample Size?
 p <- ggplot(b10, aes(x=as.factor(model), y=med, ymin=lb, ymax=ub)) +
-  geom_pointrange() +
-  coord_flip() +
+  geom_pointrange() +  
+  coord_flip(ylim = c(0,8)) + 
   xlab('Drive Model') + theme_bw() + 
   ylab("Years")   +
-  scale_x_discrete(breaks=seq(1,44,1)) + 
+  scale_x_discrete(breaks=seq(1,44,1)) 
 p
 
 

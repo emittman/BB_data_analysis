@@ -128,7 +128,7 @@ KM_plot <- function(data, model, tr_adj = 0, title = NULL,
 }
 
 KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95), x_logscale=T, n=30, verbose=F,
-                    pi.free=T, mu1.free=F, sigma1.free=F, mu2.free=T, sigma2.free=T, colline="black", colband="red"){
+                    pi.free=T, mu1.free=F, sigma1.free=F, mu2.free=T, sigma2.free=T, linetp="dashed", colline="black", colband="red"){
   total_iter <- length(samp$lp__)
   iter <- floor(total_iter/n_iter) * 1:n_iter
   
@@ -150,7 +150,7 @@ KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95)
     })
   if(verbose) print(band)
   list(ptws_ci = geom_ribbon(data = band, inherit.aes = FALSE, aes(x=x, ymin=lower, ymax=upper), fill=colband, alpha=.2),
-       ptws_est = geom_line(data= band, inherit.aes = FALSE, aes(x=x, y=y), color=colline))
+       ptws_est = geom_line(data= band, inherit.aes = FALSE, aes(x=x, y=y), linetype=linetp, color=colline))
 }
 
 KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_adj, xlimits, ylimits, fixed=T,
