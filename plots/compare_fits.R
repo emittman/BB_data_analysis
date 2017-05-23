@@ -21,10 +21,10 @@ stp2 <- readRDS("../workflow_tp2_vary/samples_tp2_vary.rds")
 snull <- readRDS("../workflow_null/samples_null_model_3_29.rds")
 sfull <- readRDS("../workflow/samples_lor_only3fails.rds")
 #
-ssigtp <- readRDS("MCMC_draws/vary_s2_and_tp2_4_17.rds")
-stp2 <- readRDS("MCMC_draws/samples_tp2_vary_new.rds")
-snull <- readRDS("MCMC_draws/samples_null_model_3_29.rds")
-sfull <- readRDS("MCMC_draws/samples_lor_only3fails.rds")
+# ssigtp <- readRDS("MCMC_draws/vary_s2_and_tp2_4_17.rds")
+# stp2 <- readRDS("MCMC_draws/samples_tp2_vary_new.rds")
+# snull <- readRDS("MCMC_draws/samples_null_model_3_29.rds")
+# sfull <- readRDS("MCMC_draws/samples_lor_only3fails.rds")
 
 
 samps2tp <- extract(ssigtp)
@@ -104,9 +104,9 @@ out.pi <- matrix(ncol=4, nrow=44)
 for (i in 1:44){
   num=i
   seta <- paste0("log_pi[",num,"]",collapse="")
-  etal <- summary(sfull)$summary[seta,"2.5%"]
+  etal <- summary(sfull)$summary[seta,"25%"]
   etam <- summary(sfull)$summary[seta,"50%"]
-  etah <- summary(sfull)$summary[seta,"97.5%"]
+  etah <- summary(sfull)$summary[seta,"75%"]
   out.pi[i,1] <- exp(etal)
   out.pi[i,2] <- exp(etam)
   out.pi[i,3]<- exp(etah)
@@ -127,7 +127,8 @@ p <- ggplot(pi.dat, aes(x=as.factor(model), y=med, ymin=lower, ymax=upper)) +
   coord_flip() + 
   xlab('Drive Model') + theme_bw() + 
   ylab(expression(pi))   +
-  scale_x_discrete(breaks=seq(1,44,1)) 
+  scale_x_discrete(breaks=seq(1,44,1))+
+  scale_y_continuous(trans="logit", breaks=c(.01, .02, .05, .1, .2, .4, .6, .8, .9))
 p
 
 
