@@ -160,9 +160,9 @@ KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_
   p + q[[1]] + q[[2]]
 }
 
-KM_plot_multi <- function(data, prob_model="weibull", tr_adj = 0, title = NULL,
+KM_plot_multi <- function(data, prob_model="weibull", tr_adj = NULL, title = NULL,
                     linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000),
-                    ylimits=c(.0001, .9999), verbose=F, grayscale=F){
+                    ylimits=c(.0001, .9999), verbose=F, grayscale=F, size=.2){
   require(ggplot2)
   require(plyr)
   require(dplyr)
@@ -176,6 +176,11 @@ KM_plot_multi <- function(data, prob_model="weibull", tr_adj = 0, title = NULL,
          ytrans <- "qgev"},
          {stop("`model' must be one of lnorm, weibull, frechet")})
   
+  if(is.null(tr_adj)){
+    message("No truncation adjustment specified: setting to 0.")
+    tr_adj <- rep(0, length(unique(data$model)))
+  }
+  
   # df <- with(data, data.frame(time = endtime[!censored]))
   df <- ddply(data, .(model), function(m){
               t = sort(unique(m$endtime[!(m$censored)]))
@@ -186,7 +191,7 @@ KM_plot_multi <- function(data, prob_model="weibull", tr_adj = 0, title = NULL,
           d = sum(data$starttime[data$model==model] < t & data$endtime[data$model==model] == t & data$censored[data$model==model] == 0)) %>%
     mutate(p = (n-d)/n,
            St = cumprod(p))
-  df$Ft <- (1 - df$St) * (1 - tr_adj) + tr_adj
+  df$Ft <- (1 - df$St) * (1 - tr_adj[df$model]) + tr_adj[df$model]
   df <- df[which(df$Ft < 1),]
   
   df$model <- factor(df$model)
@@ -196,7 +201,7 @@ KM_plot_multi <- function(data, prob_model="weibull", tr_adj = 0, title = NULL,
   }
 
   p <- df %>% 
-    ggplot(aes(t, Ft, group=model, color=model)) + geom_step()
+    ggplot(aes(t, Ft, group=model, color=model)) + geom_step(size=size)
   
   if(!linear_axes){
     if(!fixed){
