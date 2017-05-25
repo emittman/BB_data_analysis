@@ -140,9 +140,8 @@ Probability plotting is an effective method to check the adequacy of various par
 For the hard drive data we first estimate the empirical cdf for each model using the Kaplan-Meier estimator \cite{kaplan}.  With left truncation, however, the Kaplan-Meier estimate, $\widehat{F(t)_{KM}}$, is conditional based on hard drive $i$ surviving up to time $\tau_i^L$ where $L$ is the amount of time the hard drive was running before Backblaze starting monitoring the drive.  To get the unconditional distribution we correct the non-parametric estimates using a parametric adjustment outlined by Turnbull, and given in more detail by Meeker and Escobar \cite{turnbull,meeker}.  For each hard drive model we select $\tau_{\text{min}}^L$, the smallest left truncated time in the sample.  Then, using the parametric estimates of the parameters, we calculate $Pr(T>\tau_\text{min}^L)$ the probability a hard drive has survived up to $\tau_{\text{min}}^L$.  We then apply this correction to the non parametric estimates, which results in the unconditional distribution of time to failure.\\
 
 \begin{figure}
-\includegraphics[width=\textwidth]{fig/heterogeneity_compare_preliminary.pdf}
-\caption{Left: Kaplan-Meier estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, orderered left to right, top to bottom.}
-\label{fig2}
+\includegraphics[width=.8\textwidth]{fig/data_overview}
+\caption{Left: Kaplan-Meier plots showing nonparametric estimates of fraction failing for individual drive-models with truncation adjustments based on fitted model, Right: Total observed failures (top) and the sum of lengths of all observational intervals by drive-model.}
 \end{figure}
 
 In Figure \ref{fig2} we plot the Kaplan-Meier adjusted cdf for hard drive model X on Weibull paper.  Each point on the plot corresponds to a hard drive failure.  Censored drives are not plotted.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring around hour Z.  Therefore, fitting a single Weibull model would not be flexible enough to model the failure distribution.
@@ -227,6 +226,12 @@ plots and checking that potential scale reduction factors (Rhat) \cite{gelman201
 
 
 \subsection{Model Comparisons}
+\begin{figure}
+\includegraphics[width=\textwidth]{fig/heterogeneity_compare_preliminary.pdf}
+\caption{Left: Kaplan-Meier estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, orderered left to right, top to bottom.}
+\label{fig2}
+\end{figure}
+
 The right side of Figure \ref{fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive models; note that, since the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
 
 The lower left panel, representing Model 3, suggests differing shape parameters in the wearout failure mode which mean that the ranking of models with respect to fraction failing differs as a function of time.

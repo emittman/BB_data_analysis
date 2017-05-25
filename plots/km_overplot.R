@@ -14,6 +14,8 @@
 dat <- readRDS("../BB_data/clean_unit_summaries.rds")
 dat$model <- as.integer(dat$model)
 
+tr_adj <- readRDS("../BB_data/tr_adj_tp2s2pi.rds")$median
+
 library(plyr)
 library(dplyr)
 library(rstan)
@@ -28,7 +30,8 @@ overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
 df1 <- dat %>% filter(model %in% id) %>%
-  select(-start_date, -end_date)
+  select(-start_date, -end_date) %>%
+  mutate(model = overview$stan_id[match(model, overview$model)])
 
 source("../plotting_fns/KM_plot.R")
 
@@ -44,7 +47,8 @@ y.scale <- scale_y_continuous(name="Fraction failing", breaks=y.breaks, limits=y
 no_legend <- theme(legend.position="none")
 x_log <- scale_x_continuous(trans="log")
 
-p1 <- KM_plot_multi(df1, linear_axes = T, xlimits = xlimits, ylimits=ylimits, grayscale = TRUE)
+p1 <- KM_plot_multi(df1, tr_adj = tr_adj, linear_axes = F,
+                    xlimits = xlimits, ylimits=ylimits, grayscale = TRUE, size=1)
 
 null_s <- readRDS("../workflow_null/samples_null_model_3_29.rds")
 null_samp <- extract(null_s)
@@ -107,6 +111,23 @@ for(j in 1:length(id)){
 p5 <- p5 + theme_bw(base_size = 14)+xlab("Hours")+ylab("Fraction Failing")+
   xlim(xlimits)+ylim(ylimits)
 
+#decided to reorganize this (5-24-2017)
+# cowplot::plot_grid(p1 + no_legend, cowplot::plot_grid(p2,p3,p4,p5, ncol=2), ncol=2)
 
-cowplot::plot_grid(p1 + no_legend, cowplot::plot_grid(p2,p3,p4,p5, ncol=2), ncol=2)
+bytimeobs <- ddply(df1, .(model), function(x){
+  total_time = sum(x$endtime - x$starttime)
+  failures = sum(x$failed>0)
+  data.frame(total_time=total_time, failures=failures)
+})
 
+p6 <- ggplot(bytimeobs, aes(factor(model), total_time)) + geom_bar(stat="identity") +
+  scale_y_continuous(trans="log", breaks=c(100,10000,1000000,1000000))+
+  ggtitle("Total operational hours")+ylab("")+xlab("")+
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+p7 <- ggplot(bytimeobs, aes(factor(model), failures)) + geom_bar(stat="identity")+
+  scale_y_continuous(trans="log", breaks=c(1, 2 ,10, 100, 500, 1000, 2000)) +
+  xlab("") + ylab("") + ggtitle("Failures observed") +
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+cowplot::plot_grid(p1 + no_legend, cowplot::plot_grid(p7,p6,ncol=1),ncol=2)             
