@@ -21,7 +21,7 @@ stp2 <- readRDS("../workflow_tp2_vary/samples_tp2_vary.rds")
 snull <- readRDS("../workflow_null/samples_null_model_3_29.rds")
 sfull <- readRDS("../workflow/samples_lor_only3fails.rds")
 #
-# ssigtp <- readRDS("MCMC_draws/vary_s2_and_tp2_4_17.rds")
+#ssigtp <- readRDS("MCMC_draws/vary_s2_and_tp2_4_17.rds")
 # stp2 <- readRDS("MCMC_draws/samples_tp2_vary_new.rds")
 # snull <- readRDS("MCMC_draws/samples_null_model_3_29.rds")
 # sfull <- readRDS("MCMC_draws/samples_lor_only3fails.rds")
@@ -39,9 +39,10 @@ full_list <- list()
 s2tp_list <- list()
 tp2_list <-list()
 KM_list <- list()
+null_list <- list()
 xlimits <- c(100,50000)
 ylimits <- c(.0001, .9)
-null_band <- KM_band(id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
+#null_band <- KM_band(id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
                      x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F,
                      linetp = "longdash", colband="green", colline="darkblue")
 for(j in 1:length(id)){
@@ -55,9 +56,13 @@ for(j in 1:length(id)){
   
   dat_tmp <- subset(mods, model == orig_id)
   
-  # KM_list[[j]] <- KM_plot(data = dat_tmp, model = "weibull", tr_adj = adj, title="", linear_axes = TRUE, fixed= TRUE, xlimits=xlimits, ylimits = ylimits,verbose = F)
-  KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
-                             xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
+  null_list[[j]] <- KM_band(id=j, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
+                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F,
+                            linetp = "longdash", colband="green", colline="darkblue")
+  
+  KM_list[[j]] <- KM_plot(data = dat_tmp, model = "weibull", tr_adj = adj, title="", linear_axes = FALSE, fixed= TRUE, xlimits=xlimits, ylimits = ylimits,verbose = F)
+  #KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
+                             #xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
   tp2_list[[j]] <- KM_band(id=j, samp=samptp2, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = F,
                            colband="red", linetp="dotted", colline="black")
@@ -79,11 +84,21 @@ KM_list[[j]] + #null_band[[2]] + null_band[[2]] +
 
 #Models to Plot for Paper; Just show Bands for Full Model; Added LineType
 #Possible Models to Show: 2, 9, 14, 23, 40, 45 
-j=40
-KM_list[[j]] + null_band[[2]] + 
-  tp2_list[[j]][[2]] + s2tp_list[[j]][[2]] + 
-  full_list[[j]][[1]] + full_list[[j]][[2]]
 
+#Function to Grab 4 Drive Models and Make a List of the Plots
+quad <- function(p1, p2, p3, p4){
+  plts <- cbind(p1,p2,p3,p4)
+  out <- list()
+  for (i in 1:4){
+    p1 <- plts[i]
+    out[[i]] <- KM_list[[p1]] + null_list[[p1]][[2]] + tp2_list[[p1]][[2]] + s2tp_list[[p1]][[2]] + full_list[[p1]][[2]]
+  }
+  return((out))
+}
+
+#Test Function and Use Cow to Make Grid.
+plot1 <- quad(2,9,14,40)
+plot_grid(plot1[[1]], plot1[[2]], plot1[[3]], plot1[[4]], labels=c("2","9","14","40"), ncol = 2, nrow = 2)
   
 # compare parameter estimates of log_tp2
 results_list <- list(full = sfull, sig_tp = ssigtp, tp_only = stp2)
