@@ -131,7 +131,7 @@ As of the first quarter of 2016, Backblaze was collecting data on 63 different h
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{fig/data_sum.pdf}
 \caption{Left: Total number of failures (log scale) for each of the drive-models in the Backblaze data. Right: Total time in operation (log scale) for each of the drive-models in the Backblaze data.  Both plots are sorted based on the total number of failures.}
-\label{fig2}
+\label{fig1}
 \end{figure}
 
 
@@ -237,12 +237,13 @@ The right side of Figure \ref{fig2} shows that the set of estimated failure curv
 The lower left panel, representing Model 3, suggests differing shape parameters in the wearout failure mode which mean that the ranking of models with respect to fraction failing differs as a function of time.
 
 Finally, the lower right panel, corresponding to Model 4, shows that, by allowing $\pi_d$ to vary by drive model, there is greater variability in the early rate of failure and, for some drive models, the forecasted fraction failing is adjusted downward. 
-First look at the overlaid posterior credible bands.  Perhaps pick 4 different drive models and present a plot like the figure below.  Bands are for full model, and the solid line is the full model fit. \\
+\\
+Comment: I think I prefer to use points for Kaplan Meier.  Using the connected dots almost makes it look like another model fit, rather than the actual observed failure data.  What do you think? \\
 
 \begin{figure}[H]
     \centering
-   \includegraphics[width=5.0in]{fig/mod40_bands.pdf}
-		\caption{Drive Model 40 \label{fig:first}} 
+   \includegraphics[width=5.0in]{fig/brand_compare_nobands.pdf}
+		\caption{Estimated GFLP for all 4 Model Specifications.  Truncated Adjusted Kaplan Meier points are also presented.    \label{fig:first}} 
 \end{figure}
 
 
