@@ -5,6 +5,7 @@ dat$model <- as.integer(dat$model)
 library(plyr)
 library(dplyr)
 library(rstan)
+library(ggplot2)
 overview <- ddply(dat, .(model), summarise,
                   n=length(model),
                   f=sum(failed>0),

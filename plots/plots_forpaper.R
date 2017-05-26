@@ -17,14 +17,22 @@ id <- with(overview, which(overview$early >= 0 & overview$late_f >= 0 & f >=3))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
 
+#new id
+
+
 
 #Look at Distribution of Failures and Total Time on Test
 #Total Filures By Model
-tot <- dat %>% select(model, censored) %>% group_by(model) %>% summarise(sum(censored==FALSE))
+
+#Subset based on Model with >=3 failures
+datsub = subset(dat, model %in% id)
+
+tot <- datsub %>% select(model, censored) %>% group_by(model) %>% summarise(sum(censored==FALSE))
 names(tot)[2]<-"count"
 
 #Sort by Failures
 tot <- as.data.frame(tot)
+tot$model <- 1:length(id)  #Make New ID based on Subset
 tot$model <- factor(tot$model,levels=tot$model[order(tot$count)])  #Sort by Total Failures
 
 
@@ -34,12 +42,13 @@ fail <- ggplot(tot, aes(x=model, y=count)) + geom_bar(stat="identity") + xlab("D
    ggtitle("Total Failures by Drive Brand Model") + scale_y_log10() + coord_flip() 
 
 #Total Time on Test
-tt <- dat %>% group_by(model) %>% mutate(tt=(endtime-starttime)/(24*365))
+tt <- datsub %>% group_by(model) %>% mutate(tt=(endtime-starttime)/(24*365))
 tt2 <- tt %>% group_by(model) %>% summarize(sum(tt))
 names(tt2)[2]<-"total"
 
 tt2 <- as.data.frame(tt2)
 tt2$count <- tot$count
+tt2$model <- 1:length(id)
 tt2$model <- factor(tt2$model,levels=tt2$model[order(tt2$count)])  #Sort by Total Failures
 
 theme_set(theme_bw(base_size=18))
