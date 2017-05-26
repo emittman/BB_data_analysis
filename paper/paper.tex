@@ -130,7 +130,7 @@ As of the first quarter of 2016, Backblaze was collecting data on 63 different h
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{fig/data_sum.pdf}
-\caption{Left: Total number of failures (log scale) for each of the drive-models in the Backblaze data. Right: Total time in operation (log scale) for each of the drive-models in the Backblaze data.  Both plots are sorted based on the total number of failures.}
+\caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total time in operation (log scale) for each of the drive-models in the Backblaze data.  Both plots are sorted based on the total number of failures.}
 \label{fig1}
 \end{figure}
 
@@ -143,12 +143,21 @@ $$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\te
 
 While this adjustment is negligible for the majority of drive-models, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
 
-\begin{figure}
-\includegraphics[width=.8\textwidth]{fig/data_overview}
-\caption{Left: Kaplan-Meier plots showing nonparametric estimates of fraction failing for individual drive-models with truncation adjustments based on fitted model, Right: Total observed failures (top) and the sum of lengths of all observational intervals by drive-model.}
+%\begin{figure}
+%\includegraphics[width=.8\textwidth]{fig/data_overview}
+%\caption{Left: Kaplan-Meier plots showing nonparametric estimates of fraction failing for individual drive-models with truncation adjustments based on fitted model, Right: Total observed failures (top) and the sum of lengths of all observational intervals by drive-model.}
+%\end{figure}
+
+
+In Figure 2 we plot the Kaplan-Meier adjusted cdf for hard drive model 14 on Weibull paper.  Drive model 14 had the most observed failures of all the brands.  Each point on the plot corresponds to a hard drive failure.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method (reference).  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring around 15,000 hours.  Therefore, fitting a single Weibull model would not be flexible enough to model the failure distribution.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.5\textwidth]{fig/mod14_KM_adj}
+\caption{Truncated Adjusted Kaplan-Meier plot showing nonparametric estimate of fraction failing for drive model 14.  Dashed lines are Greenwood standard errors.}
 \end{figure}
 
-In Figure \ref{fig2} we plot the Kaplan-Meier adjusted cdf for hard drive model 20 on Weibull paper.  Each point on the plot corresponds to a hard drive failure.  Censored drives are not plotted.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring around 15,000 hours.  Therefore, fitting a single Weibull model would not be flexible enough to model the failure distribution.
+
 
 
 \section{Hierarchical GLFP model}

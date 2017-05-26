@@ -20,11 +20,14 @@ ssigtp <- readRDS("../workflow_sig2_and_tp2_vary/vary_s2_and_tp2_4_17.rds")
 stp2 <- readRDS("../workflow_tp2_vary/samples_tp2_vary.rds")
 snull <- readRDS("../workflow_null/samples_null_model_3_29.rds")
 sfull <- readRDS("../workflow/samples_lor_only3fails.rds")
-#
+tr_adj <- readRDS("../BB_data/tr_adj_tp2s2pi.rds")$median
+
+
 #ssigtp <- readRDS("MCMC_draws/vary_s2_and_tp2_4_17.rds")
-# stp2 <- readRDS("MCMC_draws/samples_tp2_vary_new.rds")
-# snull <- readRDS("MCMC_draws/samples_null_model_3_29.rds")
-# sfull <- readRDS("MCMC_draws/samples_lor_only3fails.rds")
+#stp2 <- readRDS("MCMC_draws/samples_tp2_vary_new.rds")
+#snull <- readRDS("MCMC_draws/samples_null_model_3_29.rds")
+#sfull <- readRDS("MCMC_draws/samples_lor_only3fails.rds")
+
 
 
 samps2tp <- extract(ssigtp)
@@ -39,12 +42,13 @@ full_list <- list()
 s2tp_list <- list()
 tp2_list <-list()
 KM_list <- list()
-null_list <- list()
 xlimits <- c(100,50000)
 ylimits <- c(.0001, .9)
-#null_band <- KM_band(id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
+
+null_band <- KM_band(id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
                      x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F,
                      linetp = "longdash", colband="green", colline="darkblue")
+
 for(j in 1:length(id)){
   orig_id <- id[j]
   pi_j = exp(sampfull$log_pi[max_id,j])
@@ -52,17 +56,14 @@ for(j in 1:length(id)){
   loc2_j = sampfull$mu2[max_id,j]
   scl1_j = sampfull$sigma1[max_id]
   scl2_j = sampfull$sigma2[max_id,j]
-  adj <- with(subset(mods, model == orig_id),get_tr_adj(min(starttime), pi_j, loc1_j, scl1_j, loc2_j, scl2_j))
+  adj <- tr_adj[j]   #New Median Truncation Values
   
   dat_tmp <- subset(mods, model == orig_id)
   
-  null_list[[j]] <- KM_band(id=j, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
-                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F,
-                            linetp = "longdash", colband="green", colline="darkblue")
+  #KM_list[[j]] <- KM_plot(data = dat_tmp, model = "weibull", tr_adj = adj, title="", linear_axes = FALSE, fixed= TRUE, xlimits=xlimits, ylimits = ylimits,verbose = F)
   
-  KM_list[[j]] <- KM_plot(data = dat_tmp, model = "weibull", tr_adj = adj, title="", linear_axes = FALSE, fixed= TRUE, xlimits=xlimits, ylimits = ylimits,verbose = F)
-  #KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
-                             #xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
+  KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
+                             xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
   tp2_list[[j]] <- KM_band(id=j, samp=samptp2, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = F,
                            colband="red", linetp="dotted", colline="black")
