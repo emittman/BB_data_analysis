@@ -1,4 +1,4 @@
-#setwd("workflow/")
+setwd("workflow/")
 dat <- readRDS("../BB_data/clean_unit_summaries.rds")
 dat$model <- as.integer(dat$model)
 
@@ -24,10 +24,10 @@ sfull <- readRDS("../workflow/samples_lor_only3fails.rds")
 tr_adj <- readRDS("../BB_data/tr_adj_tp2s2pi.rds")$median
 
 
-#ssigtp <- readRDS("MCMC_draws/vary_s2_and_tp2_4_17.rds")
-#stp2 <- readRDS("MCMC_draws/samples_tp2_vary_new.rds")
-#snull <- readRDS("MCMC_draws/samples_null_model_3_29.rds")
-#sfull <- readRDS("MCMC_draws/samples_lor_only3fails.rds")
+ssigtp <- readRDS("../MCMC_draws/vary_s2_and_tp2_4_17.rds")
+stp2 <- readRDS("../MCMC_draws/samples_tp2_vary_new.rds")
+snull <- readRDS("../MCMC_draws/samples_null_model_3_29.rds")
+sfull <- readRDS("../MCMC_draws/samples_lor_only3fails.rds")
 
 
 
@@ -78,7 +78,7 @@ for(j in 1:length(id)){
 }
 
 j=26 #lack of fit on 4, compromise on 15, 37 hits the mark, all agree 26
-KM_list[[j]] + #null_band[[2]] + null_band[[2]] +
+KM_list[[j]] + null_band[[2]] + null_band[[2]] +
   tp2_list[[j]][[1]] + tp2_list[[j]][[2]] +
   s2tp_list[[j]][[1]] + s2tp_list[[j]][[2]] + 
   full_list[[j]][[1]] + full_list[[j]][[2]] + null_band
@@ -114,8 +114,34 @@ mean_df <- ldply(1:3, function(mod){
 ggplot(mean_df, aes(x=means)) + geom_histogram(aes(y=..density..), bins=10) + facet_grid(model~.) + geom_density()
 
 
+
+#Plot B10
+#Note: 50% CI for B10
+b10 <- readRDS("../paper/b10_fullmod_50CI.rds")
+colnames(b10) <- c("model","lb","med","ub")
+b10$lb <- b10$lb/(24*365)
+b10$med <- b10$med/(24*365)
+b10$ub <- b10$ub/(24*365)
+
+#Sort by Lower End Point Time
+b10$model <- factor(b10$model,levels=b10$model[order(b10$med)])  #Sort By Lower End Point
+
+
+#Make Catepillar Plot for B10; Perhaps Sort by Sample Size?
+b10.plot <- ggplot(b10, aes(x=as.factor(model), y=med, ymin=lb, ymax=ub)) +
+  geom_pointrange() +  
+  coord_flip(ylim = c(0,8)) + 
+  xlab('Drive Model') + theme_bw() + 
+  ylab("Years")   +
+  scale_x_discrete(breaks=seq(1,44,1))
+b10.plot
+
+
+
+
+
 #compare pi's for full model (sampfull)
-#Get Pi's Out with 95% Credible
+#Get Pi's Out with 50% Credible
 #look at log_tp.05 quantile estimates
 out.pi <- matrix(ncol=4, nrow=44)
 for (i in 1:44){
@@ -134,21 +160,24 @@ pi.dat <- as.data.frame(out.pi)
 colnames(pi.dat) <- c("lower", "med","upper","model")
 
 #Make Catepillar Plot
-#Sort by Lower End Point Time
-pi.dat$model <- factor(pi.dat$model,levels=pi.dat$model[order(pi.dat$lower)])  #Sort By Lower End Point
+#Sort by Median of B10
+
+pi.dat$bmed <- b10$med
+pi.dat$model <- factor(pi.dat$model,levels=pi.dat$model[order(pi.dat$bmed)])  #Sort By Lower End Point
 
 
 #Make Catepillar Plot for B10; Perhaps Sort by Sample Size?
-p <- ggplot(pi.dat, aes(x=as.factor(model), y=med, ymin=lower, ymax=upper)) +
+pi.plot <- ggplot(pi.dat, aes(x=as.factor(model), y=med, ymin=lower, ymax=upper)) +
   geom_pointrange() +  
   coord_flip() + 
   xlab('Drive Model') + theme_bw() + 
   ylab(expression(pi))   +
   scale_x_discrete(breaks=seq(1,44,1))+
   scale_y_continuous(trans="logit", breaks=c(.01, .02, .05, .1, .2, .4, .6, .8, .9))
-p
+pi.plot
 
-
+#Make Cow Plot
+plot_grid(b10.plot, pi.plot, ncol = 2, nrow = 1)
 
 
 
