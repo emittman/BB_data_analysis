@@ -117,7 +117,7 @@ ggplot(mean_df, aes(x=means)) + geom_histogram(aes(y=..density..), bins=10) + fa
 
 #Plot B10
 #Note: 50% CI for B10
-b10 <- readRDS("../paper/b10_fullmod_50CI.rds")
+b10 <- readRDS("b10_50ci.rds")
 colnames(b10) <- c("model","lb","med","ub")
 b10$lb <- b10$lb/(24*365)
 b10$med <- b10$med/(24*365)
