@@ -129,7 +129,7 @@ Backblaze is a company that offers backup storage to protect against data loss. 
 As of the first quarter of 2016, Backblaze was collecting data on 63 different hard drive models.  Some drive models have been running since 2013, while others were added at a later date.  There are a total of 75,297 hard drives in operation.  The distribution of drives by model varies: some models have only have a service record for a single drive whereas the maximum number of service records for a single drive model is 35,860.  Figure \ref{fig1} shows the distribution of total number of failures and total time on test for drive brand models with at least 3 failures.  As discussed later, for model identification, a minimum of 3 failures was the criterion for hard drive brands to be included in the GLFP model.  
 
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{fig/data_sum.pdf}
+\includegraphics[width=\textwidth]{fig/data-sum.pdf}
 \caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total time in operation (log scale) for each of the drive-models in the Backblaze data.  Both plots are sorted based on the total number of failures.}
 \label{fig1}
 \end{figure}
@@ -137,14 +137,29 @@ As of the first quarter of 2016, Backblaze was collecting data on 63 different h
 
 Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  Identifying whether failure data are consistent with a specific family of distributions is difficult to do by examining a histogram or other density estimate. By transform the y-axis of the estimated cumulative distribution function (cdf), denoted by $\widehat{F(t)}$, by the inverse cdf of for the standardized distribution, a visual comparison of the plot to a straight line can be an effective informal test for distributional goodness of fit.
 
-Applying this method to the hard drive data, we first must estimate the empirical cdf for each model using the Kaplan-Meier estimator \cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $d$, denoted by $\widehat{F_d(t)}_{KM}$, is conditional on survival up to $t_{d,\text{min}}^L$, the shortest reported running time of all units of drive-model $d$ for which records are available. To produce unconditional estimates, we adapt the adjustment method outlined by Turnbull, and given in more detail by Meeker and Escobar \cite{turnbull,meeker}.  For each hard drive model we select $t_{d,\text{min}}^L$, the smallest left truncated time in the sample.  By sampling from the full posterior distribution, since $Pr(T>t_{d,\text{min}}^L|\theta_d)$ (the probability a hard drive has survived up to $t_{d,\text{min}}^L$) is a function of the model parameters, we can easily compute its posterior median, $\widehat{A}_{\text{med}} = \widehat{Pr}_(T>t_{d,\text{min}}^L|\theta_d)$. We compute the adjusted estimate by
+Applying this method to the hard drive data, we first must estimate
+the empirical cdf for each model using the Kaplan-Meier estimator
+\cite{kaplan}.  With left truncation, however, the standard
+Kaplan-Meier estimator for drive-model $d$, denoted by
+$\widehat{F_d(t)}_{KM}$, is conditional on survival up to
+$t_{d,\text{min}}^L$, the shortest reported running time of all units
+of drive-model $d$ for which records are available. To produce
+unconditional estimates, we adapt the adjustment method outlined by
+Turnbull, and given in more detail by Meeker and Escobar
+\cite{turnbull,meeker}.  For each hard drive model we select
+$t_{d,\text{min}}^L$, the smallest left truncated time in the sample.
+By sampling from the full posterior distribution, since
+$Pr(T>t_{d,\text{min}}^L|\theta_d)$ (the probability a hard drive has
+survived up to $t_{d,\text{min}}^L$) is a function of the model
+parameters, we can easily compute its posterior median,
+$\widehat{A}_{\text{med}} = \widehat{Pr}(T>t_{d,\text{min}}^L|\theta_d)$. We compute the adjusted estimate by
 
 $$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\text{med}}\right)\widehat{F_d(t)}_{KM},\; t>t_{d,\text{min}}^L.$$
 
 While this adjustment is negligible for the majority of drive-models, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
 
 %\begin{figure}
-%\includegraphics[width=.8\textwidth]{fig/data_overview}
+%\includegraphics[width=.8\textwidth]{fig/data-overview}
 %\caption{Left: Kaplan-Meier plots showing nonparametric estimates of fraction failing for individual drive-models with truncation adjustments based on fitted model, Right: Total observed failures (top) and the sum of lengths of all observational intervals by drive-model.}
 %\end{figure}
 
@@ -153,7 +168,7 @@ In Figure 2 we plot the Kaplan-Meier adjusted cdf for hard drive model 14 on Wei
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=.5\textwidth]{fig/mod14_KM_adj}
+\includegraphics[width=.5\textwidth]{fig/mod14-KM-adj}
 \caption{Truncated Adjusted Kaplan-Meier plot showing nonparametric estimate of fraction failing for drive model 14.  Dashed lines are Greenwood standard errors.  Plotted on Weibull paper.}
 \end{figure}
 
@@ -172,13 +187,13 @@ $$F_{dj}(t) = 1 - \exp \left\{ -\exp \left\{ \frac{ \log (t) - \mu_{dj}}{\sigma_
 
 For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{d1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." The interpretation of the parameter $\pi_d$ is to represent the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units of the same drive-model are exchangable.
 
-To borrow strength across models, we can either share parameters across drive-models, or model the drive-model specific parameters hierarchically, allowing the data to inform the hyperparameters. For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j} = \Phi^{-1}(\mu_j)$, and proportions, $\pi_d$, of the component distributions as follows:
+To borrow strength across models, we can either share parameters across drive-models, or model the drive-model specific parameters hierarchically, allowing the data to inform the hyperparameters. For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j}$, and proportions, $\pi_d$, of the component distributions as follows:
 
 $$\sigma_{d,1} \ind \op{Lognormal} \left( \eta_{\sigma,1}, \tau^2_{\sigma,1} \right) \mbox{ for } d=1,\ldots,D$$
-$$\sigma_{d,2} \ind \op{Truncated-Lognormal} \left( \eta_{\sigma,2}, \tau^2_{\sigma,2} , 0, 1, \right) \mbox{ for } d=1,\ldots,D$$
+$$\sigma_{d,2} \ind \op{Truncated-Lognormal} \left( \eta_{\sigma,2}, \tau^2_{\sigma,2} , 0, 1 \right) \mbox{ for } d=1,\ldots,D$$
 $$t_{p_j,d,j} \equiv \mu_{d,j} + \sigma_{d,j}\,\Phi^{-1}(p_j)  \ind \op{Normal} \left(\eta_{t_{p_j},j}, \tau^2_{t_{p_j},j}\right) \mbox{ for } j=1,2\; d=1,\ldots,D$$
 
-$$\op{logit} \pi_d \ind \op{N}(\eta_pi, \tau_pi) \mbox{ for } d=1,\ldots,D.$$
+$$\op{logit} \pi_d \ind \op{N}(\eta_\pi, \tau_\pi) \mbox{ for } d=1,\ldots,D.$$
 
 Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribution. We truncate $\sigma_{d,2}$ at $1$, appealing to the logic that,by nature, wearout produces an increasing hazard function. The decision to parameterize in terms of a quantile other than the log-location parameter, $\mu = t_{0.632}$, is that lifetime data often, as is true of the data presented here, features heavy right-censoring where inferences about the location parameter are extrapolations beyond the range of the data. For this data we selected $p_1=0.5,\mbox{ (the median), and } p_2 = 0.2$.
 
@@ -240,7 +255,7 @@ plots and checking that potential scale reduction factors (Rhat) \cite{gelman201
 
 \subsection{Model Comparisons}
 \begin{figure}
-\includegraphics[width=\textwidth]{fig/heterogeneity_compare_preliminary.pdf}
+\includegraphics[width=\textwidth]{fig/heterogeneity-compare-preliminary}
 \caption{Left: Kaplan-Meier estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, orderered left to right, top to bottom.}
 \label{fig2}
 \end{figure}
@@ -254,7 +269,7 @@ Finally, the lower right panel, corresponding to Model 4, shows that, by allowin
 
 \begin{figure}[H]
     \centering
-   \includegraphics[width=5.0in]{fig/brand_compare_nobands.pdf}
+   \includegraphics[width=5.0in]{fig/brand-compare-nobands}
 		\caption{Estimated GFLP for all 4 Model Specifications.  Truncated Adjusted Kaplan Meier points are also presented.    \label{fig:first}} 
 \end{figure}
 
@@ -278,18 +293,36 @@ Model 1 & -17483.6  \\
 \end{table}
 
 
-\subsection{Brand Comparisons}
+\subsection{Drive-model Comparisons}
+We consider the problem of selecting between drive-models. From the
+perspective of return on investment, is clear
+that we should prefer the drive-models which will provide more years
+of service. There are two sources of variation at play; the
+posterior uncertainty in the parameters, which largely depends on the
+sample size, and the uncertainty in future
+observations conditional on the parameters. The {\em posterior
+  predictive} distribution incorporates both sources.
+\begin{equation}
 
+\end{equation}
 
+Figure \ref{fig5} shows the predi
 
 \begin{figure}[H]
-\centering
- \includegraphics[width=4.0in]{fig/b10andpi.pdf}
-\caption{Left: 50\% credible intervals for B10 (time in years till 10\% of the drives fail). Right: 50\% credible intervals for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of B10.}
-\label{fig4}
+  \centering
+  \includegraphics[width=.8\textwidth]{fig/b10andpi}
+  \caption{Left: 50\% credible intervals for B10 (time in years till 10\% of the drives fail). Right: 50\% credible intervals for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of B10.}
+  \label{fig4}
 \end{figure}
 
-
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.8\textwidth]{fig/dm-eval}
+  \caption{Left: Posterior predictive TTF (years) for new
+    unit, by drive-model. Right: TTF (top) and loss based on exponential
+    devaluation, $\lambda=5$ (bottom), for best 11 drive-models.}
+  \label{fig5}
+\end{figure}
 
 
 \section{Discussion}
