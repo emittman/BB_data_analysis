@@ -49,6 +49,7 @@ p3 <- res %>%
   ggplot(aes(x=model, y=annualized_loss, ymin=lower2, ymax=upper2)) +
   geom_pointrange()+
   ylab("") +
+  scale_y_continuous(trans="sqrt", breaks=c(.01,.05,.10,.15,.25))+
   ggtitle("Annualized adjusted loss")
 
 c1 <- cowplot::plot_grid(p1,p3,ncol=1)
