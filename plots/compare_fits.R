@@ -24,10 +24,10 @@ sfull <- readRDS("../workflow/samples_lor_only3fails.rds")
 tr_adj <- readRDS("../BB_data/tr_adj_tp2s2pi.rds")$median
 
 
-ssigtp <- readRDS("../MCMC_draws/vary_s2_and_tp2_4_17.rds")
-stp2 <- readRDS("../MCMC_draws/samples_tp2_vary_new.rds")
-snull <- readRDS("../MCMC_draws/samples_null_model_3_29.rds")
-sfull <- readRDS("../MCMC_draws/samples_lor_only3fails.rds")
+# ssigtp <- readRDS("../MCMC_draws/vary_s2_and_tp2_4_17.rds")
+# stp2 <- readRDS("../MCMC_draws/samples_tp2_vary_new.rds")
+# snull <- readRDS("../MCMC_draws/samples_null_model_3_29.rds")
+# sfull <- readRDS("../MCMC_draws/samples_lor_only3fails.rds")
 
 
 
@@ -46,7 +46,7 @@ KM_list <- list()
 xlimits <- c(100,50000)
 ylimits <- c(.0001, .9)
 
-null_band <- KM_band("Model 1", id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
+null_band <- KM_band("1", id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
                      x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F,
                      linetp = "longdash", colband="green")
 
@@ -68,15 +68,15 @@ for(j in 1:44){
   #KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
                             # xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
   
-  tp2_list[[j]] <- KM_band("Model 2", id=j, samp=samptp2, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+  tp2_list[[j]] <- KM_band("2", id=j, samp=samptp2, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = F,
                            colband="red", linetp="dotted")
   
-  s2tp_list[[j]] <- KM_band("Model 3", id=j, samp=samps2tp, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+  s2tp_list[[j]] <- KM_band("3", id=j, samp=samps2tp, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
                             x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T,
                             colband="blue", linetp="dashed")
   
-  full_list[[j]] <- KM_band("Model 4",id=j, samp=sampfull, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+  full_list[[j]] <- KM_band("4",id=j, samp=sampfull, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
                             x_logscale=T, verbose=F, n = 100, pi.free=T, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T,
                             linetp="solid")
 }
@@ -119,8 +119,17 @@ p4 <- ptest + scale_colour_manual(values=c("green", "red","blue","orange"), name
 p4 <- p4 + theme(legend.position = "none")
 
 
-plot_grid(p1, p2, p3, p4, labels=c("2","9","14","40"), ncol = 2, nrow = 2)
-  
+#extract legend as separate plot
+grobs <- ggplotGrob(p1)$grobs
+legend <- grobs[[which(sapply(grobs, function(x) x$name) == "guide-box")]]
+p1 <- p1 + theme(legend.position="none")
+cow1 <- plot_grid(p1, p2, p3, p4, labels=c("2","9","14","40"), ncol = 2, nrow = 2)
+
+#make mod_compare_legend
+pdf(file="../paper/fig/mod_compare_legend.pdf", width=11, height=6)
+plot_grid(cow1, legend, ncol=2, rel_widths=c(1, .1)) 
+dev.off()
+
 # compare parameter estimates of log_tp2
 results_list <- list(full = sfull, sig_tp = ssigtp, tp_only = stp2)
 mean_df <- ldply(1:3, function(mod){
