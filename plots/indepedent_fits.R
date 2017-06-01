@@ -11,8 +11,8 @@ ov <- readRDS("../BB_data/overview.rds")
 mod_id <- filter(ov, f>=5, early_f>=1, late_f>=1) %>%
   select(model) %>%
   unlist
-xlim = c(2000,50000)
-ylim = c(.005,.8)
+xlim = c(1000,50000)
+ylim = c(.008,.8)
 todo <- c(3,8,14)
 
 #these corresponds to full_model ids: 
@@ -29,19 +29,20 @@ for(id in 1:3){
   plots[[id]] <- KM_plot_NP(subdat, "weibull", conf=.9, xlimits=xlim, ylimits=ylim)+
     theme_bw()+
     theme(legend.position="none",
-          axis.title = element_blank(),
-          axis.ticks = element_blank(),
-          axis.text = element_blank(),
+          axis.title.y = element_blank(),
           panel.grid = element_blank()
-          )
-  bands[[id]] <- KM_band("1", 1, samp, 100, xlim=xlim, ylim=ylim, pi.free=F, mu1.free=F, sigma1.free=F,
+          )+
+    scale_x_continuous(limits=xlim, breaks=c(1000, 2000, 5000, 10000, 20000, 40000), trans="log")+
+    scale_y_continuous(limits=ylim, breaks=c(.01, .05, .1, .2, .5, .7, .9, .95, .99), trans="qsev")
+  bands[[id]] <- KM_band("1", 1, samp, 2000, xlim=xlim, ylim=ylim, pi.free=F, mu1.free=F, sigma1.free=F,
                mu2.free=F, sigma2.free=F)
 }
 
+no_yaxis_nums <- theme(axis.text.y=element_blank())
+library(cowplot)
 
 pdf("../plots/ind_estimates.pdf")
-library(cowplot)
-plot_grid(plots[[1]]+bands[[1]],
-          plots[[2]]+bands[[2]],
-          plots[[3]]+bands[[3]], ncol=3)
+plot_grid(plots[[1]]+bands[[1]]+ggtitle("6"),
+          plots[[2]]+bands[[2]]+no_yaxis_nums+ggtitle("14"),
+          plots[[3]]+bands[[3]]+no_yaxis_nums+ggtitle("23"), ncol=3)
 dev.off()

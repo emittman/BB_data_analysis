@@ -255,11 +255,6 @@ plots and checking that potential scale reduction factors (Rhat) \cite{gelman201
 
 
 \subsection{Model Comparisons}
-\begin{figure}
-\includegraphics[width=\textwidth]{fig/heterogeneity-compare-preliminary}
-\caption{Left: Kaplan-Meier estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, orderered left to right, top to bottom.}
-\label{fig2}
-\end{figure}
 
 The right side of Figure \ref{fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive models; note that, since the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
 
@@ -267,12 +262,16 @@ The lower left panel, representing Model 3, suggests differing shape parameters 
 
 Finally, the lower right panel, corresponding to Model 4, shows that, by allowing $\pi_d$ to vary by drive model, there is greater variability in the early rate of failure and, for some drive models, the forecasted fraction failing is adjusted downward. 
 
-
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{fig/heterogeneity-compare-preliminary}
+\caption{Left: Kaplan-Meier estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, orderered left to right, top to bottom.}
+\label{fig2}
+\end{figure}
 
 
 \begin{figure}[H]
     \centering
-   \includegraphics[width=.8\textwidth]{fig/mod_compare_legend}
+   \includegraphics[width=\textwidth]{fig/mod_compare_legend}
 		\caption{Estimated GLFP for 4 Drive Brand Models plotted on Weibull paper.  Black step function is the truncated adjusted Kaplan Meier points.  \label{fig:first}} 
 \end{figure}
 
@@ -308,9 +307,10 @@ posterior uncertainty in the parameters, which largely depends on the
 sample size, and the uncertainty in future
 observations conditional on the parameters. The {\em posterior
   predictive} distribution incorporates both sources.
-\begin{align*}
-  p(t_{d,new}|t) = \int p(\t_{d,new}|\theta_d) p(\theta_d|t) \, d\theta_d\\
-\end{align*}
+\begin{equation*}
+  p(t_{d,new}|t) = \int p(t_{d,new}|\theta_d) p(\theta_d|t) \, d\theta_d
+\end{equation*}
+
 We can sample from this distribution by drawing $t_{d,new}^{(s)}$ from
 $\operatorname{GLFP}(\pi_d^{(s)},
 \mu_1^{(s)},\sigma_1^{(s)},\mu_{2,d}^{(s)},\sigma_{2,d}^{(s)})$, for
