@@ -3,7 +3,7 @@ library(dplyr)
 library(rstan)
 library(cowplot)
 
-dat <- readRDS("BB_data/clean_unit_summaries.rds")
+dat <- readRDS("../BB_data/clean_unit_summaries.rds")
 dat$model <- as.integer(dat$model)
 dat$failed[dat$failed==2] <- 1
 
@@ -39,7 +39,7 @@ tot$model <- factor(tot$model,levels=tot$model[order(tot$count)])  #Sort by Tota
 theme_set(theme_bw(base_size=18))
 #ggplot(tot, aes(x = count)) + geom_histogram(bins = 15) + scale_x_log10()
 fail <- ggplot(tot, aes(x=model, y=count)) + geom_bar(stat="identity") + xlab("Drive Brand Model") + ylab("Total Failures") + 
-   ggtitle("Total Failures by Drive Brand Model") + scale_y_log10() + coord_flip() 
+   ggtitle("Total Failures") + scale_y_log10(breaks=c(10,100,1000)) + coord_flip() 
 
 #Total Time on Test
 tt <- datsub %>% group_by(model) %>% mutate(tt=(endtime-starttime)/(24*365))
@@ -53,8 +53,8 @@ tt2$model <- factor(tt2$model,levels=tt2$model[order(tt2$count)])  #Sort by Tota
 
 theme_set(theme_bw(base_size=18))
 testtime <- ggplot(tt2, aes(x=factor(model),y=total)) + geom_bar(stat="identity") + xlab("Drive Brand Model") + 
-  ylab("Total Time (Years)") + ggtitle("Total Running Time by Drive Brand Model") + scale_y_log10() +
-  coord_flip()
+  ylab("Total Time (Years)") + ggtitle("Total Observed Running Time") + scale_y_log10(breaks=c(10,100,1000, 10000)) +
+  coord_flip() + theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
 
 #Make Cow Plot
 plot_grid(fail, testtime, ncol = 2, nrow = 1)

@@ -77,7 +77,7 @@ get_tr_adj <- function(starttime, pi, loc1, scl1, loc2, scl2){
 
 ## ggplot object containing Weibull probability plot with point estimate and optional credible band
 KM_plot <- function(data, model, tr_adj = 0, title = NULL,
-                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000), ylimits=c(.0001, .9999), verbose=F){
+                    linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000), ylimits=c(.0001, .9999), verbose=F, size=.3){
   require(ggplot2)
   require(plyr)
   require(dplyr)
@@ -106,7 +106,7 @@ KM_plot <- function(data, model, tr_adj = 0, title = NULL,
   }
   
   p <- df %>%
-    ggplot(aes(t, Ft)) + geom_point()
+    ggplot(aes(t, Ft)) + geom_step(size=size)
   
   if(!linear_axes){
     if(!fixed){
@@ -120,15 +120,15 @@ KM_plot <- function(data, model, tr_adj = 0, title = NULL,
         scale_y_continuous(trans = ytrans, breaks = ybrks(ylimits[1], ylimits[2], model="weibull"), limits=ylimits)
     }
   } else{
-    p <- p + scale_x_continuous(limits=xlimits) + scale_y_continuous(limits=ylimits)
+    p <- p + scale_x_continuous(limits=xlimits) + scale_y_continuous(limits=ylimits) 
   }
   p <- p +
-    theme_bw(base_size = 14) + ggtitle(title)+xlab("Hours")+ylab("Fraction Failing")
+    theme_bw(base_size = 14) + ggtitle(title) + xlab("Hours") + ylab("Fraction Failing") 
   p
 }
 
-KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95), x_logscale=T, n=30, verbose=F,
-                    pi.free=T, mu1.free=F, sigma1.free=F, mu2.free=T, sigma2.free=T, linetp="dashed", colline="black", colband="red"){
+KM_band <- function(num, id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95), x_logscale=T, n=30, verbose=F,
+                    pi.free=T, mu1.free=F, sigma1.free=F, mu2.free=T, sigma2.free=T, linetp="dashed", colband="black"){
   total_iter <- length(samp$lp__)
   iter <- floor(total_iter/n_iter) * 1:n_iter
   
@@ -137,7 +137,6 @@ KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95)
   } else{
     x <- seq(xlim[1], xlim[2], length.out=n)
   }
-  
   band <- data.frame(x=x) %>%
     ddply(.(x), function(g){
       Fp <- sapply(iter, function(i) {
@@ -150,7 +149,7 @@ KM_band <- function(id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5, .95)
     })
   if(verbose) print(band)
   list(ptws_ci = geom_ribbon(data = band, inherit.aes = FALSE, aes(x=x, ymin=lower, ymax=upper), fill=colband, alpha=.2),
-       ptws_est = geom_line(data= band, inherit.aes = FALSE, aes(x=x, y=y), linetype=linetp, color=colline))
+       ptws_est = geom_line(data= band, inherit.aes = FALSE, aes_(x=substitute(x), y=substitute(y), colour=num, linetype=num)))
 }
 
 KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_adj, xlimits, ylimits, fixed=T,

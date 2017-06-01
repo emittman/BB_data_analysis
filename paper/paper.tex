@@ -126,11 +126,12 @@ The structure of the paper is as follows.  Section 1 summarizes the Backblaze da
 \section{Data}
 Backblaze is a company that offers backup storage to protect against data loss.  While selling storage space is Backblaze's main business, since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive brand models.  The hard drives continuously spin in controlled storage pods where they run until failure.  When a hard drive fails it is permanently removed, and new hard drives are regularly added to the storage pods.  In addition, the number of storage pods is increasing as Backblaze adds new hard drive models to the sample.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}. In addition, Backblaze publishes summary statistics of the different hard drive models currently operating.  No other analysis or modeling of the failure data is provided; however, Backblaze does encourage the public to further analyze its data, which for this paper goes through the first quarter of 2016.
 
-As of the first quarter of 2016, Backblaze was collecting data on 63 different hard drive models.  Some drive models have been running since 2013, while others were added at a later date.  There are a total of 75,297 hard drives in operation.  The distribution of drives by model varies: some models have only have a service record for a single drive whereas the maximum number of service records for a single drive model is 35,860.  Figure \ref{fig1} shows the distribution of total number of failures and total time on test for drive brand models with at least 3 failures.  As discussed later, for model identification, a minimum of 3 failures was the criterion for hard drive brands to be included in the GLFP model.  
+As of the first quarter of 2016, Backblaze was collecting data on 63 different hard drive models.  Some drive models have been running since 2013, while others were added at a later date.  There are a total of 75,297 hard drives in operation.  The distribution of drives by model varies: some models have only have a service record for a single drive whereas the maximum number of service records for a single drive model is 35,860.  Figure \ref{fig1} shows the distribution of total number of failures and total observed time on test for drive brand models with at least 3 failures.  For model identification, a minimum of 3 failures was the criterion for hard drive brands to be included in the GLFP model.  
 
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{fig/data-sum.pdf}
-\caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total time in operation (log scale) for each of the drive-models in the Backblaze data.  Both plots are sorted based on the total number of failures.}
+\includegraphics[width=.9\textwidth]{fig/data-sum.pdf}
+\centering
+\caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total observed time in operation (log scale) for each of the drive-models in the Backblaze data.  Both plots are sorted based on the total number of failures.}
 \label{fig1}
 \end{figure}
 
@@ -164,7 +165,7 @@ While this adjustment is negligible for the majority of drive-models, five drive
 %\end{figure}
 
 
-In Figure 2 we plot the Kaplan-Meier adjusted cdf for hard drive model 14 on Weibull paper.  Drive model 14 had the most observed failures of all the brands.  Each point on the plot corresponds to an observed failure.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method \cite{green}.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring around 15,000 hours.  Therefore, fitting a single Weibull model is not flexible enough to model the failure distribution.
+In Figure 2 we plot the Kaplan-Meier adjusted cdf for hard drive model 14 on Weibull paper.  Drive model 14 had the most observed failures of all the brands.  Each point on the plot corresponds to an observed failure.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method \cite{green}.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring between 8000 and 20,000 hours.  Therefore, fitting a single Weibull model is not flexible enough to model the failure distribution.
 
 \begin{figure}[H]
 \centering
@@ -267,10 +268,12 @@ The lower left panel, representing Model 3, suggests differing shape parameters 
 Finally, the lower right panel, corresponding to Model 4, shows that, by allowing $\pi_d$ to vary by drive model, there is greater variability in the early rate of failure and, for some drive models, the forecasted fraction failing is adjusted downward. 
 
 
+
+
 \begin{figure}[H]
     \centering
-   \includegraphics[width=5.0in]{fig/brand-compare-nobands}
-		\caption{Estimated GFLP for all 4 Model Specifications.  Truncated Adjusted Kaplan Meier points are also presented.    \label{fig:first}} 
+   \includegraphics[width=.8\textwidth]{fig/mod_compare_legend}
+		\caption{Estimated GLFP for 4 Drive Brand Models plotted on Weibull paper.  Black step function is the truncated adjusted Kaplan Meier points.  \label{fig:first}} 
 \end{figure}
 
 
@@ -310,7 +313,7 @@ Figure \ref{fig5} shows the predi
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=.8\textwidth]{fig/b10andpi}
+  \includegraphics[width=\textwidth]{fig/b10andpi}
   \caption{Left: 50\% credible intervals for B10 (time in years till 10\% of the drives fail). Right: 50\% credible intervals for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of B10.}
   \label{fig4}
 \end{figure}

@@ -1,6 +1,6 @@
 KM_plot_NP <- function(data, model, tr_adj = 0, title = NULL,
                     linear_axes = FALSE, fixed=FALSE, xlimits=c(1000, 50000),
-                    ylimits=c(.0001, .9999), conf=.95, verbose=F){
+                    ylimits=c(.0001, .9999), conf=.95, verbose=F, size=.2){
   require(ggplot2)
   require(plyr)
   require(dplyr)
@@ -37,7 +37,7 @@ KM_plot_NP <- function(data, model, tr_adj = 0, title = NULL,
   }
   
   p <- df %>%
-    ggplot(aes(t, Ft)) + geom_point() +
+    ggplot(aes(t, Ft)) + geom_step(size=size) +
     geom_line(aes(y=lowFt), color="green", lty=2)+
     geom_line(aes(y=uprFt), color="green", lty=2)
     

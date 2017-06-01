@@ -2,7 +2,7 @@
 library(rstan)
 
 # s <- readRDS("reduce_relaxed.rds")
-s <- readRDS("MCMC_draws/samples_lor_only3fails.rds")
+s <- readRDS("../MCMC_draws/samples_lor_only3fails.rds")
 samp <- extract(s)
 
 ## Get Quantiles from GFLP Model ##
@@ -31,7 +31,7 @@ bfcn <- function(model, b, samp, quantiles = c(.025, .5, .975)){
 }
 
 #reduced version
-bfcn2 <- function(model, b, samp, quantiles = c(.025, .5, .975)){
+bfcn2 <- function(model, b, samp, quantiles = c(.25, .5, .75)){
   
   j <- model 
   Qp <- sapply(1:dim(samp$lp__), function(i){
@@ -45,10 +45,10 @@ bfcn2 <- function(model, b, samp, quantiles = c(.025, .5, .975)){
 }
 
 #Run this Function for All Models.  Note:  Should be a quick way to combine this with first function.
-df_reduced <- NULL
-for (j in 1:21){
-  df_reduced <- rbind(df_reduced,bfcn2(j,.1, samp))
-}
+#df_reduced <- NULL
+#for (j in 1:21){
+#  df_reduced <- rbind(df_reduced,bfcn2(j,.1, samp))
+#}
 
 df <- NULL
 for (j in 1:44){
@@ -58,14 +58,14 @@ for (j in 1:44){
 
 
 #B10_Model4.rds is in paper folder for future use
-b10 <- readRDS("paper/B10_Model4.rds")
+b10 <- readRDS("../paper/B10_Model4.rds")
 colnames(b10) <- c("model","lb","med","ub")
 b10$lb <- b10$lb/(24*365)
 b10$med <- b10$med/(24*365)
 b10$ub <- b10$ub/(24*365)
 
 #Sort by Lower End Point Time
-b10$model <- factor(b10$model,levels=b10$model[order(b10$lb)])  #Sort By Lower End Point
+b10$model <- factor(b10$model,levels=b10$model[order(b10$med)])  #Sort By Lower End Point
 
 
 #Make Catepillar Plot for B10; Perhaps Sort by Sample Size?

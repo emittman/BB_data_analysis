@@ -46,11 +46,12 @@ KM_list <- list()
 xlimits <- c(100,50000)
 ylimits <- c(.0001, .9)
 
-null_band <- KM_band(id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
+null_band <- KM_band("Model 1", id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
                      x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F,
-                     linetp = "longdash", colband="green", colline="darkblue")
+                     linetp = "longdash", colband="green")
 
-for(j in 1:length(id)){
+#for(j in 1:length(id)){
+for(j in 1:44){
   orig_id <- id[j]
   pi_j = exp(sampfull$log_pi[max_id,j])
   loc1_j = sampfull$mu1[max_id]
@@ -61,20 +62,23 @@ for(j in 1:length(id)){
   
   dat_tmp <- subset(mods, model == orig_id)
   
-  #KM_list[[j]] <- KM_plot(data = dat_tmp, model = "weibull", tr_adj = adj, title="", linear_axes = FALSE, fixed= TRUE, xlimits=xlimits, ylimits = ylimits,verbose = F)
+  KM_list[[j]] <- KM_plot(data = dat_tmp, model = "weibull", tr_adj = adj, title="", linear_axes = FALSE, fixed= TRUE, xlimits=xlimits, 
+                          size=.2, ylimits = ylimits,verbose = F)
   
-  KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
-                             xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
-  tp2_list[[j]] <- KM_band(id=j, samp=samptp2, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+  #KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
+                            # xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
+  
+  tp2_list[[j]] <- KM_band("Model 2", id=j, samp=samptp2, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = F,
-                           colband="red", linetp="dotted", colline="black")
-  s2tp_list[[j]] <- KM_band(id=j, samp=samps2tp, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
-                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T,
-                            colband="blue", linetp="dashed", colline="black")
+                           colband="red", linetp="dotted")
   
-  full_list[[j]] <- KM_band(id=j, samp=sampfull, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+  s2tp_list[[j]] <- KM_band("Model 3", id=j, samp=samps2tp, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T,
+                            colband="blue", linetp="dashed")
+  
+  full_list[[j]] <- KM_band("Model 4",id=j, samp=sampfull, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
                             x_logscale=T, verbose=F, n = 100, pi.free=T, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T,
-                            linetp="solid",colband="green")
+                            linetp="solid")
 }
 
 j=26 #lack of fit on 4, compromise on 15, 37 hits the mark, all agree 26
@@ -83,24 +87,39 @@ KM_list[[j]] + null_band[[2]] + null_band[[2]] +
   s2tp_list[[j]][[1]] + s2tp_list[[j]][[2]] + 
   full_list[[j]][[1]] + full_list[[j]][[2]] + null_band
 
+#Pick 4 Drive Models for Paper.  
 
-#Models to Plot for Paper; Just show Bands for Full Model; Added LineType
-#Possible Models to Show: 2, 9, 14, 23, 40, 45 
+#Make One Plot with Legend:
+j=2
+ptest = KM_list[[j]] + null_band[[2]] + tp2_list[[j]][[2]] + s2tp_list[[j]][[2]] + full_list[[j]][[2]]
+p1 <- ptest + scale_colour_manual(values=c("green", "red","blue","orange"), name="Model") + 
+  scale_linetype_manual(values=c("longdash","dotted","dashed","solid") , name="Model") + 
+  theme(legend.key.width=unit(3,"line")) 
 
-#Function to Grab 4 Drive Models and Make a List of the Plots
-quad <- function(p1, p2, p3, p4){
-  plts <- cbind(p1,p2,p3,p4)
-  out <- list()
-  for (i in 1:4){
-    p1 <- plts[i]
-    out[[i]] <- KM_list[[p1]] + null_list[[p1]][[2]] + tp2_list[[p1]][[2]] + s2tp_list[[p1]][[2]] + full_list[[p1]][[2]]
-  }
-  return((out))
-}
+j=9
+ptest = KM_list[[j]] + null_band[[2]] + tp2_list[[j]][[2]] + s2tp_list[[j]][[2]] + full_list[[j]][[2]]
+p2 <- ptest + scale_colour_manual(values=c("green", "red","blue","orange"), name="Model") + 
+  scale_linetype_manual(values=c("longdash","dotted","dashed","solid") , name="Model") + 
+  theme(legend.key.width=unit(3,"line")) 
 
-#Test Function and Use Cow to Make Grid.
-plot1 <- quad(2,9,14,40)
-plot_grid(plot1[[1]], plot1[[2]], plot1[[3]], plot1[[4]], labels=c("2","9","14","40"), ncol = 2, nrow = 2)
+p2 <- p2 + theme(legend.position = "none")
+
+j=14
+ptest = KM_list[[j]] + null_band[[2]] + tp2_list[[j]][[2]] + s2tp_list[[j]][[2]] + full_list[[j]][[2]]
+p3 <- ptest + scale_colour_manual(values=c("green", "red","blue","orange"), name="Model") + 
+  scale_linetype_manual(values=c("longdash","dotted","dashed","solid") , name="Model") + 
+  theme(legend.key.width=unit(3,"line")) 
+p3 <- p3 + theme(legend.position = "none")
+
+j=40
+ptest = KM_list[[j]] + null_band[[2]] + tp2_list[[j]][[2]] + s2tp_list[[j]][[2]] + full_list[[j]][[2]]
+p4 <- ptest + scale_colour_manual(values=c("green", "red","blue","orange"), name="Model") + 
+  scale_linetype_manual(values=c("longdash","dotted","dashed","solid") , name="Model") + 
+  theme(legend.key.width=unit(3,"line")) 
+p4 <- p4 + theme(legend.position = "none")
+
+
+plot_grid(p1, p2, p3, p4, labels=c("2","9","14","40"), ncol = 2, nrow = 2)
   
 # compare parameter estimates of log_tp2
 results_list <- list(full = sfull, sig_tp = ssigtp, tp_only = stp2)
@@ -117,7 +136,7 @@ ggplot(mean_df, aes(x=means)) + geom_histogram(aes(y=..density..), bins=10) + fa
 
 #Plot B10
 #Note: 50% CI for B10
-b10 <- readRDS("b10_50ci.rds")
+b10 <- readRDS("../paper/b10_50ci.rds")
 colnames(b10) <- c("model","lb","med","ub")
 b10$lb <- b10$lb/(24*365)
 b10$med <- b10$med/(24*365)
@@ -128,9 +147,9 @@ b10$model <- factor(b10$model,levels=b10$model[order(b10$med)])  #Sort By Lower 
 
 
 #Make Catepillar Plot for B10; Perhaps Sort by Sample Size?
-b10.plot <- ggplot(b10, aes(x=as.factor(model), y=med, ymin=lb, ymax=ub)) +
+b10.plot <- ggplot(b10, aes(x=model, y=med, ymin=lb, ymax=ub)) +
   geom_pointrange() +  
-  coord_flip(ylim = c(0,8)) + 
+  coord_cartesian(ylim = c(0, 8)) + 
   xlab('Drive Model') + theme_bw() + 
   ylab("Years")   +
   scale_x_discrete(breaks=seq(1,44,1))
@@ -169,7 +188,6 @@ pi.dat$model <- factor(pi.dat$model,levels=pi.dat$model[order(pi.dat$bmed)])  #S
 #Make Catepillar Plot for B10; Perhaps Sort by Sample Size?
 pi.plot <- ggplot(pi.dat, aes(x=as.factor(model), y=med, ymin=lower, ymax=upper)) +
   geom_pointrange() +  
-  coord_flip() + 
   xlab('Drive Model') + theme_bw() + 
   ylab(expression(pi))   +
   scale_x_discrete(breaks=seq(1,44,1))+
