@@ -5,7 +5,7 @@ source("../predictive/sample_from_predictive.R")
 # tr_adj <- readRDS("../BB_data/tr_adj_tp2s2pi.rds")
 V <- function(x){
   #devaluation curve
-  5*dexp(x,1/5)
+  exp(-.4*x)
 }
 
 library(plyr)
@@ -19,10 +19,10 @@ res <- ldply(1:44, function(dm){
   s2 <- samp$sigma2[,dm]
   newtime <- sample_glfp(n=length(samp$lp__), p, m1, s1, m2, s2)/24/365
   meantime <- mean(newtime)
-  annualized_loss <- mean(V(newtime)) * 1/mean(newtime)
+  loss <- V(newtime)
   q <- quantile(newtime, c(.25,.5,.75))
-  q2 <- quantile(V(newtime)/newtime, c(.25,.5,.75))
-  data.frame(model = dm, mean_time = meantime, annualized_loss = annualized_loss,
+  q2 <- quantile(loss, c(.25,.5,.75))
+  data.frame(model = dm, mean_time = meantime, mean_loss = mean(loss),
              lower = q[1], median = q[2], upper = q[3],
              lower2 = q2[1], median2 = q2[2], upper2 = q2[3])
 })
@@ -55,8 +55,8 @@ p3 <- res %>%
 c1 <- cowplot::plot_grid(p1,p3,ncol=1)
 
 p4 <- res %>%
-  ggplot(aes(x=model, y=median, ymin=lower, ymax=upper)) + geom_pointrange(linetype=2) +
-  scale_y_continuous()+geom_hline(yintercept=9, color="red") +
+  ggplot(aes(x=model, y=median2, ymin=lower2, ymax=upper2)) + geom_pointrange(linetype=2) +
+  scale_y_continuous()+#geom_hline(yintercept=9, color="red") +
   theme(axis.title.x = element_blank(),
         axis.ticks.x = element_blank(),
         axis.text.x = element_blank()) +

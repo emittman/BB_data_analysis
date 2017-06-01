@@ -296,7 +296,7 @@ Model 1 & -17483.6  \\
 
 
 \subsection{Drive-model Comparisons}
-We consider the problem of selecting between drive-models. From a
+We consider the problem of ranking drive-models. From a
 business perspective, it is clear
 that we should prefer the drive-models which will provide more years
 of service. For ease of exposition, we will assume that the purchase
@@ -314,13 +314,21 @@ observations conditional on the parameters. The {\em posterior
 We can sample from this distribution by drawing $t_{d,new}^{(s)}$ from
 $\operatorname{GLFP}(\pi_d^{(s)},
 \mu_1^{(s)},\sigma_1^{(s)},\mu_{2,d}^{(s)},\sigma_{2,d}^{(s)})$, for
-$s=1,...,S$, using the saved posterior draws for the model parameters.
+$s=1,...,S$, using the saved posterior draws for the model
+parameters. The expected time-to-failure (TTF) for drive-model $d$ can be estimated by
+$$\frac{1}{S} \sum_{s=1}^{S} t_{d,new}^{(s)}.$$
 
-Predicted time to failure does not account for depreciation. Assuming that
-antiquated computer hardware tends to have less practical value, we
-may want to use a different measure which will reward more the drive-models
-that are very reliable in the first 0-5 years compared with those with a
-larger number of early failures, but which may last 20 years.
+While TTF is clearly important, due to the
+anticipation of advancements in technology, we can expect that the
+relative value of computer hardware will depreciate rather quickly. To account
+for this, we can posit a model for this depreciation and instead of
+TTF, we can consider the value at replacement. The IRS considered
+computer hardware to be ``5-year'' equipment.(form 4562) Using``the declining
+balance method'' the rate of depreciation is 40\% per year.
+
+Let $L(t) = e^{-.4t}$ represent the value at the time of failure
+relative to its original value. We can then define the predicted loss
+of a unit as its value at time of failure.
 
 Figure \ref{fig5} shows the predi
 

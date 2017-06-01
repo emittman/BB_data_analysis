@@ -11,7 +11,7 @@ ov <- readRDS("../BB_data/overview.rds")
 mod_id <- filter(ov, f>=5, early_f>=1, late_f>=1) %>%
   select(model) %>%
   unlist
-xlim = c(1000,50000)
+xlim = c(1000,55000)
 ylim = c(.008,.8)
 todo <- c(3,8,14)
 
@@ -41,7 +41,7 @@ for(id in 1:3){
 no_yaxis_nums <- theme(axis.text.y=element_blank())
 library(cowplot)
 
-pdf("../plots/ind_estimates.pdf")
+pdf("../plots/ind_estimates.pdf", width=10, height=5)
 plot_grid(plots[[1]]+bands[[1]]+ggtitle("6"),
           plots[[2]]+bands[[2]]+no_yaxis_nums+ggtitle("14"),
           plots[[3]]+bands[[3]]+no_yaxis_nums+ggtitle("23"), ncol=3)
