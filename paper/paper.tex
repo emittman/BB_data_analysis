@@ -297,17 +297,30 @@ Model 1 & -17483.6  \\
 
 
 \subsection{Drive-model Comparisons}
-We consider the problem of selecting between drive-models. From the
-perspective of return on investment, is clear
+We consider the problem of selecting between drive-models. From a
+business perspective, it is clear
 that we should prefer the drive-models which will provide more years
-of service. There are two sources of variation at play; the
+of service. For ease of exposition, we will assume that the purchase
+price of a hard-drive is the same across drive-models.
+
+There are two sources of variation at play; the
 posterior uncertainty in the parameters, which largely depends on the
 sample size, and the uncertainty in future
 observations conditional on the parameters. The {\em posterior
   predictive} distribution incorporates both sources.
-\begin{equation}
+\begin{align*}
+  p(t_{d,new}|t) = \int p(\t_{d,new}|\theta_d) p(\theta_d|t) \, d\theta_d\\
+\end{align*}
+We can sample from this distribution by drawing $t_{d,new}^{(s)}$ from
+$\operatorname{GLFP}(\pi_d^{(s)},
+\mu_1^{(s)},\sigma_1^{(s)},\mu_{2,d}^{(s)},\sigma_{2,d}^{(s)})$, for
+$s=1,...,S$, using the saved posterior draws for the model parameters.
 
-\end{equation}
+Predicted time to failure does not account for depreciation. Assuming that
+antiquated computer hardware tends to have less practical value, we
+may want to use a different measure which will reward more the drive-models
+that are very reliable in the first 0-5 years compared with those with a
+larger number of early failures, but which may last 20 years.
 
 Figure \ref{fig5} shows the predi
 
