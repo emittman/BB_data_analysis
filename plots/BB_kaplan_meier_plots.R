@@ -23,25 +23,29 @@ source("../plotting_fns/KM_plot.R")
 mods <- subset(dat, model %in% id)
 max_id <- which.max(samp$lp__)
 plot_list <-NULL
-for(j in 1:length(id)){
-  orig_id <- id[j]
-  pi_j = exp(samp$log_pi[max_id,j])
-  loc1_j = samp$mu1[max_id]
-  loc2_j = samp$mu2[max_id,j]
-  scl1_j = samp$sigma1[max_id]
-  scl2_j = samp$sigma2[max_id,j]
-  adj <- with(subset(mods, model == orig_id),get_tr_adj(min(starttime), pi_j, loc1_j, scl1_j, loc2_j, scl2_j))
-  
-  dat_tmp <- subset(mods, model == orig_id)
 
-  kmb <- KM_with_band(data = dat_tmp, id =j, samp = samp, n_iter = 200, n = 50, quantiles = c(.05,.5,.95), tr_adj = adj,
-                      xlimits = c(0,50000), ylimits = c(0,.9), fixed = T, linear_axes = T, verbose = F, model = "weibull")
+adjs <-readRDS("../BB_data/tr_adj_tp2s2pi.rds")$median
+
+selected <- c(4,5,2,3,6,8,26,23)
+
+for(i in 1:length(selected)){
+  j <- selected[i]
+  orig_id <- id[j]
+  adj <- adjs[j]
+  xlim <- c(100,50000)
+  ylim <- c(.005,.5)
+  dat_tmp <- subset(mods, model == orig_id)
+  p <- KM_plot_NP(dat_tmp, "weibull", adj, as.character(j),FALSE, TRUE, xlimits=xlim, ylimits=ylim, conf = .9)
+  p <- p + KM_band(num=as.character(j), id=j, samp=samp, n_iter = 1000, xlim = xlim, ylim = ylim, n = 100,
+                   pi.free=T, mu1.free=F, mu2.free=T,sigma1.free=F,sigma2.free=T)+
+    scale_y_continuous(trans="qsev", breaks=c(.01, .05, .15, .4), limits=c(.005,.5))+
+    theme(legend.position="none",
+          axis.title = element_blank())+
+    scale_x_continuous(trans="log", breaks=c(.01, .1, 1, 5)*365*24, 
+                       labels=as.character(c(.01,.1,1,5)), limits=xlim)
   
-  plot_list[[j]] <- kmb
+  plot_list[[i]] <- p
 }
 
-gridExtra::grid.arrange(plot_list[[1]], plot_list[[2]], plot_list[[3]], plot_list[[4]], plot_list[[5]],
-                        plot_list[[6]], plot_list[[7]], plot_list[[8]], plot_list[[9]], plot_list[[10]],
-                        plot_list[[11]], plot_list[[12]], plot_list[[13]], plot_list[[14]], plot_list[[15]],
-                        plot_list[[16]], plot_list[[17]], plot_list[[18]], plot_list[[19]], plot_list[[20]], 
-                        plot_list[[21]], nrow=5, ncol=5)
+plot_grid(plot_list[[1]],plot_list[[2]], plot_list[[3]],plot_list[[4]],
+          plot_list[[5]], plot_list[[6]], plot_list[[7]], plot_list[[8]], nrow=2)

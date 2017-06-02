@@ -155,7 +155,7 @@ KM_band <- function(num, id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5,
 KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_adj, xlimits, ylimits, fixed=T,
                          linear_axes=F, verbose=F, model="weibull", pi.free=T, mu1.free=F, sigma1.free=F, mu2.free=T, sigma2.free=T){
   p <- KM_plot(data = data, model = model, tr_adj = tr_adj, title=title, fixed=fixed, linear_axes = linear_axes, xlimits=xlimits, ylimits=ylimits, verbose)
-  q <- KM_band(id, samp, n_iter, xlimits, ylimits, quantiles, !linear_axes, n, verbose, pi.free, mu1.free, sigma1.free, mu2.free, sigma2.free)
+  q <- KM_band(title, id, samp, n_iter, xlimits, ylimits, quantiles, !linear_axes, n, verbose, pi.free, mu1.free, sigma1.free, mu2.free, sigma2.free)
   p + q[[1]] + q[[2]]
 }
 
