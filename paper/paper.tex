@@ -330,8 +330,8 @@ Let $L(t) = e^{-.4t}$ represent the value at the time of failure
 relative to its original value. We can then define the predicted loss
 of a unit as its value at time of failure.
 
-Figure \ref{fig5} shows the predi
-
+We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a central measure of tendency.  On the left panel of Figure 5 we plot B10, the .10 quantile (i.e., the amount of time it takes for 10\% of hard drives to fail), for all drive brand models. The best six drive models ranked by TTF are also the drive models with the longest time to B10.  Drive brand models 5, 2, 4, and 3 seem to really stick out as the most reliable as there is a larger gap separating them from the rest of the group.  Another interesting feature to compare is $\pi$, the proportion failing due to infant mortality.  One the right panel of Figure 5 are the posterior credible intervals of $\pi$ for each hard drive model.  The plot is again sorted according to B10 so it can be compared to the left hand side.  While for many of the drive models the ordinal ranking is the same as on the left, there are some drive model comparisons, for example 23 and 18, that differ in ranking if compared using B10 or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.   
+ 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{fig/b10andpi}
