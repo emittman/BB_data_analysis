@@ -129,10 +129,9 @@ Backblaze is a company that offers backup storage to protect against data loss. 
 As of the first quarter of 2016, Backblaze was collecting data on 63 different hard drive models.  Some drive models have been running since 2013, while others were added at a later date.  There are a total of 75,297 hard drives in operation.  The distribution of drives by model varies: some models have only have a service record for a single drive whereas the maximum number of service records for a single drive model is 35,860.  Figure \ref{fig1} shows the distribution of total number of failures and total observed running time for drive brand models with at least 3 failures.  For model identification, a minimum of 3 failures was the criterion for hard drive brands to be included in the GLFP model.  
 
 \begin{figure}[H]
-\includegraphics[width=.9\textwidth]{fig/data-sum.pdf}
-\centering
-\caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total observed time in operation (log scale) for each of the drive-models in the Backblaze data.  Both plots are sorted based on the total number of failures.}
-\label{fig1}
+  \includegraphics[width=.9\textwidth]{fig/data-sum.pdf}
+  \caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total observed time in operation (log scale) for each of the drive-models in the Backblaze data.  Both plots are sorted based on the total number of failures.}
+  \label{fig1}
 \end{figure}
 
 
@@ -321,14 +320,14 @@ $$\frac{1}{S} \sum_{s=1}^{S} t_{d,new}^{(s)}.$$
 While TTF is clearly important, due to the
 anticipation of advancements in technology, we can expect that the
 relative value of computer hardware will depreciate rather quickly. To account
-for this, we can posit a model for this depreciation and instead of
-TTF, we can consider the value at replacement. The IRS considered
-computer hardware to be ``5-year'' equipment.(form 4562) Using``the declining
+for this depreciation, rather than using TTF as the metric for drive-model comparison, we use the value at replacement. The IRS considers
+computer hardware to be ``5-year'' equipment\cite{f4562}. Using``the declining
 balance method'' the rate of depreciation is 40\% per year.
 
 Let $L(t) = e^{-.4t}$ represent the value at the time of failure
-relative to its original value. We can then define the predicted loss
-of a unit as its value at time of failure.
+relative to a new unit. We can rank the drive-models by 
+$$\op{E}(L(t_{d,new})|t))\approx \frac{1}{S} \sum_{s=1}^{S} L(t_{d,new}^{(s)}).$$
+
 
 We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a central measure of tendency.  On the left panel of Figure 5 we plot B10, the .10 quantile (i.e., the amount of time it takes for 10\% of hard drives to fail), for all drive brand models. The best six drive models ranked by TTF are also the drive models with the longest time to B10.  Drive brand models 5, 2, 4, and 3 seem to really stick out as the most reliable as there is a larger gap separating them from the rest of the group.  Another interesting feature to compare is $\pi$, the proportion failing due to infant mortality.  One the right panel of Figure 5 are the posterior credible intervals of $\pi$ for each hard drive model.  The plot is again sorted according to B10 so it can be compared to the left hand side.  While for many of the drive models the ordinal ranking is the same as on the left, there are some drive model comparisons, for example 23 and 18, that differ in ranking if compared using B10 or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.   
  
@@ -342,9 +341,8 @@ We can also use the posterior draws to compute quantiles of interest, which in r
 \begin{figure}[H]
   \centering
   \includegraphics[width=.8\textwidth]{fig/dm-eval}
-  \caption{Left: Posterior predictive TTF (years) for new
-    unit, by drive-model. Right: TTF (top) and loss based on exponential
-    devaluation, $\lambda=5$ (bottom), for best 11 drive-models.}
+  \caption{Left: Posterior predictive relative value-at-loss for new
+    unit, by drive-model. Right: TTF (top) and VAF based on 40\% annual depreciation (bottom), for best 11 drive-models.}
   \label{fig5}
 \end{figure}
 
