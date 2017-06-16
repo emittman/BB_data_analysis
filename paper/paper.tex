@@ -347,11 +347,16 @@ We can also use the posterior draws to compute quantiles of interest, which in r
 \end{figure}
 
 
-\section{Discussion}
-Review the advantages of fitting the GFLP model and offer future ideas.  
+\section{Conclusions}
+We should point out some assumptions made in this analysis. First, we assume exchangability of units within drive models. This assumption is due to our ignorance about the causes of failure and of potentially important covariates. If we had information about distinguishing characteristics of the two identified failure modes, then we should use this information. Also, there could be many environmental or human-related factors that impact lifetime, such as operating conditions associated with location in the data center, which are likely confounded with drive-model.
 
-Advances in computer technology have made computationally intensive Bayesian methods for fitting hierarchical models feasible in practice. Analysis using HMC is accessible to practitioners by Stan. HMC can be very efficient in terms of effective samples because of the way that it uses joint updates for all parameters using Hamiltonian dynamics to rapidly explore the target distribution. Hierarchical modeling can be a useful way to pool information to estimate large models. By using Bayesian methods like the one presented here we can avoid using potentially problematic asymptotic approximations, since all posterior uncertainty is automatically integrated into averages computed from functions of the samples.
+Second, it is probably true that many modes of failure occur and that the heterogeneity that we observe among drive models is due to different combinations of these. Our ignorance of the causes of failure leads us to approximate the main failure mode with a single drive-model specific Weibull distribution. Because of this, we suspect that our forecasts are too confident; especially for ``well-estimated" models, our ``model certainty" makes the uncertainty about these parameters too small. On the other hand, our model borrows strength across drive-models, including those with information about late failures. In addition, we suggest that using metrics for comparing drive-models that reduce the importance of the right tail of the distribution are appropriate for these data. With respect to decisions based on such metrics, we believe the assumptions in the previous paragraph to be the most critical. Those issues are typical to observational data such as these.
 
+Consumers of high-tech manufactured goods usually lack the expertise to perform a failure analysis to determine the cause of failure. The ability to fit marginal models, such as GLFP, can allow investigators to answer many pertinent questions while still appropriately accounting for uncertainty and avoiding substantial model bias.
+
+Advances in technology have made computationally intensive Bayesian methods for fitting hierarchical models feasible in practice. Hierarchical modeling can be an effective way to regularize a large number of models fits by borrowing information. Because all the data contribute some information about the global parameters, it is often sufficient to use weakly informative priors on the global parameters, making the resulting shrinkage data dependent. Using samples from the full joint posterior avoids the need for potential problematic asymptotic approximations.
+
+Analysis using HMC is accessible to practitioners by Stan. HMC can be very efficient in terms of effective samples because of the way that it uses joint updates for all parameters using Hamiltonian dynamics to rapidly explore the target distribution. 
 
 
     
