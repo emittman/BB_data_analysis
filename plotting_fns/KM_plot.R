@@ -48,10 +48,10 @@ qgev_trans <- function(){
 ## Generate sensible breaks for Weibull plot
 xbrks <- function(min, max, N = 8, prec = -3) {
   n <- log2(max/min)
-  round(2^seq.int(0, n, length.out = N)*min, prec)
+  signif(2^seq.int(0, n, length.out = N)*min, prec)
 }
 
-ybrks <- function(min_p, max_p, model){
+ybrks <- function(min_p, max_p, model, len = 7){
   switch(model,
          weibull = {invcdf <- qsev
          cdf <- psev},
@@ -61,10 +61,11 @@ ybrks <- function(min_p, max_p, model){
          cdf <- pgev})
   
   
-  quantiles <- seq.int(invcdf(min_p)-.5, invcdf(max_p)+.5, length.out = 7)
-  out <- round(cdf(quantiles), 4)
+  quantiles <- seq.int(invcdf(min_p), invcdf(max_p), length.out = len)
+  out <- signif(cdf(quantiles), 1)
   
-  out <- out + c(.0001, rep(0,5), -.0001)
+  # out <- out + c(.0001, rep(0,len-2), -.0001)
+  out
 }
 
 my_pweibull <- function(x, location, scale, ...){
@@ -149,7 +150,8 @@ KM_band <- function(num, id, samp, n_iter=NULL, xlim, ylim, quantiles=c(.05, .5,
     })
   if(verbose) print(band)
   list(ptws_ci = geom_ribbon(data = band, inherit.aes = FALSE, aes(x=x, ymin=lower, ymax=upper), fill=colband, alpha=.2),
-       ptws_est = geom_line(data= band, inherit.aes = FALSE, aes_(x=substitute(x), y=substitute(y), colour=num, linetype=num)))
+       ptws_est = geom_line(data= band, inherit.aes = FALSE, aes_(x=substitute(x), y=substitute(y), colour=num, linetype=num)),
+       band = band)
 }
 
 KM_with_band <- function(title = NULL, data, id, samp, n_iter, n, quantiles, tr_adj, xlimits, ylimits, fixed=T,

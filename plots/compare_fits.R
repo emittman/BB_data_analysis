@@ -44,7 +44,7 @@ s2tp_list <- list()
 tp2_list <-list()
 KM_list <- list()
 xlimits <- c(100,50000)
-ylimits <- c(.0001, .9)
+ylimits <- c(.001, .9)
 
 null_band <- KM_band("1", id=1, n_iter= 100, samp=sampnull, xlim=xlimits, ylim=ylimits, quantiles=c(.05,.5,.95),
                      x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = F, sigma2.free = F,
@@ -65,27 +65,27 @@ for(j in 1:44){
   KM_list[[j]] <- KM_plot(data = dat_tmp, model = "weibull", tr_adj = adj, title="", linear_axes = FALSE, fixed= TRUE, xlimits=xlimits, 
                           size=.2, ylimits = ylimits,verbose = F)
   
-  #KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
-                            # xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
-  
-  tp2_list[[j]] <- KM_band("2", id=j, samp=samptp2, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
-                           x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = F,
-                           colband="red", linetp="dotted")
-  
-  s2tp_list[[j]] <- KM_band("3", id=j, samp=samps2tp, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
-                            x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T,
-                            colband="blue", linetp="dashed")
-  
-  full_list[[j]] <- KM_band("4",id=j, samp=sampfull, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+  # KM_list[[j]] <- KM_plot_NP(data=dat_tmp, model = "weibull", tr_adj=adj, title = NULL, linear_axes = FALSE, fixed=TRUE,
+  #                           xlimits=xlimits, ylimits=ylimits, verbose=F, conf=.90)
+  # 
+  # tp2_list[[j]] <- KM_band("2", id=j, samp=samptp2, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+  #                          x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = F,
+  #                          colband="red", linetp="dotted")
+  # 
+  # s2tp_list[[j]] <- KM_band("3", id=j, samp=samps2tp, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.05,.5,.95),
+  #                           x_logscale=T, verbose=F, n = 100, pi.free=F, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T,
+  #                           colband="blue", linetp="dashed")
+
+  full_list[[j]] <- KM_band("4",id=j, samp=sampfull, xlim=xlimits, ylim=ylimits, n_iter=100, quantiles=c(.025,.5,.975),
                             x_logscale=T, verbose=F, n = 100, pi.free=T, mu1.free=F, sigma1.free = F, mu2.free = T, sigma2.free = T,
-                            linetp="solid")
+                            colband="red", linetp="solid")
 }
 
 j=26 #lack of fit on 4, compromise on 15, 37 hits the mark, all agree 26
-KM_list[[j]] + null_band[[2]] + null_band[[2]] +
-  tp2_list[[j]][[1]] + tp2_list[[j]][[2]] +
-  s2tp_list[[j]][[1]] + s2tp_list[[j]][[2]] + 
-  full_list[[j]][[1]] + full_list[[j]][[2]] + null_band
+KM_list[[j]] + #null_band[[2]] + null_band[[2]] +
+  # tp2_list[[j]][[1]] + tp2_list[[j]][[2]] +
+  # s2tp_list[[j]][[1]] + s2tp_list[[j]][[2]] + 
+  full_list[[j]][[1]] + full_list[[j]][[2]] #+ null_band
 
 #Pick 4 Drive Models for Paper.  
 
@@ -207,4 +207,22 @@ pi.plot
 plot_grid(b10.plot, pi.plot, ncol = 2, nrow = 1)
 
 
-
+full_pls_km <- function(j){
+  datKM <- KM_list[[j]]$data
+  datKM$t <- pmax(xlimits[1], datKM$t)
+  datNULL <- null_band[[2]]$data
+  datBAND <- full_list[[j]][[1]]$data
+  ggplot(datBAND) + geom_line(aes(x,y), color="red")+
+    geom_ribbon(aes(x,y,ymin=lower,ymax=upper), fill="red",alpha=.3)+
+    geom_step(data=datKM, inherit.aes =FALSE, aes(x=t,y=Ft), color="black")+
+    geom_line(data=datNULL, aes(x,y), color="green")+
+    scale_x_continuous(name="time(hours)",trans="log", limits = xlimits,
+                       breaks=xbrks(xlimits[1], xlimits[2], prec=0, N = 5))+
+    scale_y_continuous(name="proportion failing", trans="qsev", limits = ylimits,
+                       breaks=ybrks(ylimits[1], ylimits[2], model = "weibull", len=5))+
+    theme(legend.position="none") + ggtitle(paste(j))+
+    theme_bw()
+}
+cowplot::plot_grid(full_pls_km(11), full_pls_km(9), 
+                   full_pls_km(10), full_pls_km(15))
+p
