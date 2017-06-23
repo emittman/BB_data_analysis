@@ -206,23 +206,75 @@ pi.plot
 #Make Cow Plot
 plot_grid(b10.plot, pi.plot, ncol = 2, nrow = 1)
 
-
+#needs xlimits, ylimits in global env. as well as KM_list, null_band, full_list
 full_pls_km <- function(j){
   datKM <- KM_list[[j]]$data
   datKM$t <- pmax(xlimits[1], datKM$t)
   datNULL <- null_band[[2]]$data
   datBAND <- full_list[[j]][[1]]$data
+  xlabels <- c(.01,.05,.25,1,2,5)
   ggplot(datBAND) + geom_line(aes(x,y), color="red")+
     geom_ribbon(aes(x,y,ymin=lower,ymax=upper), fill="red",alpha=.3)+
     geom_step(data=datKM, inherit.aes =FALSE, aes(x=t,y=Ft), color="black")+
     geom_line(data=datNULL, aes(x,y), color="green")+
-    scale_x_continuous(name="time(hours)",trans="log", limits = xlimits,
-                       breaks=xbrks(xlimits[1], xlimits[2], prec=0, N = 5))+
+    scale_x_continuous(name="time(years)",trans="log", limits = xlimits,
+                       breaks=xlabels*365*24,
+                       labels=xlabels)+
     scale_y_continuous(name="proportion failing", trans="qsev", limits = ylimits,
                        breaks=ybrks(ylimits[1], ylimits[2], model = "weibull", len=5))+
-    theme(legend.position="none") + ggtitle(paste(j))+
-    theme_bw()
+    theme_bw()+
+    theme(legend.position="none"#,
+#          axis.text.x=element_text(angle=45, hjust=1, vjust=1)
+          ) + ggtitle(paste(j))
 }
 cowplot::plot_grid(full_pls_km(11), full_pls_km(9), 
                    full_pls_km(10), full_pls_km(15))
-p
+
+cowplot::plot_grid(full_pls_km(4), full_pls_km(5), full_pls_km(2), full_pls_km(3),
+                   full_pls_km(6), full_pls_km(8), full_pls_km(26), full_pls_km(23),
+                   nrow=2)
+
+#lifetime plots
+j = 11
+
+lifetime_plot <- function(mod, to_show=NULL){
+  xlabels <- c(.01,.05,.25,1,2,5)
+  subdat <- filter(dat, model==id[mod])
+  if(!is.null(to_show)){
+    N = nrow(subdat)
+    subdat <- sample_n(subdat, size=to_show)
+  }
+  subdat <- subdat %>%
+    mutate(ID=as.integer(factor(serial_number, levels=serial_number[order(starttime)])),
+           starttime=pmax(starttime, 100))
+
+  p <- filter(subdat, censored) %>%
+    ggplot(aes(x=ID, xend=ID, y=starttime, yend=endtime)) +
+    geom_segment(arrow = arrow(length=unit(.15, "cm"), type = "open"), alpha=.5)+
+    geom_segment(data = filter(subdat, !censored),
+                 aes(x=ID, xend=ID, y=starttime, yend=endtime), alpha=.5)+
+    geom_point(data = filter(subdat, !censored),
+               aes(x=ID,y=endtime), shape=4, size=3) +
+    coord_flip() +
+    theme_bw() +
+    theme(axis.title.y= element_blank(),
+          axis.ticks.y= element_blank(),
+          axis.text.y = element_blank()) +
+    scale_y_continuous(name="time(years)",trans="log", limits = xlimits,
+                       breaks=xlabels*365*24,
+                       labels=xlabels)
+    
+  if(is.null(to_show)) return(p+ggtitle(paste(mod)))
+  p + ggtitle(paste(mod, "(sample size = ", to_show, ", N = ", N, ")"))
+}
+p11 <- lifetime_plot(11)
+p9 <- lifetime_plot(9)
+p10 <- lifetime_plot(10)
+p15 <- lifetime_plot(15, 200)
+cowplot::plot_grid(p11,p9, p10, p15, ncol=2)
+
+p4 <- lifetime_plot(4, 200)
+p5 <- lifetime_plot(5, 200)
+p2 <- lifetime_plot(2, 200)
+p3 <- lifetime_plot(3, 200)
+cowplot::plot_grid(p4,p5,p2,p3, ncol=2)
