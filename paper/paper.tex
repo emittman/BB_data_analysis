@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage{amsmath}
-\usepackage{graphicx,psfrag,epsf,float}
+\usepackage{graphicx,psfrag,epsf,float, bm}
 \graphicspath{C:/Users/Colin/Documents/GitHub/BB_data_analysis/paper/fig/}
 \usepackage{enumerate}
 \usepackage[numbers]{natbib}
@@ -136,22 +136,46 @@ Previous papers have employed various data assumptions and methodologies to mode
 
 
 \section{GLFP model}
-\subsection{Likelihood}
-\subsubsection{With Truncation}
+For modeling the lifetime of hard drives, we use the Generalized Limited Failure Population model of \citet{chan}.
+Let $T_{d,i}$ be the time of failure for drive $i$ of drive-model $d$.
+We assume that $T_{d,1},\ldots T_{d,n_d}$ are independent and have a probability distribution with cdf given by
+$$F_d(T_{d,i}) = P(T_{d,i}\le t) = 1 - (1-\pi_d\, F_{d1}(t))(1 - F_{d2}(t)), t>0 \mbox{, where } 0 < \pi_d < 1.$$
+
+As in \cite{chan}, we assume $F_{dj}$ has a Weibull distribtion. The standard parametrization of the Weibull distribution is
+\begin{equation*}
+F(T;\mu,\sigma)= 1-\text{exp}\left[-\left(\frac{T}{\eta}\right)^{\beta}\right] = \Phi_{sev} \left(\frac{\text{log}(T)-\mu}{\sigma}\right) 
+\end{equation*}
+where $\sigma=\frac{1}{\beta}$, $\mu=\text{log}(\eta)$ and $\Phi_{sev}(z)=1-\text{exp}[-\text{exp}(z)]$.  The flexibility of the Weibull distribution makes it quite useful empirically; it can model failure distributions with positive or negative hazard functions \cite{meeker}.  The parameter $\beta$ captures this flexibility: if $\beta>1$ the Weibull distribution has an increasing hazard function, $\beta=1$ corresponds to constant hazard, and if $0<\beta<1$ the hazard is decreasing over time.  The GLFP model is a mixture of two Weibull distributions.  We will define each of the Weibull distributions in terms of a log-location parameter $\mu_{dj}$ and log-scale parameter $\sigma_{dj}$ so that
+$$F_{dj}(t) = 1 - \exp \left\{ -\exp \left\{ \frac{ \log (t) - \mu_{dj}}{\sigma_{dj}} \right\} \right\},\; t>0, j=1,2$$
+For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{d1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." The parameter $\pi_d$ represents the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units of the same drive-model are exchangable.
+
+\subsection{Censoring and Truncation}
+A common feature of lifetime data is right censoring.  Due to time or budget constraints it is rare all units are observed until failure.  Therefore, any units still in service when the data is analyzed are considered right censored.  Despite over three years of data the hard drive times are heavily right censored.  Hard drives are built to last for decades under normal use conditions.  Even when running continuously fewer than two percent of all the drives Backblaze operates fail per year.  For our analysis we code any hard drive still in operation as of the first quarter of 2016 as right censored.\\
+
+While right censoring imposes an upper bound on an observation, truncation means the existence of an observation is unknown if it falls within a certain interval \cite{meeker}.  Other than the previous amount of running time, Backblaze does not provide information about why hard drives are added the sample at different times.  Some hard drives enter the storage pod with zero hours of service.  Others are added after thousands of hours of usage.  Ignoring the left truncation and treating the data as identically distributed would lead to biased estimates.  Dropping left truncated observations would substantially reduce our sample size.  Therefore, both the right censoring and left truncation are incorporated into the likelihood function. 
+
+\subsubsection{Likelihood}
+We will now define the general form for the likelihood function that takes into account left truncation, as well as right censoring.  We will use the same likelihood form for each hard drive brand, and thus drop the drive-model, $d$, subscript for simplicity.  Let $T_{i}$ denote the lifetime of hard drive $i$ in hours when it has failed, where $i$ goes from $i=1 \dots n$. As mentioned earlier, the sample size, $n$, varies by hard drive brand.  Let $t_i^L$ define the left truncation time in hours.  Specifically, for how many hours has a hard drive been running for before it is added to the storage pod for observation.  For hard drives that are right censored, $c_i$ denotes the number of hours a hard drive has survived without failing.  We also specify the following indicator functions.  Let $\nu_i=0$ if a hard drive is left truncated and $\nu_i=1$ otherwise.  Let $\delta_i=0$ if a hard drive is right censored and $\delta_i=1$ otherwise.  Given the two parametric forms for $F_1$ and $F_2$ the joint likelihood for the GLFP is a function of $\bm{\theta} = (\mu_1, \sigma_1, \mu_2, \sigma_2, \pi)$.  Assuming hard drives are independent, the complete likelihood for one hard drive brand is
+\begin{equation*}
+L(\bm{\theta})= \prod_{i=1}^{n} f(T_i; \bm{\theta})^{\nu_i\delta_i} \left[\frac{f(T_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{(1-\nu_i) \delta_i}
+[1-F(c_i;\bm{\theta})]^{\nu_i (1-\delta_i)} \left[ \frac{1-F(c_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{(1-\nu_i)(1-\delta_i)}
+\end{equation*}
+
 \subsection{Example 1}
-Analysis of single drive model
+We first fit the GLFP model to individual hard drive brand models.  For estimation, we modeled the data on the log scale, using the Smallest Extreme Value (SEV) distribution \cite{meeker}.  If $\text{log}(Y) \sim \text{SEV}(\mu, \sigma)$ then $Y \sim \text{Weibull}(\beta = 1/\sigma, \eta = \exp(\mu))$.  This decision was chosen after encountering numerical issues when performing estimation using the standard Weibull parametrization.  In addition, we transformed the parameters to the lower log quantile, $\log(t_{p_j})$ (where $p_{1} = 0.5$, and $p_2 = 0.2$), and log scale, $\log(\sigma_j)$.  This parameterization was selected as the majority of failures occur at the lower tail of the distribution.  \\
+
+Given the instability of maximum likelihood estimates for many of the hard drive brand models, we used a Bayeisan approach and specified priors for following parameters where $\Phi^{-1}$ is the quantile function for the SEV distribution.
+
+$$t_{p_j} \equiv \mu_{j} + \sigma_{j}\,\Phi^{-1}(p_j) \quad j=1,2$$
+\[\log(t_{p_1})  \sim \operatorname{N}(\mu = 7, \sigma = 1 )\]
+\[\log(t_{p_2}) \sim \operatorname{N}(\mu = 9, \sigma = 2 )\]
+\[\sigma_j \sim \operatorname{Lognormal}(\mu = 0, \sigma =1 ) \quad j = 1,2\]
+
 
 \section{Hierarchical GLFP model}
-For modeling the lifetime of hard drives, we select the Generalized Limited Failure Population model of \citet{chan}.
-Let $T_{d,i}$ be the time of failure for the $i^{th}$ drive of drive-model $d$.
-We assume that $T_{d,1},\ldots T_{d,n_d}$ are independent and have a probability distribution with cdf given by
-$$P(T_{d,i}\le t) = 1 - (1-\pi_d\, F_{d1}(t))(1 - F_{d2}(t)), \mbox{ for }t>0 \mbox{, and where } \pi_d \mbox{ is in }(0,1).$$
 
-As in \cite{chan}, we assume $F_{dj}$ is a member of the Weibull family of cdfs and parameterize in terms of a log-location parameter $\mu_{dj}$ and log-scale parameter $\sigma_{dj}$ so that
 
-$$F_{dj}(t) = 1 - \exp \left\{ -\exp \left\{ \frac{ \log (t) - \mu_{dj}}{\sigma_{dj}} \right\} \right\},\; t>0, j=1,2$$
 
-For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{d1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." The interpretation of the parameter $\pi_d$ is to represent the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units of the same drive-model are exchangable.
 
 To borrow strength across drive-models, we can either share parameters across drive-models, or model the drive-model specific parameters hierarchically, allowing the data to inform the hyperparameters. For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j}$, and proportions, $\pi_d$, of the component distributions as follows:
 
