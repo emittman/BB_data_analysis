@@ -94,5 +94,5 @@ model{
   log_tp2 ~ normal(10, 4);
   sigma1 ~ lognormal(0, 2.5);
   sigma2 ~ lognormal(0, 2.5);
-  logit_pi ~ normal(-3,2)
+  logit_pi ~ normal(-3,2);
 }
