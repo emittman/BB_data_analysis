@@ -30,8 +30,6 @@
 
 \begin{document}
 
-\bibliographystyle{natbib}
-
 \def\spacingset#1{\renewcommand{\baselinestretch}%
 {#1}\small\normalsize} \spacingset{1}
 
@@ -63,7 +61,11 @@
 
 \bigskip
 \begin{abstract}
-The text of your abstract.  100 or fewer words.
+Consumers have an interest in accurate assessment of product reliability. Toward this end, there is a need for models that can fit the data together with methods that account for uncertainty. While computationally convenient, simple parametric models can fail to capture key characteristics found in real data.
+
+In this paper we present a method for joint estimation of multiple lifetime distributions based on the GLFP model \citep{chan}. This 5-parameter model for lifetime data accomodates lifetime distributions displaying early failures due to "infant mortality" and wearout. By borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures. By producing samples from the full posterior distribution, estimation of arbitrary functionals is straightforward.
+
+We illustrate this method on real data with left-truncation and right-censoring where the information in the data is unevenly distributed across the populations of interest.
 \end{abstract}
 
 \noindent%
@@ -75,24 +77,27 @@ The text of your abstract.  100 or fewer words.
 \newpage
 \spacingset{1.45} % DON'T change the spacing!
 \section{Introduction}
-You are a consumer with reliability data for products from multiple sources and wish to estimate lifetime, possibly for purposes of comparison.
+Consumers have an interest in accurate assessment of product reliability. Toward this end, there is a need for models that can fit the data together with methods that account for uncertainty. While computationally convenient, simple parametric models can fail to capture key characteristics found in real data.
 
-We present a method for joint estimation of reliability data. This model is appropriate for products that have both early failures due to defect as well as due to wearout such as electronics. We illustrate this method in a setting where the information in the data is unevenly distributed across the populations of interest.
+In this paper we present a method for joint estimation of multiple lifetime distributions based on the GLFP model \citep{chan}. This 5-parameter model for lifetime data accomodates lifetime distributions displaying early failures due to "infant mortality" and wearout. By borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures. By producing samples from the full posterior distribution, estimation of arbitrary functionals is straightforward.
+
+We illustrate this method on real data with left-truncation and right-censoring where the information in the data is unevenly distributed across the populations of interest.
 
 \subsection{Motivation}
 
-Failure distributions of high-reliability products, can be difficult
-to assess. Accelerated testing tries to address this problem, but
-requires strong assumptions to extrapolate to use conditions in the
-field (citation). When field data are available, information may be
-very limited. In this paper, we propose the use of Bayesian hierarchical modeling to borrow
-information to improve inferences on lifetime
+Failure distributions of high-reliability consumer products can be difficult
+to assess; when field data are available, information may be limited. In this paper, we propose the use of Bayesian hierarchical modeling to borrow
+information, improving inferences on lifetime
 distributions where information is limited by right-censoring and
 left-truncation.
 
-The goal of this paper is to model, and compare, the lifetime distribution of different hard drive brands using the GLFP lifetime model.  Product populations often contain a mixture of defective and non defective units.  The hazard function for this type of population is often described as a bathtub curve: the beginning of the curve corresponds to defective units failing early, followed by a constant hazard, and then and upswing as units fail from wearout.  Ignoring this hazard structure, which exists for series systems, could lead to spurious inference when comparing the reliability of hard drive-models \cite{sujata}.  The GLFP combines different failure time distributions to account for bending hazard functions; for example, one parametric model for defective units (infant mortality) and a second model for wearout \cite{chan}. \\ 
+The reliability of many engineered products follow a similar pattern. Relatively high rates of failure occur in early life ("infant mortality"). This can often be explained by defects from the manufacturing process. Following a period of "burn-in", after which the majority of the defective units have failed, failure rates flatten out during a period. Finally, after prolonged use, rates of failure increase due to wearout.  Ignoring this pattern in failure rates can lead to suboptimal decisions. While simple nonparametric methods are available, these are not suitable for forecasting.
 
-While the GLFP model allows for multiple hazard functions, it does not account for the group structure of the hard drive data.  A naive approach would combine all drive-models and fit an overall GLFP model.  This model can be easily estimated, but a common GLFP model for all drive-models fits poorly: the model captures drive-models with lots of observed failures, while the predicted time to failure for drive-models with less information is over or under estimated.  At the other extreme, fitting individual models to each drive-mode is difficult for drive-models with few failures.  Due to multimodality, in these cases the model fit is unstable unless strongly informative priors are chosen.  \\
+\citet{chan} proposed the Generalized Limited Failure Population (GLFP) model. This model includes the Weibull as a special case. Additionally, it theorizes an unknown proportion of defective units which are susceptible to competing risks.\\ 
+
+THIS NEEDS TO BE SEPARATED OUT
+While the GLFP model provides flexibility, it can be difficult to fit with limited data. When multiple populations are of interest, comparisons based on GLFP model fits will be restricted to those with sufficient data. A naive approach would be to combine the data from all drive-models and fit a single GLFP model.  This model can be well-estimated, but this common GLFP model fits poorly.% the model captures drive-models with lots of observed failures, while the predicted time to failure for drive-models with less information is over or under estimated.  
+At the other extreme, separately fitting the model to each drive-model, is difficult for drive-models where the data are not strongly informative.  Due to identifiability issues, in these cases the model fit is unstable unless strongly informative priors are chosen.  \\
 
 We therefore propose to fit the GLFP model using a hierarchical Bayesian approach.  With over 60 drive-models in operation, a hierarchical model is advantageous as allows for borrowing of information to improve estimation of the GLFP parameters for each drive-model.  Moreover, the hierarchical model is a nice compromise between the aggregate and individual modeling approaches: drive-models with lots of failures are estimated precisely; and in cases where little data is available the hierarchical model borrows information from other drive-models to obtain stable estimates.  This allows us to include more of the hard drive data and more importantly, make valid inferences for each group of hard drive brands.
 
@@ -414,6 +419,7 @@ Analysis using HMC is accessible to practitioners by Stan. HMC has been shown to
 
 \end{description}
 
+\bibliographystyle{plainnat}
 \bibliography{sample}
 
 \end{document}
