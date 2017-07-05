@@ -14,7 +14,6 @@ paper/*.gz
 paper/*.log
 paper/*.aux
 workflow/*.rds
-workflow2/*.rds
 plots/*.png
 workflow_sig2_and_tp2_vary/*.rds
 workflow_tp2_vary/*.rds
