@@ -6,11 +6,13 @@
 \usepackage[numbers]{natbib}
 \usepackage{url} % not crucial - just used below for the URL
 
+
 \usepackage[x11names]{xcolor}
 \usepackage{framed} % provides framed env., should be removed in final draft
 \definecolor{shadecolor}{rgb}{1,.5,.5}
 
 % math macros 
+
 \newcommand{\ind}{\stackrel{ind.}{\sim}}
 \newcommand{\op}{\operatorname}
 
@@ -43,7 +45,7 @@
 \if0\blind
 {
   \title{\bf A Hierarchical Bayesian Approach for Modeling Infant-Mortality and Wearout Failure Modes}
-  \author{Eric Mittman 1\thanks{
+  \author{Eric Mittman\thanks{
     The authors gratefully acknowledge Bill Meeker for his comments and suggestions}\hspace{.2cm}\\
     Department of Statistics, Iowa State University\\
     and \\
@@ -67,13 +69,13 @@
 \begin{abstract}
 Consumers have an interest in accurate assessment of product reliability. Toward this end, there is a need for models that can fit the data together with methods that account for uncertainty. While computationally convenient, simple parametric models can fail to capture key characteristics found in real data.
 
-In this paper we present a method for joint estimation of multiple lifetime distributions based on the GLFP model \citep{chan}. This 5-parameter model for lifetime data accomodates lifetime distributions displaying early failures due to "infant mortality" and wearout. By borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures. By producing samples from the full posterior distribution, estimation of arbitrary functionals is straightforward.
+In this paper we present a method for joint estimation of multiple lifetime distributions based on the GLFP model \citep{chan}. This 5-parameter model for lifetime data accommodates lifetime distributions displaying early failures due to "infant mortality" and wearout. By borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures. By producing samples from the full posterior distribution, estimation of arbitrary functionals is straightforward.
 
 We illustrate this method on real data with left-truncation and right-censoring where the information in the data is unevenly distributed across the populations of interest.
 \end{abstract}
 
 \noindent%
-{\it Keywords:}  3 to 6 keywords, (don't reuse words appearing in title)
+{\it Keywords:} GLFP, Bathtub hazard, Censored data, Hierarchical models, Bayesian estimation
 \vfill
 
 \newpage
@@ -83,19 +85,15 @@ We illustrate this method on real data with left-truncation and right-censoring 
 \section{Introduction}
 Consumers have an interest in accurate assessment of product reliability. Toward this end, there is a need for models that can fit the data together with methods that account for uncertainty. While computationally convenient, simple parametric models can fail to capture key characteristics found in real data.
 
-In this paper we present a method for joint estimation of multiple lifetime distributions based on the GLFP model \citep{chan}. This 5-parameter model for lifetime data accomodates lifetime distributions displaying early failures due to "infant mortality" and wearout. By borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures. By producing samples from the full posterior distribution, estimation of arbitrary functionals is straightforward.
+In this paper we present a method for joint estimation of multiple lifetime distributions based on the GLFP model \citep{chan}. This 5-parameter model for lifetime data accommodates lifetime distributions displaying early failures due to "infant mortality" and wearout. By borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures. By producing samples from the full posterior distribution, estimation of arbitrary functionals is straightforward.
 
 We illustrate this method on real data with left-truncation and right-censoring where the information in the data is unevenly distributed across the populations of interest.
 
 \subsection{Motivation}
 
-Failure distributions of high-reliability consumer products can be difficult
-to assess; when field data are available, information may be limited. In this paper, we propose the use of Bayesian hierarchical modeling to borrow
-information, improving inferences on lifetime
-distributions where information is limited by right-censoring and
-left-truncation.
+Failure distributions of high-reliability consumer products can be difficult to assess.  Even when field data are available, information may be limited for a variety of reasons.  Certain brands may have few products in operation resulting in small sample sizes.  Other products may have many observed units in operation but few observed failures or limited time under observation, which makes fitting a parametric lifetime model problematic.  In this paper, we propose the use of Bayesian hierarchical modeling to borrow information across products, thereby improving inferences on lifetime distributions where information is limited by small sample sizes, left-truncation, and right censoring. 
 
-The reliability of many engineered products follow a similar pattern. Relatively high rates of failure occur in early life ("infant mortality"). This can often be explained by defects from the manufacturing process. Following a period of "burn-in", after which the majority of the defective units have failed, failure rates flatten out during a period. Finally, after prolonged use, rates of failure increase due to wearout.  Ignoring this pattern in failure rates can lead to suboptimal decisions. While simple nonparametric methods are available, these are not suitable for forecasting.
+The reliability of many engineered products follow a similar pattern. Relatively high rates of failure occurring in early life ("infant mortality") due to defects from the manufacturing process. Following a period of "burn-in", after which the majority of the defective units have failed, failure rates flatten out during a period. Finally, after prolonged use, rates of failure increase due to wearout.  Ignoring this pattern in failure rates can lead to suboptimal decisions and spurious inferences about a product's reliability.   While simple nonparametric methods are available, such as the Kaplan-Meier estimator, these are not suitable for forecasting.  They also do not allow for a straight forward statistical comparisons of different brands in order to select the most reliable product. 
 
 For real reliability data, often no failure analysis is available allowing objective discernment about when a failure is due to infant mortality. This presents a dilemma for analysts: the data may indicate more than one failure mode, contraindicating the use of a unimodal parametric distribution. However, without any knowledge of cause of failure, traditional competing risk models are not identifiable. \citet{chan} proposed the Generalized Limited Failure Population (GLFP) model. This model can provide a solution to the problem of unknown cause of failure (masking) in the special case where there is evidence of two modes of failure which impact different stages of product life. It avoids non-identifiability by introducing a parameter representing the population proportion defective. Where this parameter is zero, the GLFP model reduces to a unimodal distribution. \\
 
@@ -136,6 +134,37 @@ While the GLFP model provides flexibility and accords with a macro-level theory 
   drive failure data from a
   cloud-based storage company.
 \end{shaded}
+
+To model this mixture of failure distributions in a unified framework, Chan and Meeker proposed the Generalized Limited Failure Population (GLFP) model \citet{chan}.  In addition to describing the failure time distribution for products that are susceptible to infant mortality and wearout failure modes, it theorizes an unknown proportion of defective units which are susceptible to defects.    While the GLFP model provides flexibility over a simple or piece-wise parametric model, it can be difficult to fit with limited data  As Chan and Meeker discuss in their original paper, few observed failures in addition to unknown causes of failure cause maximum likelihood estimates to be unstable or impossible to obtain.  Therefore, when multiple populations are of interest, comparisons based on the standard GLFP model are restricted to those with sufficient data and observed failure from each failure mode.  A naive approach to this limitation is to combine the data from all products and fit a single GLFP model.  This model can be well-estimated, but the pooled GLFP model fits poorly.  At the other extreme, fitting a separate GLFP model to each product is problematic for products where the data are weakly informative.  Due to identifiability issues, in these cases the model fit is unstable unless strongly informative priors are placed on the model parameters.  \\
+
+We therefore propose to fit the GLFP model using a hierarchical Bayesian approach.  A hierarchical model is advantageous as allows for borrowing of information to improve estimation of the GLFP parameters for a whole class of products.  Moreover, the hierarchical model is a nice compromise between the aggregate and individual modeling approaches: product brands with lots of failures are estimated precisely; and in cases where little data is available the hierarchical model borrows information from other products to obtain stable estimates.  This allows us to include all of the data and more importantly, make valid inferences for each individual product.
+
+
+Failure data for series systems may be collected at the system level
+by end-users interested only in the lifetime of the system. \citet{chan} proposed the generalized limited failure population
+model (GLFP), for
+failure times in a population where some units are susceptible to infant mortality. This model
+covers a subset of the class of distributions known as bathtub distributions
+\cite{sujata}. Bathtub distributions are characterized by a U-shaped
+hazard function, where early failures are due to infant mortality and
+late failure are due to wearout. While complex systems actually
+exhibit more than two modes of failure, suitable parametric models
+which can suitably approximate the overall lifetime distribution are
+useful. 
+
+In the case of complex, high-reliability systems where cause of failure is
+not available, a model which
+\begin{enumerate}[a.]
+\item has parameters that can be estimated from the observed data
+\item is flexible enough to fit the observed data
+\item in interpretable with respect to available theory of the underlying process
+\end{enumerate}
+is desired. We present a Bayesian, hierarchical modeling approach for
+grouped failure data. As a benefit of working with Monte Carlo
+samples, we can easily make inference on a wide range of quantities of
+interest while accounting for uncertainty. We demonstrate this approach on real data hard
+drive failure data from a
+cloud-based storage company.
 
 \subsection{Overview}
 The structure of the paper is as follows.  Section~\ref{sec:Background} describes some of the potential applications of our method and summarizes previous related work found in the literature. Section~\ref{sec:GLFP model} introduces the GLFP model and illustrates an application in an example. Section~\ref{sec:Hierarchical GLFP model} introduces a hierarchical model for extending the GLFP model to multiple populations. In section~\ref{sec:Data analysis} we illustrate applying the hierarchical GLFP model to a real data set. Subsection~\ref{sec:Data} describes and summarizes the Backblaze Hard Drive data set.  Subsection~\ref{sec:Model Comparisons} shows the use of approximate leave-one-out cross-validation as a way to do model selection between different hierarchical model specifications. We also address computational issues and modeling decisions that lead to a final model.  In subsection~\ref{sec:Drive-model Comparisons} we present an analysis comparing drive-model lifetime distributions.  Finally, in section~\ref{sec:Conclusions}, we discuss the strengths and limitations of our method and consider extensions and alternatives.
