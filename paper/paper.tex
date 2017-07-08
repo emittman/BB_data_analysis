@@ -67,11 +67,9 @@
 
 \bigskip
 \begin{abstract}
-Consumers have an interest in accurate assessment of product reliability.  However, available reliability data often contains little information.  Products with long lifetimes produce few observed failures, and when products do fail the cause of failure is often unknown. While computationally convenient, simple parametric models are often limited in modeling this type of data.  Small sample sizes make parameter estimates unstable or difficult to obtain.  Multiple failure modes cause bends in the lifetime distributions that single parametric models cannot capture.  
+Consumers have an interest in accurate assessment of product reliability.  However, lifetime data is often sparse and has limited information.  Products with long lifetimes produce few observed failures; and when products do fail the cause of failure is often unknown.  While computationally convenient, simple parametric models are often limited in modeling this type of data.  Small sample sizes make parameter estimates unstable or difficult to obtain.  Multiple failure modes cause bends in the lifetime distribution single parametric models cannot capture.  
 
-In this paper we present a method for joint estimation of multiple lifetime distributions based on the Generalized Limited Failure Population (GLFP) model \citep{chan}. This 5-parameter model for lifetime data accommodates lifetime distributions with multiple failure modes:  an early failure due to "infant mortality" and a second failure mode due to wearout. We fit the GLFP model using a hierarchical Bayesian approach.  By borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures.  Moreover, by using a Bayeisan approach, comparison of different product brands is straightforward since the estimation of arbitrary functionals are easily computable from the full posterior distribution.
-
-We illustrate this method on hard drive reliability data from a cloud-based computing company.  The data contains both left-truncation and right-censoring.  Also, the information in the data is unevenly distributed across the populations of interest making a hierarchical approach especially advantageous. 
+In this paper we present a method for joint estimation of multiple lifetime distributions based on the Generalized Limited Failure Population (GLFP) model \citep{chan}. This 5-parameter model for lifetime data accommodates lifetime distributions with multiple failure modes:  an early failure due to "infant mortality" and a second failure mode due to wearout. We fit the GLFP model using a hierarchical Bayesian approach.  Borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures.  Moreover, using a Bayesian approach, comparison of different product brands is straightforward as estimation of arbitrary functionals are easily computable from the full posterior distribution.
 \end{abstract}
 
 \noindent%
@@ -87,7 +85,7 @@ Consumers have an interest in accurate assessment of product reliability. Toward
 
 In this paper we present a method for joint estimation of multiple lifetime distributions based on the GLFP model \citep{chan}. This 5-parameter model for lifetime data accommodates lifetime distributions displaying early failures due to "infant mortality" and wearout. By borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures. By producing samples from the full posterior distribution, estimation of arbitrary functionals is straightforward.
 
-We illustrate this method on real data with left-truncation and right-censoring where the information in the data is unevenly distributed across the populations of interest.
+We illustrate this method on hard drive reliability data from a cloud-based computing company.  The data contains both left-truncation and right-censoring.  Also, the information in the data is unevenly distributed across the populations of interest making a hierarchical approach especially advantageous. 
 
 \subsection{Motivation}
 
@@ -171,12 +169,9 @@ The structure of the paper is as follows.  Section~\ref{sec:Background} describe
 
 \section{Background}
 \label{sec:Background}
-In engineering applications, a product can often fail from one out of a set of possible malfunctioning components.  For example, a computer system can fail if the mother board, disc drive or power supply stop working.  Circuit boards (CB) can fail due to a manufacturing defect or later as a result of wearout.  The general name for such products is a series system where the lifetime of the product is the minimum failure time across $s$ different components or risks \cite{nelson}.  A common assumption in series systems is the time to failure for each risk, $s$, is statistically independent.  Thus, the overall reliability of a unit is modeled using the product rule across all $s$ risks.  Parameter estimation is straightforward if the cause of failure is known for each observation.  With engineering systems data, however, the exact cause of failure is frequently unknown or masked from the analyst.  \\
+In engineering applications, a product can often fail from one out of a set of possible malfunctioning components.  For example, a computer system can break if the mother board, disc drive or power supply stop working.  Circuit boards (CB) can fail due to a manufacturing defect or later as a result of wearout.  The general name for such products is a series system where the lifetime of the product is the minimum failure time across $s$ different components or risks \cite{nelson}.  A common assumption in series systems is the time to failure for each risk, $s$, is statistically independent.  Thus, the overall reliability of a unit is modeled using the product rule across all $s$ risks.  Parameter estimation is straightforward if the cause of failure is known for each observation.  With engineering systems data, however, the exact cause of failure is frequently unknown or masked from the analyst.  \\
 
 Previous papers have employed various data assumptions and methodologies to model masked lifetime failure data.  When modeling computer system failures Reiser et al. assumed each observed failure came from a known subset of failure modes, and estimation was performed using a Bayesian approach \cite{reiser}.  Chan and Meeker labeled the cause of circuit board failures as infant mortality, unknown, or wearout based on the time of observed failures.  This helped identify parameters when using maximum likelihood (ML) estimation.  Extending Chan and Meeker's analysis, Basu et.al performed a Bayesian analysis with informative priors to better identify early versus late failure modes without making any data assumptions \cite{basu}.  Berger and Sun introduced the Poly-Weibull distribution where cause of failure is the minimum of a several Weibull distributions \cite{berger}.  More recently, Ranjan et al. considered a competing risk model for infant mortality and wearout as a mixture of Weibull and exponential failure distributions \cite{ranjan}.  Treating the unknown failure modes as incomplete data, an expectation maximization (EM) algorithm providing ML estimates was used, in addition to Bayesian estimation.
-
-
-
 
 
 \section{Generalized Limited Failure Population model}
@@ -206,37 +201,68 @@ P(Y_i\le y | D_i=1) =& 1 -(1-F_1(y))(1-F_2(y))\\
 P(Y_i\le y | D_i=0) =& F_2(y).
 \end{align*}
 
-For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." The parameter $\pi_d$ represents the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units of the same drive-model are exchangable.
+For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." The parameter $\pi_d$ represents the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units from the same population are exchangeable.
 
 \subsection{Censoring and Truncation}
-A common feature of lifetime data is right censoring.  Due to time or budget constraints it is rare all units are observed until failure.  Therefore, any units still in service when the data is analyzed are considered right censored.  Despite over three years of data the hard drive times are heavily right censored.  Hard drives are built to last for decades under normal use conditions.  Even when running continuously fewer than two percent of all the drives Backblaze operates fail per year.  For our analysis we code any hard drive still in operation as of the first quarter of 2016 as right censored.\\
+A common feature of lifetime data is right censoring.  Due to time or budget constraints it is rare all units are observed until failure.  Therefore, any units still in service when the data is analyzed are considered right censored.  Products with long expected lifetimes, such as hard drives, are heavily right censored.  Hard drives are built to last for decades under normal use conditions.  Even when running continuously, hard drives can exhibit failure rates of less than two percent per year \cite{backblaze}.  \\
 
-While right censoring imposes an upper bound on an observation, truncation means the existence of an observation is unknown if it falls within a certain interval \cite{meeker}.  Other than the previous amount of running time, Backblaze does not provide information about why hard drives are added the sample at different times.  Some hard drives enter the storage pod with zero hours of service.  Others are added after thousands of hours of usage.  Ignoring the left truncation and treating the data as identically distributed would lead to biased estimates.  Dropping left truncated observations would substantially reduce our sample size.  Therefore, both the right censoring and left truncation are incorporated into the likelihood function. 
+While right censoring imposes an upper bound on an observation, truncation means the existence of an observation is unknown if it falls within a certain interval \cite{meeker}.  For example, a product may appear in a sample after operating for thousands of hours.   Ignoring the left truncation and treating the data as identically distributed leads to biased estimates.  Dropping left truncated observations substantially reduces the sample size.  Therefore, both the right censoring and left truncation are incorporated into the likelihood function. 
 
 \subsubsection{Likelihood}
-We will now define the general form for the likelihood function that takes into account left truncation, as well as right censoring.  We will use the same likelihood form for each hard drive brand, and thus drop the drive-model, $d$, subscript for simplicity.  Let $T_{i}$ denote the lifetime of hard drive $i$ in hours when it has failed, where $i$ goes from $i=1 \dots n$. As mentioned earlier, the sample size, $n$, varies by hard drive brand.  Let $t_i^L$ define the left truncation time in hours.  Specifically, for how many hours has a hard drive been running for before it is added to the storage pod for observation.  For hard drives that are right censored, $c_i$ denotes the number of hours a hard drive has survived without failing.  We also specify the following indicator functions.  Let $\nu_i=0$ if a hard drive is left truncated and $\nu_i=1$ otherwise.  Let $\delta_i=0$ if a hard drive is right censored and $\delta_i=1$ otherwise.  Given the two parametric forms for $F_1$ and $F_2$ the joint likelihood for the GLFP is a function of $\bm{\theta} = (\mu_1, \sigma_1, \mu_2, \sigma_2, \pi)$.  Assuming hard drives are independent, the complete likelihood for one hard drive brand is
+We now define the general form for the likelihood function that takes into account left truncation, as well as right censoring.  Let $T_{i}$ denote the lifetime of product $i$ in hours when it has failed, where $i$ goes from $i=1 \dots n$.  Let $t_i^L$ define the left truncation time in hours.  Specifically, for how many hours has a unit been running for before it is added to the sample for observation.  For units that are right censored, $c_i$ denotes the number of hours a unit has survived without failing.  We also specify the following indicator functions.  Let $\nu_i=0$ if a product is left truncated and $\nu_i=1$ otherwise.  Let $\delta_i=0$ if a product is right censored and $\delta_i=1$ otherwise.  Given the two parametric forms for $F_1$ and $F_2$ the joint likelihood for the GLFP is a function of $\bm{\theta} = (\mu_1, \sigma_1, \mu_2, \sigma_2, \pi)$.  Assuming all products are independent, the complete likelihood for one product brand is
 \begin{equation*}
 L(\bm{\theta})= \prod_{i=1}^{n} f(T_i; \bm{\theta})^{\nu_i\delta_i} \left[\frac{f(T_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{(1-\nu_i) \delta_i}
 [1-F(c_i;\bm{\theta})]^{\nu_i (1-\delta_i)} \left[ \frac{1-F(c_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{(1-\nu_i)(1-\delta_i)}
 \end{equation*}
 
 \subsection{Example 1}
-We first demonstrate the GLFP model on real hard drive failure data from a cloud-based storage company.  The data set has over 60 hard drive models in operation, but for now we focus on one model.  For estimation, we modeled the data on the log scale, using the Smallest Extreme Value (SEV) distribution \cite{meeker}.  If $\text{log}(Y) \sim \text{SEV}(\mu, \sigma)$ then $Y \sim \text{Weibull}(\beta = 1/\sigma, \eta = \exp(\mu))$.  This decision was chosen after encountering numerical issues when performing estimation using the standard Weibull parametrization.  In addition, we transformed the parameters to the lower log quantile, $\log(t_{p_j})$ (where $p_{1} = 0.5$, and $p_2 = 0.2$), and log scale, $\log(\sigma_j)$.  This parameterization was selected as the majority of failures occur at the lower tail of the distribution.  \\
+We fit the GLFP model on real hard drive failure data from the cloud-based storage company, Backblaze.  Computer hard drives are known to have a mixture of early and late failures, making the GLFP an appropriate parametric model \cite{chan}.  Backblaze provides the number of hours the hard drive is in operation, and whether the drive failed or was right censored.  No information is available about the cause of failure.  We first focus on the drive brand model with the most observed failures to demonstrate the GLFP model.  \\
 
-Given the instability of maximum likelihood estimates for many of the hard drive brand models, we used a Bayeisan approach and specified priors for following parameters where $\Phi^{-1}$ is the quantile function for the SEV distribution.
+For estimation, we modeled the data on the log scale, using the Smallest Extreme Value (SEV) distribution \cite{meeker}.  If $\text{log}(Y) \sim \text{SEV}(\mu, \sigma)$ then $Y \sim \text{Weibull}(\beta = 1/\sigma, \eta = \exp(\mu))$.  This decision was chosen after encountering numerical issues when performing estimation using the standard Weibull parametrization.  In addition, we transformed the parameters to the lower log quantile, $\log(t_{p_j})$ (where $p_{1} = 0.5$, and $p_2 = 0.2$), and log scale, $\log(\sigma_j)$.  This parameterization was selected as the majority of failures occur at the lower tail of the distribution.  \\
+
+Given the instability of maximum likelihood estimates for many of the hard drive brand models, we used a Bayesian approach and specified priors for following parameters where $\Phi^{-1}$ is the quantile function for the SEV distribution.
 
 $$t_{p_j} \equiv \mu_{j} + \sigma_{j}\,\Phi^{-1}(p_j) \quad j=1,2$$
 $$t_{0.5,1} \sim \op{N}(8,4), \quad t_{0.2,2} \sim \op{N}(10,4)$$
 $$\mbox{logit}^{-1}\pi_1 \sim \op{Normal}(-3,2),\quad \sigma_1 \sim \op{Lognormal}(0, 2.5), \quad \sigma_2 \sim \op{Lognormal}(0, 2.5) $$
 
-Question: Do we Want to explain these priors here or wait till the hierarchical section where we lay out all the priors?
+The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$. The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability. (Note that, due to symmetry, the Weibull shape parameter has the same prior distribution and that a value of 1, corresponding to a constant hazard, is the median of this prior distribution.) The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ it is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.  They do, however, help identify the two failure modes. \\
+
+The model model was fit using the {\tt rstan}\cite{rstan} package in {\tt R} \cite{r}, which implements a variant of Hamiltonian Monte Carlo (HMC) \cite{betancourt}. Multiple chains were run for 1500 iterations after 1500 burnin iterations. Convergence was assessed by examining posterior plots and checking that potential scale reduction factors (Rhat) \cite{gelman2014bayesian} were less than $1.1$.
+
+Table 1 gives the posterior median and 95\% credible intervals for the 5 GLFP parameters for drive model 14.  The parameter $p$ is an estimate of the proportion of drives susceptible to to infant mortality.  As expected, this fraction is small with a median value of 0.05.  The parameter estimates for the two Weibull distributions also match intuition.  The wearout failure mode puts posterior probability on a values of $\beta_1$ less than 1, which corresponds to a decreasing hazard.  Conversely, the credible interval for $\beta_2$, the wearout mode, is strictly above 1, an increasing hazard.  The two means times to failure (on the log scale) are also well identified with the infant mortality failure mode having an earlier mean time to failure than for the wearout mode. 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{rrrr}
+  \hline
+ & 2.5\% & 50\% & 97.5\% \\ 
+  \hline
+\pi & 0.03 & 0.05 & 0.10 \\ 
+ \beta_1 & 0.47 & 1.13 & 1.72 \\ 
+  \beta_2 & 4.47 & 4.70 & 4.95 \\ 
+  \mu_1 & 7.46 & 8.06 & 8.76 \\ 
+  \mu_2 & 10.12 & 10.13 & 10.14 \\ 
+   \hline
+\end{tabular}
+\caption{Posterior 95\% Credible Intervals for the 5 GLFP parameters for Drive Model 14.}
+\label{table:1}
+\end{table}
+
+To graphically examine the model fit, we plot the GLFP cdf using the median values of the posterior distribution along with 90\% credible interval bands.  For reference, the solid line corresponds to a truncated adjusted non-parametric  estimator of $F(t)$.  The posterior median follows the non-parametric estimate quite closely.  Evidence eof at least two failure modes is seen in the probability plot having a kink occurring between 1 and 1.5 years.  Moreover, the fitted GLFP curves bends with the non-parametric estimate, accurately following the curvature of the lifetime distribution.
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=.9\textwidth]{fig/drive14cred.pdf}
+  \caption{Estimated GLFP for drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws.  Solid blue line is a non-parametric Kaplan-Meier estimator.  Credible 90\% bands are in red.  Greenwood non-parametric error bands are in blue.}
+  \label{fig1}
+\end{figure}
+
 
 \section{Hierarchical GLFP model}
 \label{sec:Hierarchical GLFP model}
 
-
-
-To borrow strength across drive-models, we can either share parameters across drive-models, or model the drive-model specific parameters hierarchically, allowing the data to inform the hyperparameters. For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j}$, and proportions, $\pi_d$, of the component distributions as follows:
+To borrow strength across different product populations, we can either share parameters across products, or model the product specific parameters hierarchically, allowing the data to inform the hyperparameters. For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j}$, and proportions, $\pi_d$, of the component distributions as follows:
 
 $$\sigma_{d,1} \ind \op{Lognormal} \left( \eta_{\sigma,1}, \tau^2_{\sigma,1} \right) \mbox{ for } d=1,\ldots,D$$
 $$\sigma_{d,2} \ind \op{Truncated-Lognormal} \left( \eta_{\sigma,2}, \tau^2_{\sigma,2} , 0, 1 \right) \mbox{ for } d=1,\ldots,D$$
@@ -244,7 +270,7 @@ $$t_{p_j,d,j} \equiv \mu_{d,j} + \sigma_{d,j}\,\Phi^{-1}(p_j)  \ind \op{Normal} 
 
 $$\op{logit} \pi_d \ind \op{N}(\eta_\pi, \tau_\pi) \mbox{ for } d=1,\ldots,D.$$
 
-Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribution. We truncate $\sigma_{d,2}$ at $1$, appealing to the logic that,by nature, wearout produces an increasing hazard function. The decision to parameterize in terms of a quantile other than the log-location parameter, $\mu = t_{0.632}$, is that lifetime data often, as is true of the data presented here, features heavy right-censoring where inferences about the location parameter are extrapolations beyond the range of the data. For this data we selected $p_1=0.5,\mbox{ (the median), and } p_2 = 0.2$.
+Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribution. We truncate $\sigma_{d,2}$ at $1$, appealing to the logic that, by nature, wearout produces an increasing hazard function. The decision to parameterize in terms of a quantile other than the log-location parameter, $\mu = t_{0.632}$, is that lifetime data often features heavy right-censoring where inferences about the location parameter are extrapolations beyond the range of the data. %For this data we selected $p_1=0.5,\mbox{ (the median), and } p_2 = 0.2$.
 
 We consider the models with the following set of restrictions (from most to least restrictive):
 
@@ -255,12 +281,9 @@ We consider the models with the following set of restrictions (from most to leas
 \item $\mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
 \end{enumerate}
 
-The set of model specifications were chosen based on the data, interpretation of the model, as well as estimation considerations. Drive brand specific parameters for the the wearout failure mode $(\mu_{d2},\sigma_{d2})$, and the proportion defective $(\pi_d)$, are considered as a means to account for heterogeneity across brands in the right tails of the failure distribution.  Going from a common model for all hard drive brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by drive-model.
+The set of model specifications were chosen based data, interpretation of the model, as well as estimation considerations.  Product specific parameters for the the wearout failure mode $(\mu_{d2},\sigma_{d2})$, and the proportion defective $(\pi_d)$, are considered as a means to account for heterogeneity across brands in the right tails of the failure distribution.  Going from a common model for all product brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by product.
 
-For all of the models we consider, the parameters for the infant mortality failure mode are held in common across drive-models. We found that there was insufficient information in the data to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality provides a meaningful interpretation and comparison of $\pi_i$ and $\pi_j$ ($i \neq j$). 
-
-
-
+For all of the models we consider, the parameters for the infant mortality failure mode are held in common across products.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality provides a meaningful interpretation and comparison of $\pi_i$ and $\pi_j$ ($i \neq j$). 
 
 
 \section{Data analysis}
@@ -278,12 +301,10 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
 \end{figure}
 
 
-Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  Identifying whether failure data are consistent with a specific family of distributions is difficult to do by examining a histogram or other density estimate. By transform the y-axis of the estimated cumulative distribution function (cdf), denoted by $\widehat{F(t)}$, by the inverse cdf of for the standardized distribution, a visual comparison of the plot to a straight line can be an effective informal test for distributional goodness of fit.
+Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  Identifying whether failure data are consistent with a specific family of distributions is difficult to do by examining a histogram or other density estimate.  By properly transforming the axes of a plot of an empirical estimate of fraction failing as a function of time with simultaneous confidence bands provides a graphical test for distributional goodness of fit.  
 
-Applying this method to the hard drive data, we first must estimate
-the empirical cdf for each drive-model using the Kaplan-Meier estimator
-\cite{kaplan}.  With left truncation, however, the standard
-Kaplan-Meier estimator for drive-model $d$, denoted by
+Applying this method to the hard drive data, we start with a non-parametric estimate of the empirical cdf for each drive-model using the Kaplan-Meier estimator
+\cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $d$, denoted by
 $\widehat{F_d(t)}_{KM}$, is conditional on survival up to
 $t_{d,\text{min}}^L$, the shortest reported running time of all units
 of drive-model $d$ for which records are available. To produce
@@ -292,7 +313,7 @@ Turnbull, and given in more detail by Meeker and Escobar
 \cite{turnbull,meeker}.  For each drive-model we select
 $t_{d,\text{min}}^L$, the smallest left truncated time in the sample.
 By sampling from the full posterior distribution, since
-$Pr(T>t_{d,\text{min}}^L|\theta_d)$ (the probability a hard drive has
+$\Pr(T>t_{d,\text{min}}^L|\theta_d)$ (the probability a hard drive has
 survived up to $t_{d,\text{min}}^L$) is a function of the model
 parameters, we can easily compute its posterior median,
 $\widehat{A}_{\text{med}} = \widehat{Pr}(T>t_{d,\text{min}}^L|\theta_d)$. We compute the adjusted estimate by
@@ -300,11 +321,6 @@ $\widehat{A}_{\text{med}} = \widehat{Pr}(T>t_{d,\text{min}}^L|\theta_d)$. We com
 $$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\text{med}}\right)\widehat{F_d(t)}_{KM},\; t>t_{d,\text{min}}^L.$$
 
 While this adjustment is negligible for the majority of drive-models, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
-
-%\begin{figure}
-%\includegraphics[width=.8\textwidth]{fig/data-overview}
-%\caption{Left: Kaplan-Meier plots showing nonparametric estimates of fraction failing for individual drive-models with truncation adjustments based on fitted model, Right: Total observed failures (top) and the sum of lengths of all observational intervals by drive-model.}
-%\end{figure}
 
 
 In Figure 2 we plot the Kaplan-Meier adjusted cdf for drive-model 14 on Weibull paper.  Drive-model 14 had the most observed failures of all the brands.  Each point on the plot corresponds to an observed failure.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method \cite{green}.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring between 8000 and 20,000 hours.  Therefore, fitting a single Weibull model is not flexible enough to model the failure distribution.
@@ -323,14 +339,9 @@ To complete the full probability model, we need to select prior distributions fo
 For models 1-4, different sets of restrictions required different prior specifications, which were assigned as follows:
 
 \begin{enumerate}
-\item This model constrains all drive-models to the same failure distribution. For this ``reduced" model we assume the priors :
+\item This model constrains all drive-models to the same failure distribution. For this ``reduced" model we assume the same priors as in Example 1.
 
-$$\mbox{logit}^{-1}\pi_1 \sim \op{Normal}(-3,2),\quad \sigma_1 \sim \op{Lognormal}(0, 2.5), \quad t_{0.5,1} \sim \op{Normal}(8,4)$$
-$$\sigma_2 \sim \op{Lognormal}(0, 2.5) \quad t_{0.2,2} \sim \op{N}(10,4)$$
-
-The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$. The prior on $\sigma_1$ and $\sigma_2$ put it on the interval $(0.02, 61.1)$ with $90\%$ probability. (Note that, due to symmetry, the Weibull shape parameter has the same prior interval and that a value of 1, corresponding to a constant hazard, is the median of this prior distribuion.) $t_{0.5,1}$ has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ it is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.
-
-\item We allow $t_{pd}$ to vary by drive-model. To help with model identifiability, we tighten the priors on the defective mode:
+\item We allow $t_{pd}$ to vary by drive-model. To help with model identifiably, we tighten the priors on the defective mode:
 $$ \mbox{logit}^{-1}\pi \sim \op{Normal}(-3,1),\quad \sigma_1 \sim \op{Lognormal}(0, 1), \quad t_{p1} \sim \op{Normal}(7,2),$$
 implying now a prior $90\%$ probability that $\sigma_1$ is between $0.19$ and $5.18$ and $t_{0.5,1}$ between $3.7$ and $10.3$, which, translating from the log-scale, is equivalent to an interval from 1.5 days to 3.4 years.
 
@@ -340,7 +351,7 @@ implying now a prior $90\%$ probability that $\sigma_1$ is between $0.19$ and $5
 
 \end{enumerate}
 
-For the scale hyper-parameters we follow the recommendations of \citet{gelman2014bayesian} and use half-Cauchy priors. As for the location hyper-parameters, we select weakly informative priors consistent with our prior information on hard-drives. The prior for $\eta_\pi$ puts 95\% of prior mass on the interval $(0.006, 0.27)$ for the median proportion defective (What justification? Should maybe be lower.) For $\eta_{\sigma, 2}$, $95\%$ of prior mass is on values greater than $0.037$. Since $\sigma_d$ is the reciprocal of the Weibull shape parameter, this correponds roughly to an assumption that the median Weibull shape parameter is less than $1/0.037 = 27$. The prior for $\eta_{t_{p_2},2}$ implies that the median 20th percentile for non-defective units is less than greater than 3 days and less than 24 years.
+For the scale hyper-parameters we follow the recommendations of \citet{gelman2014bayesian} and use half-Cauchy priors. As for the location hyper-parameters, we select weakly informative priors consistent with our prior information on hard-drives. The prior for $\eta_\pi$ puts 95\% of prior mass on the interval $(0.006, 0.27)$ for the median proportion defective (What justification? Should maybe be lower.) For $\eta_{\sigma, 2}$, $95\%$ of prior mass is on values greater than $0.037$. Since $\sigma_d$ is the reciprocal of the Weibull shape parameter, this corresponds roughly to an assumption that the median Weibull shape parameter is less than $1/0.037 = 27$. The prior for $\eta_{t_{p_2},2}$ implies that the median 20th percentile for non-defective units is less than greater than 3 days and less than 24 years.
 
 \begin{align*}
   \eta_{\pi} & \sim \op{Normal}(-3, 1)\\
@@ -362,9 +373,9 @@ plots and checking that potential scale reduction factors (Rhat) \cite{gelman201
 
 \subsection{Model Comparisons}
 \label{sec:Model Comparisons}
-The right side of Figure \ref{fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive-model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive-models; note that, since the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
+The right side of Figure \ref{fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive-model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive-models; note that, because the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
 
-The lower left panel, representing Model 3, suggests differing shape parameters in the wearout failure mode which mean that the ranking of drive-models with respect to fraction failing differs over time.
+The lower left panel, representing Model 3, suggests differing shape parameters in the wearout failure mode which means that the ranking of drive-models with respect to fraction failing differs over time.
 
 Finally, the lower right panel, corresponding to Model 4, shows that, by allowing $\pi_d$ to vary by drive-model, there is greater variability in the early rate of failure and, for some drive-models, the forecasted fraction failing is adjusted downward. 
 
@@ -374,15 +385,15 @@ Finally, the lower right panel, corresponding to Model 4, shows that, by allowin
 \label{fig2}
 \end{figure}
 
-We can also compare the model fits for each drive-model individually.  Using the set of parameters that maximize the posterior log probability, we examine the GLFP cdf for each of the 4 model specifications.  The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure 4.  The black step function again corresponds to the adjusted Kaplan-Meier estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All the GLFP models appear to overestimate the proportion of failed hard drives for drive-model 2, but Model 4 agrees the most with the nonparametric estimate.  For drive-model 14, Models 1-3 underestimate the proportion of drives failing, and for drive-model 40, they slightly overestimate the data.  Conversely, Model 4 follows the observed failures quite closely--accurately capturing failures at the lower and upper ends of the distribution.  The difference in accuracy between Models 3 and 4 are and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the fits from Model 3 and 4 line almost exactly on top of each other for drive-model 40.
+We can also compare the model fits for each drive-model individually.  Using the set of parameters that maximize the posterior log probability, we examine the GLFP cdf for each of the 4 model specifications.  The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure 4.  The black step functions again corresponds to the adjusted non-parametric estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All of the GLFP models appear to overestimate the proportion of failed hard drives for drive-model 2, but Model 4 agrees best with the nonparametric estimate.  For drive-model 14, Models 1-3 underestimate the proportion of drives failing, and for drive-model 40, they slightly overestimate the data.  Conversely, Model 4 follows the observed failures quite closely--accurately capturing failures at the lower and upper ends of the distribution.  The difference in accuracy between Models 3 and 4 are and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the fits from Model 3 and 4 line almost exactly on top of each other for drive-model 40.
 \begin{figure}[H]
     \centering
    \includegraphics[width=\textwidth]{fig/mod_compare_legend}
-		\caption{Estimated GLFP for 4 drive-models plotted on Weibull paper.  Black step function is the truncated adjusted Kaplan-Meier points.  \label{fig:first}} 
+		\caption{Estimated GLFP for 4 drive-models plotted on Weibull paper.  The solid step function is the truncated adjusted Kaplan-Meier points.  \label{fig:first}} 
 \end{figure}
 
 
-To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with the $i$th data point removed.  The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  We computed the elpd for all 4 models using the R package loo \cite{loo}.  When $n$ is large, the distribution of the elpd is approximately normal and different models can be statistically compared.  We calculated the difference in expected predictive accuracy for Model 4 vs 3, Model 3 vs 2, and Model 2 vs 1, as well as the standard error of the difference (Table 1).  As the model complexity increased, the expected predictive accuracy improved.  Of all the models, Model 4 had the best predictive accuracy and was significantly better than the other 3 model specifications.
+To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  We computed the elpd for all 4 models using the R package loo \cite{loo}.  When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically.  We calculated the difference in expected predictive accuracy for Model 4 vs 3, Model 3 vs 2, and Model 2 vs 1, as well as the standard error of the difference (Table 1).  As the model complexity increased, the expected predictive accuracy improved.  Of all the models, Model 4 had the best predictive accuracy and was significantly better than the other 3 models.
 
 \begin{table}[H]
 \centering
@@ -437,12 +448,12 @@ relative to a new unit. We can rank the drive-models by
 $$\op{E}(L(t_{d,new})|t))\approx \frac{1}{S} \sum_{s=1}^{S} L(t_{d,new}^{(s)}).$$
 
 
-We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a central measure of tendency.  On the left panel of Figure 5 we plot B10, the .10 quantile (i.e., the amount of time it takes for 10\% of hard drives to fail), for all drive-models. The best six drive-models ranked by TTF are also the drive-models with the longest time to B10.  Drive-models 5, 2, 4, and 3 seem to really stick out as the most reliable as there is a larger gap separating them from the rest of the group.  Another interesting feature to compare is $\pi$, the proportion failing due to infant mortality.  One the right panel of Figure 5 are the posterior credible intervals of $\pi$ for each drive-model.  The plot is again sorted according to B10 so it can be compared to the left hand side.  While for many of the drive-models the ordinal ranking is the same as on the left, there are some drive-model comparisons, for example 23 and 18, that differ in ranking if compared using B10 or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.   
+We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a central measure of tendency.  On the left panel of Figure 5 we plot $t_{0.10}$, the .10 quantile (i.e., the amount of time it takes for 10\% of hard drives to fail), for all drive-models. The best six drive-models ranked by TTF are also the drive-models with the longest time to $t_{0.10}$.  Drive-models 5, 2, 4, and 3 seem to really stick out as the most reliable as there is a larger gap separating them from the rest of the group.  Another interesting feature to compare is $\pi$, the proportion failing due to infant mortality.  One the right panel of Figure 5 are the posterior credible intervals of $\pi$ for each drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the left hand side.  While for many of the drive-models the ordinal ranking is the same as on the left, there are some drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10}$ or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.   
  
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{fig/b10andpi}
-  \caption{Left: 50\% credible intervals for B10 (time in years till 10\% of the drives fail). Right: 50\% credible intervals for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of B10.}
+  \caption{Left: 50\% credible intervals for  $t_{0.10}$ (time in years till 10\% of the drives fail). Right: 50\% credible intervals for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of $t_{0.10}$.}
   \label{fig4}
 \end{figure}
 
