@@ -192,6 +192,10 @@ $$ P(Y \le y) = 1 - \exp \left\{ -\exp \left( \frac{ \log y - \mu }{\sigma} \rig
 
 This make clear that $(\log Y - \mu)/\sigma$ follows the smallest extreme value distribution (SEV). The Weibull distribution is widely used in practice as it can model failure distributions with both increasing and decreasing hazard functions \cite{meeker}. The parameter $\beta$ captures this flexibility: if $\beta>1$ the Weibull distribution has an increasing hazard function, $\beta=1$ corresponds to constant hazard, and if $0<\beta<1$ the hazard is decreasing over time.
 
+ADD PIECE ABOUT TRANSFORMATIONS
+
+For estimation, we modeled the data on the log scale, using the Smallest Extreme Value (SEV) distribution \cite{meeker}.  If $\text{log}(Y) \sim \text{SEV}(\mu, \sigma)$ then $Y \sim \text{Weibull}(\beta = 1/\sigma, \eta = \exp(\mu))$.  This decision was chosen after encountering numerical issues when performing estimation using the standard Weibull parametrization.  In addition, we transformed the parameters to the lower log quantile, $\log(t_{p_j})$ (where $p_{1} = 0.5$, and $p_2 = 0.2$), and log scale, $\log(\sigma_j)$.  This parameterization was selected as the majority of failures occur at the lower tail of the distribution.  \\
+
 \subsection{GLFP model}
 \label{subsec:GLFP model}
 Following \cite{chan}, let $F_1,F_2$ be Weibull distributions with parameters $(\mu_1,\sigma_1)$ and $(\mu_2, \sigma_2)$ respectively.
@@ -207,31 +211,24 @@ P(Y_i\le y | D_i=0) =& F_2(y).
 For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." The parameter $\pi_d$ represents the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units from the same population are exchangeable.
 
 \subsection{Censoring and Truncation}
-A common feature of lifetime data is right censoring.  Due to time or budget constraints it is rare all units are observed until failure.  Therefore, any units still in service when the data is analyzed are considered right censored.  Products with long expected lifetimes, such as hard drives, are heavily right censored.  Hard drives are built to last for decades under normal use conditions.  Even when running continuously, hard drives can exhibit failure rates of less than two percent per year \cite{backblaze}.  \\
+Right censoring is common in reliability data.  Due to time or budget constraints it is rare all units are observed until failure. If a unit has not yet failed when the data is analyzed it is considered right censored.  In other words, right censoring puts a lower bound on the failure time.  Products with long expected lifetimes, such as hard drives, are heavily right censored.  Hard drives are built to last for decades under normal use conditions.  Even when running continuously, hard drives can exhibit failure rates of less than two percent per year \cite{backblaze}.  \\
 
-While right censoring imposes an upper bound on an observation, truncation means the existence of an observation is unknown if it falls within a certain interval \cite{meeker}.  For example, a product may appear in a sample after operating for thousands of hours.   Ignoring the left truncation and treating the data as identically distributed leads to biased estimates.  Dropping left truncated observations substantially reduces the sample size.  Therefore, both the right censoring and left truncation are incorporated into the likelihood function. 
+While right censoring imposes an upper bound on an observation, truncation means the existence of an observation is unknown if it falls within a certain interval \cite{meeker}.  In the case of left truncation, information about sample units are unknown before a certain time point.  Therefore, these units follow a conditional lifetime distribution where the conditioning is based on having survived up until the time they enter the sample.  Ignoring the left truncation and treating the data as identically distributed can lead to biased estimates whereas dropping left truncated observations substantially reduces the sample size.  Therefore, units exhibiting right censoring and or left truncation should be properly incorporated into the likelihood function. 
 
 \subsubsection{Likelihood}
-We now define the general form for the likelihood function that takes into account left truncation, as well as right censoring.  Let $T_{i}$ denote the lifetime of product $i$ in hours when it has failed, where $i$ goes from $i=1 \dots n$.  Let $t_i^L$ define the left truncation time in hours.  Specifically, for how many hours has a unit been running for before it is added to the sample for observation.  For units that are right censored, $c_i$ denotes the number of hours a unit has survived without failing.  We also specify the following indicator functions.  Let $\nu_i=0$ if a product is left truncated and $\nu_i=1$ otherwise.  Let $\delta_i=0$ if a product is right censored and $\delta_i=1$ otherwise.  Given the two parametric forms for $F_1$ and $F_2$ the joint likelihood for the GLFP is a function of $\bm{\theta} = (\mu_1, \sigma_1, \mu_2, \sigma_2, \pi)$.  Assuming all products are independent, the complete likelihood for one product brand is
+We now define the general form for the likelihood function that takes into account left truncation, as well as right censoring.  Let $Y_{i}$ denote the lifetime of product $i$ in hours when it has failed, where $i$ goes from $i=1 \dots n$.  Let $t_i^L$ define the left truncation time in hours.  Specifically, for how many hours has a unit been running for before it is added to the sample for observation.  For units that are right censored, $c_i$ denotes the number of hours a unit has survived without failing.  We also specify the following indicator functions.  Let $\nu_i=0$ if a product is left truncated and $\nu_i=1$ otherwise.  Let $\delta_i=0$ if a product is right censored and $\delta_i=1$ otherwise.  Given the two parametric forms for $F_1$ and $F_2$ the joint likelihood for the GLFP is a function of $\bm{\theta} = (\mu_1, \sigma_1, \mu_2, \sigma_2, \pi)$.  Assuming all products are independent, the complete likelihood for one product brand is
 \begin{equation*}
-L(\bm{\theta})= \prod_{i=1}^{n} f(T_i; \bm{\theta})^{\nu_i\delta_i} \left[\frac{f(T_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{(1-\nu_i) \delta_i}
+L(\bm{\theta})= \prod_{i=1}^{n} f(Y_i; \bm{\theta})^{\nu_i\delta_i} \left[\frac{f(Y_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{(1-\nu_i) \delta_i}
 [1-F(c_i;\bm{\theta})]^{\nu_i (1-\delta_i)} \left[ \frac{1-F(c_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{(1-\nu_i)(1-\delta_i)}
 \end{equation*}
 
 \subsection{Example 1}
-We fit the GLFP model on real hard drive failure data from the cloud-based storage company, Backblaze.  Computer hard drives are known to have a mixture of early and late failures, making the GLFP an appropriate parametric model \cite{chan}.  Backblaze provides the number of hours the hard drive is in operation, and whether the drive failed or was right censored.  No information is available about the cause of failure.  We first focus on the drive brand model with the most observed failures to demonstrate the GLFP model.  \\
-
-For estimation, we modeled the data on the log scale, using the Smallest Extreme Value (SEV) distribution \cite{meeker}.  If $\text{log}(Y) \sim \text{SEV}(\mu, \sigma)$ then $Y \sim \text{Weibull}(\beta = 1/\sigma, \eta = \exp(\mu))$.  This decision was chosen after encountering numerical issues when performing estimation using the standard Weibull parametrization.  In addition, we transformed the parameters to the lower log quantile, $\log(t_{p_j})$ (where $p_{1} = 0.5$, and $p_2 = 0.2$), and log scale, $\log(\sigma_j)$.  This parameterization was selected as the majority of failures occur at the lower tail of the distribution.  \\
-
-Given the instability of maximum likelihood estimates for many of the hard drive brand models, we used a Bayesian approach and specified priors for following parameters where $\Phi^{-1}$ is the quantile function for the SEV distribution.
-
-$$t_{p_j} \equiv \mu_{j} + \sigma_{j}\,\Phi^{-1}(p_j) \quad j=1,2$$
+We fit the GLFP model on real hard drive failure data from a cloud-based storage company.  Computer hard drives are known to have a mixture of early and late failures, making the GLFP an appropriate parametric model \cite{chan}.  The hard drive data contains the number of hours the hard drive was in operation, and whether the drive failed or was right censored.  No information is available about the cause of failure.  We first focus on the drive brand model with the most observed failures to demonstrate the GLFP model.  We fit the GLFP using a Bayesian framework and specified the following proper priors to ensure a proper posterior distribution.
 $$t_{0.5,1} \sim \op{N}(8,4), \quad t_{0.2,2} \sim \op{N}(10,4)$$
 $$\mbox{logit}^{-1}\pi_1 \sim \op{Normal}(-3,2),\quad \sigma_1 \sim \op{Lognormal}(0, 2.5), \quad \sigma_2 \sim \op{Lognormal}(0, 2.5) $$
 
-The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$. The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability. (Note that, due to symmetry, the Weibull shape parameter has the same prior distribution and that a value of 1, corresponding to a constant hazard, is the median of this prior distribution.) The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ it is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.  They do, however, help identify the two failure modes. \\
+The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$.  Given the interpretation of $\pi$ as the proportion of defective units, a range primarily covering the left side of 0.50 seems reasonable and weakly informative.  The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability.  Again, this allows for a wide range of hazards, larger than we would expect to see in the data.  The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ it is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.  They do, however, help separate the early and late failure modes--the earlier infant mortality mode having a lower average time to failure than the wearout mode.  This is helpful for estimation since, as discussed in Chan & Meeker, ML had difficulty identifying the parameters of the GLFP model without making strong assumptions about the data.  \\
 
-The model model was fit using the {\tt rstan}\cite{rstan} package in {\tt R} \cite{r}, which implements a variant of Hamiltonian Monte Carlo (HMC) \cite{betancourt}. Multiple chains were run for 1500 iterations after 1500 burnin iterations. Convergence was assessed by examining posterior plots and checking that potential scale reduction factors (Rhat) \cite{gelman2014bayesian} were less than $1.1$.
 
 Table 1 gives the posterior median and 95\% credible intervals for the 5 GLFP parameters for drive model 14.  The parameter $p$ is an estimate of the proportion of drives susceptible to to infant mortality.  As expected, this fraction is small with a median value of 0.05.  The parameter estimates for the two Weibull distributions also match intuition.  The wearout failure mode puts posterior probability on a values of $\beta_1$ less than 1, which corresponds to a decreasing hazard.  Conversely, the credible interval for $\beta_2$, the wearout mode, is strictly above 1, an increasing hazard.  The two means times to failure (on the log scale) are also well identified with the infant mortality failure mode having an earlier mean time to failure than for the wearout mode. 
 
@@ -252,11 +249,13 @@ $\pi$ & 0.03 & 0.05 & 0.10 \\
 \label{table:1}
 \end{table}
 
-To graphically examine the model fit, we plot the GLFP cdf using the median values of the posterior distribution along with 90\% credible interval bands.  For reference, the solid line corresponds to a truncated adjusted non-parametric  estimator of $F(t)$.  The posterior median follows the non-parametric estimate quite closely.  Evidence eof at least two failure modes is seen in the probability plot having a kink occurring between 1 and 1.5 years.  Moreover, the fitted GLFP curves bends with the non-parametric estimate, accurately following the curvature of the lifetime distribution.
+Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time with simultaneous confidence bands provides a visual check for distributional goodness of fit.  We applied this method using the Kaplan-Meier non-parametric estimate of the empirical cdf \cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version (see the Appendix for a more detailed description).   
+
+In Figure 1 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull paper.  The solid stepwise curve corresponds to the observed failures.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method \cite{green}.  Also plotted is the median of the posterior draws for the GLFP model along with 90\% pointwise credible interval bands.  The non-parametric and parametric model align up quite closely.  Moreover, evidence of at least two failure modes is seen in the acceleration of the hazard rate between 8000 and 20,000 hours.  Therefore, a single Weibull model is clearly not flexible enough to model this lifetime distribution.
 
 \begin{figure}[H]
 \centering
-  \includegraphics[width=.9\textwidth]{fig/drive14cred.pdf}
+  \includegraphics[width=.8\textwidth]{fig/drive14cred.pdf}
   \caption{Estimated GLFP for drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws.  Solid blue line is a non-parametric Kaplan-Meier estimator.  Credible 90\% bands are in red.  Greenwood non-parametric error bands are in blue.}
   \label{fig1}
 \end{figure}
@@ -301,37 +300,6 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
   \includegraphics[width=.9\textwidth]{fig/data-sum.pdf}
   \caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total accumulated time in operation (log scale) for each of the drive-models in the Backblaze data.  The plots are sorted based on the total number of failures on the left.}
   \label{fig1}
-\end{figure}
-
-
-Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  Identifying whether failure data are consistent with a specific family of distributions is difficult to do by examining a histogram or other density estimate.  By properly transforming the axes of a plot of an empirical estimate of fraction failing as a function of time with simultaneous confidence bands provides a graphical test for distributional goodness of fit.  
-
-Applying this method to the hard drive data, we start with a non-parametric estimate of the empirical cdf for each drive-model using the Kaplan-Meier estimator
-\cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $d$, denoted by
-$\widehat{F_d(t)}_{KM}$, is conditional on survival up to
-$t_{d,\text{min}}^L$, the shortest reported running time of all units
-of drive-model $d$ for which records are available. To produce
-unconditional estimates, we adapt the adjustment method outlined by
-Turnbull, and given in more detail by Meeker and Escobar
-\cite{turnbull,meeker}.  For each drive-model we select
-$t_{d,\text{min}}^L$, the smallest left truncated time in the sample.
-By sampling from the full posterior distribution, since
-$\Pr(T>t_{d,\text{min}}^L|\theta_d)$ (the probability a hard drive has
-survived up to $t_{d,\text{min}}^L$) is a function of the model
-parameters, we can easily compute its posterior median,
-$\widehat{A}_{\text{med}} = \widehat{Pr}(T>t_{d,\text{min}}^L|\theta_d)$. We compute the adjusted estimate by
-
-$$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\text{med}}\right)\widehat{F_d(t)}_{KM},\; t>t_{d,\text{min}}^L.$$
-
-While this adjustment is negligible for the majority of drive-models, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
-
-
-In Figure 2 we plot the Kaplan-Meier adjusted cdf for drive-model 14 on Weibull paper.  Drive-model 14 had the most observed failures of all the brands.  Each point on the plot corresponds to an observed failure.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method \cite{green}.  As mentioned in the introduction, the population of hard drives exhibits two primary failure modes.  One mode is a result of manufacturing defects, which cause early failures, known as infant mortality.  The second mode is non-defective hard drives that eventually fail due to wearout.   Evidence of at least two failure modes is seen in the Kaplan Meier plot with a kink occurring between 8000 and 20,000 hours.  Therefore, fitting a single Weibull model is not flexible enough to model the failure distribution.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=.5\textwidth]{fig/mod14-KM-adj}
-\caption{Truncated Adjusted Kaplan-Meier plot showing nonparametric estimate of fraction failing for drive-model 14.  Dashed lines are Greenwood standard errors.  Plotted on Weibull paper.}
 \end{figure}
 
 
@@ -481,6 +449,28 @@ Advances in technology have made computationally intensive Bayesian methods for 
 
 Analysis using HMC is accessible to practitioners by Stan. HMC has been shown to be very efficient in effective samples per iteration because its joint updating scheme.
 
+\section{Appendix}
+\label{sec:Appendix}
+Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  Identifying whether failure data are consistent with a specific family of distributions is difficult to do by examining a histogram or other density estimate.  By properly transforming the axes of a plot of an empirical estimate of fraction failing as a function of time with simultaneous confidence bands provides a graphical test for distributional goodness of fit.  
+
+Applying this method to the hard drive data, we start with a non-parametric estimate of the empirical cdf for each drive-model using the Kaplan-Meier estimator
+\cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $d$, denoted by
+$\widehat{F_d(t)}_{KM}$, is conditional on survival up to
+$t_{d,\text{min}}^L$, the shortest reported running time of all units
+of drive-model $d$ for which records are available. To produce
+unconditional estimates, we adapt the adjustment method outlined by
+Turnbull, and given in more detail by Meeker and Escobar
+\cite{turnbull,meeker}.  For each drive-model we select
+$t_{d,\text{min}}^L$, the smallest left truncated time in the sample.
+By sampling from the full posterior distribution, since
+$\Pr(T>t_{d,\text{min}}^L|\theta_d)$ (the probability a hard drive has
+survived up to $t_{d,\text{min}}^L$) is a function of the model
+parameters, we can easily compute its posterior median,
+$\widehat{A}_{\text{med}} = \widehat{Pr}(T>t_{d,\text{min}}^L|\theta_d)$. We compute the adjusted estimate by
+
+$$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\text{med}}\right)\widehat{F_d(t)}_{KM},\; t>t_{d,\text{min}}^L.$$
+
+While this adjustment is negligible for the majority of drive-models, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
 
 \pagebreak
 
