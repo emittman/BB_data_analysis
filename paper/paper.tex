@@ -188,9 +188,20 @@ $$ P(Y \le y) = 1 - \exp \left\{ \left( \frac{y}{\alpha} \right)^\beta \right\}.
 
 An alternative parameterization, in terms of log-location parameter $\mu = \log \alpha$ and log-scale parameter $\sigma = 1/\beta$ is
 
-$$ P(Y \le y) = 1 - \exp \left\{ -\exp \left( \frac{ \log y - \mu }{\sigma} \right) \right\}. $$
+\begin{equation} P(Y \le y) = 1 - \exp \left\{ -\exp \left( \frac{ \log y - \mu }{\sigma} \right) \right\}\\
+= \Phi_{SEV}\left(\frac{\log y - \mu}{\sigma}\right),
+\end{equation}
+where $\Phi_{SEV}$ is the cdf of the smallest extreme value distribution (SEV). Thus, the Weibull distribution is a log-location scale family, with $\log Y$ following an SEV distribution with location parameter $\mu$ and scale parameter $\sigma$. With this in mind, the corresponding density function is
+\begin{equation}
+p(y) = \frac{1}{\sigma y}\exp\left\{\frac{\log y - \mu}{\sigma} - \exp \left( \frac{\log y - \mu}{\sigma} \right)\right\}
+\end{equation}
 
-This make clear that $(\log Y - \mu)/\sigma$ follows the smallest extreme value distribution (SEV). The Weibull distribution is widely used in practice as it can model failure distributions with both increasing and decreasing hazard functions \cite{meeker}. The parameter $\beta$ captures this flexibility: if $\beta>1$ the Weibull distribution has an increasing hazard function, $\beta=1$ corresponds to constant hazard, and if $0<\beta<1$ the hazard is decreasing over time.
+An advantage conferred by writing the model in this way is that the log-quantile function is a simple linear function of the parameters, and this allows for more meaningful parameters through which to convey prior information.  Using the inverse cdf of the SEV distribution,
+\begin{equation}
+\log t_p = \mu + \sigma \Phi^{-1}(p),
+\end{equation}
+where $t_p = \argmin\{y:\Phi(y)>p\}$. Since $\Phi(0)\approx 0.632$, $\log{\eta} = \mu  =t_{.63}$, and when there is more prior knowledge about a quantile other than $t_{.63}$, as is often the case with high-reliability products,  this representation allows the analyst to put prior distributions directly on those quantities.
+% The Weibull distribution is widely used in practice as it can model failure distributions with both increasing and decreasing hazard functions \cite{meeker}. The parameter $\sigma$ controls this characteristic: if $\sigma < 1$ the Weibull distribution has an increasing hazard function, $\sigma=1$ corresponds to constant hazard, and if $\sigma > 1$ the hazard is decreasing.
 
 ADD PIECE ABOUT TRANSFORMATIONS
 
@@ -199,16 +210,22 @@ For estimation, we modeled the data on the log scale, using the Smallest Extreme
 \subsection{GLFP model}
 \label{subsec:GLFP model}
 Following \cite{chan}, let $F_1,F_2$ be Weibull distributions with parameters $(\mu_1,\sigma_1)$ and $(\mu_2, \sigma_2)$ respectively.
-The Generalized Limited Failure Population model (GLFP) of \citet{chan} is defined as follows: Let $Y_1,\ldots Y_{n} \ind \op{GLFP}(\pi, \mu_1,\sigma_1,\mu_2,\sigma_2)$. Then
-$$P(Y_i \le y) = 1 - (1-\pi\, F_{1}(y))(1 - F_{2}(y)),\, t>0,\, 0 < \pi < 1.$$
+The Generalized Limited Failure Population model (GLFP) of \citet{chan} is defined as follows: Let $Y \sim \op{GLFP}(\pi, \mu_1,\sigma_1,\mu_2,\sigma_2)$. Then
+$$P(Y \le y) = F(y) = 1 - (1-\pi\, F_{1}(y))(1 - F_{2}(y)),\, t>0,\, 0 < \pi < 1.$$
 
-The GLFP model can be understood as a marginalized mixture model with a binary latent variable, $D_i\ind \op Bern(\pi)$. $D_i$ is an indicator for whether or not an observational unit is defective. Expressed conditional on $D_i$,
+The GLFP model can be understood as a marginalized mixture model with a binary latent variable, $D_i\ind \op{Bernoulli}(\pi)$. $D_i$ is an indicator for whether or not an observational unit is defective. Expressed conditional on $D_i$,
 \begin{align*}
-P(Y_i\le y | D_i=1) =& 1 -(1-F_1(y))(1-F_2(y))\\
-P(Y_i\le y | D_i=0) =& F_2(y).
+P(Y\le y | D_i=1) =& 1 -(1-F_1(y))(1-F_2(y))\\
+P(Y\le y | D_i=0) =& F_2(y).
 \end{align*}
 
-For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." The parameter $\pi_d$ represents the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units from the same population are exchangeable.
+% For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." 
+The parameter $\pi_d$ represents the proportion of units susceptible to early failure, hence susceptible to both failure modes. Here the cause of failure is not assumed to be known, thus units from the same population are exchangeable.
+
+Taking the derivative of the (marginal) cdf, the density for the GLFP is
+\begin{equation}
+f(y|\pi, \mu_1,\sigma_1, \mu_2, \sigma_2) = \pi f_1(y|\mu_1,\sigma_1)\left(1-F_2(y|\mu_2,\sigma_2)\right) + f_2(y|\mu_2,\sigma_2)\left(1-\pi F_2(y|\mu_2,\sigma_2\right).
+\end{equation}
 
 \subsection{Censoring and Truncation}
 Right censoring is common in reliability data.  Due to time or budget constraints it is rare all units are observed until failure. If a unit has not yet failed when the data is analyzed it is considered right censored.  In other words, right censoring puts a lower bound on the failure time.  Products with long expected lifetimes, such as hard drives, are heavily right censored.  Hard drives are built to last for decades under normal use conditions.  Even when running continuously, hard drives can exhibit failure rates of less than two percent per year \cite{backblaze}.  \\
@@ -220,6 +237,15 @@ We now define the general form for the likelihood function that takes into accou
 \begin{equation*}
 L(\bm{\theta})= \prod_{i=1}^{n} f(Y_i; \bm{\theta})^{\nu_i\delta_i} \left[\frac{f(Y_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{(1-\nu_i) \delta_i}
 [1-F(c_i;\bm{\theta})]^{\nu_i (1-\delta_i)} \left[ \frac{1-F(c_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{(1-\nu_i)(1-\delta_i)}
+
+A common feature of lifetime data is right censoring.  For various reasons failure times for observational units are known only to up to a lower bound. For example, observational units still surviving when the data is analyzed.  Lifetime data for products with long expected lifetimes, such as hard drives, have a natural tendency to exhibit this kind of censoring.\\
+
+When an observation is truncated, that implies that it would not have been observed had it not coincided with the observation window. This has the existence of an observation would have been unknown if it falls within a certain interval \cite{meeker}. While right censoring restricts information to a lower bound on survival, left truncation makes information conditional on survival up to the truncation point. This is a common feature of observational data, where the factors leading to inclusion in the data set are uncontrolled. Ignoring left truncation can lead to biased estimates. However, dropping left truncated observations should be avoided because it could substantially reduce the total available information.  Therefore, we incorporate both right censoring and left truncation into the likelihood. 
+
+\subsubsection{Likelihood}
+We now give the general form for the likelihood function, taking into account left truncation and right censoring.  Let $Y_{i}$ denote the end of the observed lifetime of unit $i$, in hours.  Let $t_i^L$ be the left truncation time; that is, the first time reported for the unit.  Additionally, let $c_i$ be an indicator for censoring; $c_i=1$ if the failure time is right-censored, $c_1=0$ if the unit failed (at time $Y_i$). The likelihood for the GLFP is a function of $\bm{\theta} = (\mu_1, \sigma_1, \mu_2, \sigma_2, \pi)$.  Assuming the lifetimes of all units are independent, the likelihood for the data, $Y_1,\ldots,Y_N$ is given by
+\begin{equation*}
+L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{f(y_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{1-c_i} \left[ \frac{1-F(y_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{c_i}
 \end{equation*}
 
 \subsection{Example 1}
