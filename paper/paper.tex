@@ -191,16 +191,17 @@ An alternative parameterization, in terms of log-location parameter $\mu = \log 
 \begin{equation} P(Y \le y) = 1 - \exp \left\{ -\exp \left( \frac{ \log y - \mu }{\sigma} \right) \right\}\\
 = \Phi_{SEV}\left(\frac{\log y - \mu}{\sigma}\right),
 \end{equation}
-where $\Phi_{SEV}$ is the cdf of the smallest extreme value distribution (SEV). Thus, the Weibull distribution is a log-location scale family, with $\log Y$ following an SEV distribution with location parameter $\mu$ and scale parameter $\sigma$. With this in mind, the corresponding density function is
+where $\Phi_{SEV}$ is the cdf of the standard smallest extreme value distribution (SEV). Thus, the Weibull distribution is a log-location scale family, with $\log Y$ following an SEV distribution with location parameter $\mu$ and scale parameter $\sigma$. With this in mind, the corresponding density function is
 \begin{equation}
-p(y) = \frac{1}{\sigma y}\exp\left\{\frac{\log y - \mu}{\sigma} - \exp \left( \frac{\log y - \mu}{\sigma} \right)\right\}
+p(y) = \frac{1}{\sigma y}\exp\left\{\frac{\log y - \mu}{\sigma} - \exp \left( \frac{\log y - \mu}{\sigma} \right)\right\}\\
+=\frac{1}{\sigma y} \phi_{SEV}\left(\frac{\log y - \mu}{\sigma}\right)
 \end{equation}
 
-An advantage conferred by writing the model in this way is that the log-quantile function is a simple linear function of the parameters, and this allows for more meaningful parameters through which to convey prior information.  Using the inverse cdf of the SEV distribution,
+An advantage conferred by writing the model in this way is that the log of the $p^{th}$ quantile, $t_p$, is a linear function of the parameters, which an analyst to apply prior information in a straightforward way.  Using the inverse cdf of the SEV distribution,
 \begin{equation}
-\log t_p = \mu + \sigma \Phi^{-1}(p),
+\log t_p = \mu + \sigma \Phi_{SEV}^{-1}(p),
 \end{equation}
-where $t_p = \argmin\{y:\Phi(y)>p\}$. Since $\Phi(0)\approx 0.632$, $\log{\eta} = \mu  =t_{.63}$, and when there is more prior knowledge about a quantile other than $t_{.63}$, as is often the case with high-reliability products,  this representation allows the analyst to put prior distributions directly on those quantities.
+where $t_p = \argmin\{y:\Phi_{SEV}(y)>p\}$. Since $\Phi(0)\approx 0.632$, $\log{\eta} = \mu  =t_{.63}$, and when there is more prior knowledge about a quantile other than $t_{.63}$, as is often the case with high-reliability products,  this representation allows the analyst to put prior distributions directly on those quantities.
 % The Weibull distribution is widely used in practice as it can model failure distributions with both increasing and decreasing hazard functions \cite{meeker}. The parameter $\sigma$ controls this characteristic: if $\sigma < 1$ the Weibull distribution has an increasing hazard function, $\sigma=1$ corresponds to constant hazard, and if $\sigma > 1$ the hazard is decreasing.
 
 \subsection{GLFP model}
@@ -209,10 +210,10 @@ Following \cite{chan}, let $F_1,F_2$ be Weibull distributions with parameters $(
 The Generalized Limited Failure Population model (GLFP) of \citet{chan} is defined as follows: Let $Y \sim \op{GLFP}(\pi, \mu_1,\sigma_1,\mu_2,\sigma_2)$. Then
 $$P(Y \le y) = F(y) = 1 - (1-\pi\, F_{1}(y))(1 - F_{2}(y)),\, t>0,\, 0 < \pi < 1.$$
 
-The GLFP model can be understood as a marginalized mixture model with a binary latent variable, $D_i\ind \op{Bernoulli}(\pi)$. $D_i$ is an indicator for whether or not an observational unit is defective. Expressed conditional on $D_i$,
+The GLFP model can be understood as a marginalized mixture model with a binary latent variable, $\delta_i\ind \op{Bernoulli}(\pi)$. $\delta_i$ is an indicator for whether or not an observational unit is defective. Expressed conditional on $\delta_i$,
 \begin{align*}
-P(Y\le y | D_i=1) =& 1 -(1-F_1(y))(1-F_2(y))\\
-P(Y\le y | D_i=0) =& F_2(y).
+P(Y\le y | \delta_i=1) =& 1 -(1-F_1(y))(1-F_2(y))\\
+P(Y\le y | \delta_i=0) =& F_2(y).
 \end{align*}
 
 % For the purpose of exposition, we will refer to the probability distributions $F_{d1}$ and $F_{d2}$ as ``failure modes." Specifically, we will refer to $F_{1}$ as the ``early failure mode", and $F_{d2}$ as the ``main failure mode." 
@@ -224,11 +225,11 @@ f(y|\pi, \mu_1,\sigma_1, \mu_2, \sigma_2) = \pi f_1(y|\mu_1,\sigma_1)\left(1-F_2
 \end{equation}
 
 \subsection{Censoring and Truncation}
-A common feature of lifetime data is right censoring. Due to time or budget constraints it is rare all units are observed until failure. If a unit has not yet failed when the data is analyzed it is considered right censored.  In other words, right censoring puts a lower bound on the failure time.  
+A common feature of lifetime data is right-censoring. Due to time or budget constraints it is rare all units are observed until failure. If a unit has not yet failed when the data is analyzed it is considered right-censored.  In other words, right-censoring puts a lower bound on the failure time.  
 Lifetime data for products with long expected lifetimes, such as hard drives, have a natural tendency to exhibit this kind of censoring.
 
 
-When an observation is truncated, that implies that it would not have been observed had it not coincided with the observation window.  While right censoring restricts information to a lower bound on survival, left truncation makes information conditional on survival up to the truncation point. This is a common feature of observational data, where the factors leading to inclusion in the data set are uncontrolled. Ignoring left truncation can lead to biased estimates. However, dropping left truncated observations should be avoided because it could substantially reduce the total available information.  Therefore, we incorporate both right censoring and left truncation into the likelihood. 
+When an observation is left-truncated, it would not have been observed if it had failed prior to a particular time, which we refer to as the left-truncation time. Left-truncation is a common feature of observational lifetime data, where the factors leading to inclusion in the data set are uncontrolled and/or the population of interest has a history prior to any data collection. Ignoring left truncation can lead to biased estimates. However, dropping left truncated observations should be avoided because it could substantially reduce the total available information.  Therefore, we incorporate both right censoring and left truncation into the likelihood. 
 
 
 \subsubsection{Likelihood}
