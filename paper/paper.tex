@@ -201,7 +201,7 @@ An advantage conferred by writing the model in this way is that the log of the $
 \begin{equation}
 \log t_p = \mu + \sigma \Phi_{SEV}^{-1}(p),
 \end{equation}
-where $t_p = \argmin\{y:\Phi_{SEV}(y)>p\}$. Since $\Phi(0)\approx 0.632$, $\log{\eta} = \mu  =t_{.63}$, and when there is more prior knowledge about a quantile other than $t_{.63}$, as is often the case with high-reliability products,  this representation allows the analyst to put prior distributions directly on those quantities.
+where $t_p = \argmin\{y:\Phi_{SEV}(\log y)>p\}$. Since $\Phi(0)\approx 0.632$, $\log{\eta} = \mu  =t_{.63}$, and when there is more prior knowledge about a quantile other than $t_{.63}$, as is often the case with high-reliability products,  this representation allows the analyst to put prior distributions directly on those quantities.
 % The Weibull distribution is widely used in practice as it can model failure distributions with both increasing and decreasing hazard functions \cite{meeker}. The parameter $\sigma$ controls this characteristic: if $\sigma < 1$ the Weibull distribution has an increasing hazard function, $\sigma=1$ corresponds to constant hazard, and if $\sigma > 1$ the hazard is decreasing.
 
 \subsection{GLFP model}
@@ -280,28 +280,36 @@ In Figure 1 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull 
 \section{Hierarchical GLFP model}
 \label{sec:Hierarchical GLFP model}
 
-To borrow strength across different product populations, we can either share parameters across products, or model the product specific parameters hierarchically, allowing the data to inform the hyperparameters. For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j}$, and proportions, $\pi_d$, of the component distributions as follows:
+To borrow strength across different populations, we can
+%either share parameters across populations, or 
+model the population specific parameters hierarchically, allowing the data to inform the hyperparameters.
+%For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j}$, and proportions, $\pi_d$, of the component distributions as follows:
 
-$$\sigma_{d,1} \ind \op{Lognormal} \left( \eta_{\sigma,1}, \tau^2_{\sigma,1} \right) \mbox{ for } d=1,\ldots,D$$
-$$\sigma_{d,2} \ind \op{Truncated-Lognormal} \left( \eta_{\sigma,2}, \tau^2_{\sigma,2} , 0, 1 \right) \mbox{ for } d=1,\ldots,D$$
-$$t_{p_j,d,j} \equiv \mu_{d,j} + \sigma_{d,j}\,\Phi^{-1}(p_j)  \ind \op{Normal} \left(\eta_{t_{p_j},j}, \tau^2_{t_{p_j},j}\right) \mbox{ for } j=1,2\; d=1,\ldots,D$$
+Let
+\begin{equation}
+y_{g,i} \ind \op{GLFP}\left( \pi_g, \mu_{1g}, \sigma_{1g}, \mu_{2g}, \sigma_{2g} \right),
+\end{equation}
+where $g=1,\ldots,G$ indexes populations. Next we model these parameters themselves as random variables. Let
+\begin{equation*}
+\sigma_{1g} \ind \op{LN} \left( \eta_{\sigma_1}, \tau^2_{\sigma_1} \right)
+\end{equation*}
+\begin{equation*}
+\sigma_{2g} \ind \op{LN} \left( \eta_{\sigma_2}, \tau^2_{\sigma_2}\right)\op{T}\left(0, 1\right)
+\end{equation*}
+\begin{equation}
+\label{eq:hier-model}
+\log t_{p_{1}g} \equiv \mu_{1g} + \sigma_{1g}\,\Phi^{-1}(p_1)  \ind \op{N} \left(\eta_{t_{p_1}}, \tau^2_{t_{p_1}}\right)
+\end{equation}
+\begin{equation*}
+\log t_{p_{2}g} \equiv \mu_{2g} + \sigma_{2g}\,\Phi^{-1}(p_2)  \ind \op{N} \left(\eta_{t_{p_2}}, \tau^2_{t_{p_2}}\right)
+\end{equation*}
+\begin{equation*}
+\op{logit} \pi_g \ind \op{N}(\eta_\pi, \tau_\pi).
+\end{equation*}
 
-$$\op{logit} \pi_d \ind \op{N}(\eta_\pi, \tau_\pi) \mbox{ for } d=1,\ldots,D.$$
+As discussed in section \ref{sec:Weibull parameterization}, we reparameterize the Weibull in terms of log quantile and scale since the data we encounter are more informative about the left side of their respective lifetime distribution. We truncate the distribution of $\sigma_{2g}$ at $1$, restricting the wearout failure mode to have an increasing hazard function. We choose to model these parameters (or suitable transformations) with normal distributions because many populations require strong regularization which the normal, with its exponentially decreasing tails, provides. 
 
-Here, $\Phi^{-1}$ is the quantile function of the standard log-Weibull distribution. We truncate $\sigma_{d,2}$ at $1$, appealing to the logic that, by nature, wearout produces an increasing hazard function. The decision to parameterize in terms of a quantile other than the log-location parameter, $\mu = t_{0.632}$, is that lifetime data often features heavy right-censoring where inferences about the location parameter are extrapolations beyond the range of the data. %For this data we selected $p_1=0.5,\mbox{ (the median), and } p_2 = 0.2$.
-
-We consider the models with the following set of restrictions (from most to least restrictive):
-
-\begin{enumerate}
-\item $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{1}=\sigma_1,\quad \mu_{d2} = \mu_2,\quad \sigma_{d2} = \sigma_2$
-\item $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1,\quad \sigma_{d2} = \sigma_2$
-\item $\pi_{d} = \pi,\quad \mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
-\item $\mu_{d1} = \mu_1,\quad \sigma_{d1}=\sigma_1$
-\end{enumerate}
-
-The set of model specifications were chosen based data, interpretation of the model, as well as estimation considerations.  Product specific parameters for the the wearout failure mode $(\mu_{d2},\sigma_{d2})$, and the proportion defective $(\pi_d)$, are considered as a means to account for heterogeneity across brands in the right tails of the failure distribution.  Going from a common model for all product brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by product.
-
-For all of the models we consider, the parameters for the infant mortality failure mode are held in common across products.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality provides a meaningful interpretation and comparison of $\pi_i$ and $\pi_j$ ($i \neq j$). 
+In principle, we prefer this full model because we tend to believe that every population has a distribution with a distinct set of parameters. In practice, however, we may consider restrictions to reduce the number of parameters if the data do not support their estimation. For example, we may consider a model with a common $\sigma_{1}$, letting $\sigma_{1g}=\sigma_1$ for all $g=1,\ldots,G$. A practical strategy is to begin with a simple model and gradually add complexity, reevaluating model adequacy at each iteration. In section \ref{sec:Model Comparisons}, we illustrate this process, fitting a series of models with increasing complexity and evaluating their performance using a measure of leave-one-out predictive error.
 
 
 \section{Data analysis}
@@ -318,7 +326,19 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
   \label{fig1}
 \end{figure}
 
+\subsection{Candidate Models}
+We considered four models, all based on \ref{eq:hier-model}, which are identified by which model parameters are held constant across drive-models. These are (from most to least restrictive):
 
+\begin{enumerate}
+\item $\pi_{g} = \pi,\quad \mu_{1g} = \mu_1,\quad \sigma_{1g}=\sigma_1,\quad \mu_{2g} = \mu_2,\quad \sigma_{2g} = \sigma_2$
+\item $\pi_{g} = \pi,\quad \mu_{1g} = \mu_1,\quad \sigma_{1g}=\sigma_1,\quad \sigma_{2g} = \sigma_2$
+\item $\pi_{g} = \pi,\quad \mu_{1g} = \mu_1,\quad \sigma_{1g}=\sigma_1$
+\item $\mu_{1g} = \mu_1,\quad \sigma_{1g}=\sigma_1$
+\end{enumerate}
+
+The set of model specifications were chosen based data, interpretation of the model, as well as estimation considerations.  Product specific parameters for the the wearout failure mode $(\mu_{2g},\sigma_{2g})$, and the proportion defective $(\pi_g)$, are considered as a means to account for heterogeneity across brands in the right tails of the failure distribution.  Going from a common model for all product brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by product.
+
+For all of the models we consider, the parameters for the infant mortality failure mode are held in common across products.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality provides a meaningful interpretation and comparison of $\pi_g$ and $\pi_{g'}$ ($g \neq g'$). 
 \subsection{Prior Distributions}
 \label{sec:Prior Distributions}
 To complete the full probability model, we need to select prior distributions for the parameters governing the hierarchical model. We select proper priors to ensure a proper posterior.
