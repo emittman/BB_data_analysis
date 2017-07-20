@@ -40,7 +40,7 @@ sampfull14 <- with(sampfull, data.frame(mu1 = mu1, sigma1 = sigma1,
                                         log_pi = log_pi[,14]))
 band14full <- bandFromPSamp(sampfull14, xlimits, length.out = 50, N = 1000, logscale = TRUE)
 p14base <- addBandToBaseplot(p14base, band14full, color="yellow", linetype=2, alpha=.2, label="Bayes hier. 90%")
-plotFinally(p14base, xbrks = c(.1, .5, 1, 2, 4)*365*24,
+plotFinally(p14base, xbrks = c(.1, .2, .5, 1, 2, 4)*365*24,
             ybrks = c(.01, .02, .05, .1, .2, .5), years=TRUE) +
   guides(fill = FALSE) +
   theme_bw()
