@@ -1,6 +1,6 @@
 setwd("workflow2/")
 #3 8  14
-s <- readRDS("samples_nopool_data_dm14.rds")
+s <- readRDS("samples_nopool_data_dm8.rds")
 print(s)
 library(plyr)
 library(rstan)
@@ -46,3 +46,6 @@ plot_grid(plots[[1]]+bands[[1]]+ggtitle("6"),
           plots[[2]]+bands[[2]]+no_yaxis_nums+ggtitle("14"),
           plots[[3]]+bands[[3]]+no_yaxis_nums+ggtitle("23"), ncol=3)
 dev.off()
+
+plots[[1]] + geom_ribbon(data=bands[[1]]$band, inherit.aes = F,
+                         aes(x=x, y=y, ymin=lower, ymax=upper), alpha=.2)

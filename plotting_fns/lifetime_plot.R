@@ -112,7 +112,7 @@ lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
   
   p <- ggplot(data, aes(x=ID, xend=ID, y=starttime, yend=endtime)) +
     geom_segment(aes(color=status), alpha=.5)+
-    coord_flip() +
+    coord_flip(expand=F) +
     theme_bw() +
     theme(axis.title.y= element_blank(),
           axis.ticks.y= element_blank(),
@@ -133,8 +133,8 @@ lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
                                   labels=xlabels,
                                   trans=trans)
   }
-  p <- p + scale_color_manual(values = c("censored"="black", "failed"="lightgray")) 
+  p <- p + scale_color_manual(values = c("censored"="black", "failed"="white")) 
   
-  if(is.null(n_to_show)) return(p+ggtitle(paste(mod)))
+  if(is.null(n_to_show)) return(p+ggtitle(paste(lab)))
   p + ggtitle(paste(lab, "(sample size = ", n_to_show, ", N = ", N, ")"))
 }
