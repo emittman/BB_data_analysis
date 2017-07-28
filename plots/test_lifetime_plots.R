@@ -21,15 +21,19 @@ filter(df, model==overvw$model[which(overvw$stan_id==14)]) %>%
   lifetime_plot2(n_to_show=800, lab="Drive-model 14", trans="log",
                 xlimits=c(50,40000), xlabels=c(.01,.05,.25,1,2,4))
 
-plf <- lifetime_plot3(dfnew, lab="Drive-model 14", trans="log",
-                 xlimits=c(50,40000), xlabels=c(.01,.05,.2,1,2,4))
+plf <- lifetime_plot3(dfnew, lab="Drive-model 14", trans="log",n_to_show = 75,
+                 xlimits=c(250,40000), xlabels=c(.02,.05,.2,.5,1,2,4))+
+  theme(legend.position="none")
 
 source("plotting_fns/KM_plot2.R")
 fit <- KM.survfit(filter(df, model==overvw$model[which(overvw$stan_id==14)]), greenwood = T)
-p <- baseKMplot(fit, logscale = T, xlimits = c(50, 40000), ylimits=c(.001, .75))
-pkm <- plotFinally(p, xbrks = c(.01, .05, .2, .5, 1, 2, 4)*365*24,
+p <- baseKMplot(fit, logscale = T, xlimits = c(250, 40000), ylimits=c(.001, .75))
+pkm <- plotFinally(p, xbrks = c(.02, .05, .2, .5, 1, 2, 4)*365*24,
             ybrks = c(.001, .01, .1, .25, .5, .75),
-            greenwood = T, years = T)
+            greenwood = T, years = T)+
+  theme(legend.position="none")+ggtitle("Nonparametric fit")
 
 library(cowplot)
+pdf("np_ex1.pdf", width=6, height=7)
 plot_grid(plf,pkm, ncol=1, align = "hv")
+dev.off()

@@ -106,17 +106,35 @@ lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
   }
   n <- nrow(data)
   data <- data %>% arrange(starttime) %>%
-    mutate(ID=1:n,
-           status=factor(ifelse(censored, "censored","failed")),
-           starttime=pmax(starttime, xlimits[1]))
+    mutate(ID=1:n)
+
+  data_c <- filter(data, censored==TRUE) %>%
+    mutate(status="censored",
+           starttime=endtime,
+           endtime=xlimits[2])
   
-  p <- ggplot(data, aes(x=ID, xend=ID, y=starttime, yend=endtime)) +
-    geom_segment(aes(color=status), alpha=.5)+
+  data_f <- filter(data, censored==FALSE) %>%
+    mutate(starttime=endtime,
+           endtime=xlimits[2],
+           status="failed")
+  
+  data_o <- mutate(data,
+                   starttime=pmax(starttime, xlimits[1]),
+                   status="observed")
+  
+  data_new <- rbind(data_c,data_f,data_o)
+  data_new$status <- factor(data_new$status)
+  
+  p <- ggplot(data_new, aes(x=ID, xend=ID, y=starttime, yend=endtime, color=status, linetype=status, alpha=status)) +
+    geom_segment()+
     coord_flip(expand=F) +
-    theme_bw() +
+    theme_dark() +
     theme(axis.title.y= element_blank(),
           axis.ticks.y= element_blank(),
-          axis.text.y = element_blank())
+          axis.text.y = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank())
   
   transform <- switch(trans,
                       "log" = scales::log_trans,
@@ -133,7 +151,9 @@ lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
                                   labels=xlabels,
                                   trans=trans)
   }
-  p <- p + scale_color_manual(values = c("censored"="black", "failed"="white")) 
+  p <- p + scale_color_manual(values = c("censored"="white", "failed"="black", "observed"="white"))+
+    scale_linetype_manual(values = c("censored"="dashed", "failed"="solid", "observed"="solid"))+
+    scale_alpha_manual(values = c("censored"="1", "failed"=".5", "observed"="1"))
   
   if(is.null(n_to_show)) return(p+ggtitle(paste(lab)))
   p + ggtitle(paste(lab, "(sample size = ", n_to_show, ", N = ", N, ")"))
