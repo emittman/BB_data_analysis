@@ -6,6 +6,8 @@
 \usepackage[numbers]{natbib}
 \usepackage{url} % not crucial - just used below for the URL
 
+% no longer require relative path to figs
+\graphicspath{{fig/}}
 
 \usepackage[x11names]{xcolor}
 \usepackage{framed} % provides framed env., should be removed in final draft
@@ -15,7 +17,7 @@
 
 \newcommand{\ind}{\stackrel{ind.}{\sim}}
 \newcommand{\op}{\operatorname}
-
+\DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\myequation}{\begin{equation}}
 \newcommand{\myendequation}{\end{equation}}
 \let\[\myequation
@@ -170,7 +172,13 @@ We fit the GLFP model on real hard drive failure data from a cloud-based storage
 $$t_{0.5,1} \sim \op{N}(8,4), \quad t_{0.2,2} \sim \op{N}(10,4)$$
 $$\mbox{logit}^{-1}\pi_1 \sim \op{Normal}(-3,2),\quad \sigma_1 \sim \op{Lognormal}(0, 2.5), \quad \sigma_2 \sim \op{Lognormal}(0, 2.5) $$
 
-The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$.  Given the interpretation of $\pi$ as the proportion of defective units, which we would expect to be small, a range primarily covering the left side of 0.50 is reasonable and weakly informative.  The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability.  Again, this allows for a wide range of hazards, larger than we would expect to see in the data.  The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ the range is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.  They do, however, help separate the early and late failure modes--the earlier infant mortality mode having a lower mean time to failure than the wearout mode.  This is helpful for estimation since, as discussed in Chan & Meeker, ML had difficulty identifying the two sets of GLFP parameters without making strong assumptions about the data.  \\
+\begin{figure}[H]
+\centering
+\includegraphics{np_ex1}
+\caption{Top: Lifetime plot of data from 75 randomly selected units of drive-model `14'. Bottom: Kaplan-Meier estimate for drive-model `14'.}
+\label{dm14}
+\end{figure}
+The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$.  Given the interpretation of $\pi$ as the proportion of defective units, which we would expect to be small, a range primarily covering the left side of 0.50 is reasonable and weakly informative.  The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability.  Again, this allows for a wide range of hazards, larger than we would expect to see in the data.  The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ the range is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.  They do, however, help separate the early and late failure modes--the earlier infant mortality mode having a lower mean time to failure than the wearout mode.  This is helpful for estimation since, as discussed in Chan \& Meeker, ML had difficulty identifying the two sets of GLFP parameters without making strong assumptions about the data.  \\
 
 
 Table 1 gives the posterior median and 95\% credible intervals for the 5 GLFP parameters for drive model 14.  The parameter $p$ is an estimate of the proportion of drives susceptible to to infant mortality.  As expected, this fraction is small with a median value of 0.05.  The parameter estimates for the two Weibull distributions also match intuition.  The wearout failure mode puts posterior probability on a values of $\beta_1$ less than 1, which corresponds to a decreasing hazard.  Conversely, the credible interval for $\beta_2$, the wearout mode, is strictly above 1, an increasing hazard.  The two means times to failure (on the log scale) are also well identified with the infant mortality failure mode having an earlier mean time to failure than the wearout mode. 
