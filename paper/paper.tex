@@ -206,7 +206,7 @@ In Figure 1 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull 
 
 \begin{figure}[H]
 \centering
-  \includegraphics[width=.8\textwidth]{fig/drive14cred.pdf}
+  \includegraphics[width=.8\textwidth]{drive14cred.pdf}
   \caption{Estimated GLFP for drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws.  Solid blue line is a non-parametric Kaplan-Meier estimator.  Credible 90\% bands are in red.  Greenwood non-parametric error bands are in blue.}
   \label{fig1}
 \end{figure}
@@ -254,7 +254,8 @@ Backblaze is a company that offers cloud backup storage to protect against data 
 As of the first quarter of 2016, Backblaze was collecting and reporting data on 63 different drive-models.  Some drive-models have been running since 2013 or before, while others were added at a later date.  Data have been reported on 75,297 different hard drives that are or where in operation.  The distribution of drives by drive-model varies: some drive-models have only have a service record for a single drive whereas the maximum number of daily service records for a single drive model is 35,860.  Figure \ref{fig1} shows the distribution of total number of failures and total observed running time for drive-models with at least 3 failures.  For model identification, a minimum of three failures was the criterion for hard drive brands to be included in our analyses.  
 
 \begin{figure}[H]
-  \includegraphics[width=.9\textwidth]{fig/data-sum.pdf}
+  \includegraphics[width=.9\textwidth]{data-sum.pdf}
+  \includegraphics[width=.9\textwidth]{dm-summ-scatter.pdf}
   \caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total accumulated time in operation (log scale) for each of the drive-models in the Backblaze data.  The plots are sorted based on the total number of failures on the left.}
   \label{fig1}
 \end{figure}
@@ -321,7 +322,7 @@ The lower left panel, representing Model 3, suggests differing shape parameters 
 Finally, the lower right panel, corresponding to Model 4, shows that, by allowing $\pi_d$ to vary by drive-model, there is greater variability in the early rate of failure and, for some drive-models, the forecasted fraction failing is adjusted downward. 
 
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{fig/heterogeneity-compare-preliminary}
+\includegraphics[width=\textwidth]{heterogeneity-compare-preliminary}
 \caption{Left: Kaplan-Meier estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, ordered left to right, top to bottom.}
 \label{fig2}
 \end{figure}
@@ -329,7 +330,7 @@ Finally, the lower right panel, corresponding to Model 4, shows that, by allowin
 We can also compare the model fits for each drive-model individually.  Using the set of parameters that maximize the posterior log probability, we examine the GLFP cdf for each of the 4 model specifications.  The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure 4.  The black step functions again corresponds to the adjusted non-parametric estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All of the GLFP models appear to overestimate the proportion of failed hard drives for drive-model 2, but Model 4 agrees best with the nonparametric estimate.  For drive-model 14, Models 1-3 underestimate the proportion of drives failing, and for drive-model 40, they slightly overestimate the data.  Conversely, Model 4 follows the observed failures quite closely--accurately capturing failures at the lower and upper ends of the distribution.  The difference in accuracy between Models 3 and 4 are and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the fits from Model 3 and 4 line almost exactly on top of each other for drive-model 40.
 \begin{figure}[H]
     \centering
-   \includegraphics[width=\textwidth]{fig/mod_compare_legend}
+   \includegraphics[width=\textwidth]{mod_compare_legend}
 		\caption{Estimated GLFP for 4 drive-models plotted on Weibull paper.  The solid step function is the truncated adjusted Kaplan-Meier points.  \label{fig:first}} 
 \end{figure}
 
@@ -393,14 +394,14 @@ We can also use the posterior draws to compute quantiles of interest, which in r
  
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{fig/b10andpi}
+  \includegraphics[width=\textwidth]{b10andpi}
   \caption{Left: 50\% credible intervals for  $t_{0.10}$ (time in years till 10\% of the drives fail). Right: 50\% credible intervals for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of $t_{0.10}$.}
   \label{fig4}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=.8\textwidth]{fig/dm-eval}
+  \includegraphics[width=.8\textwidth]{dm-eval}
   \caption{Left: Posterior predictive relative value-at-loss for new
     unit, by drive-model. Right: TTF (top) and VAF based on 40\% annual depreciation (bottom), for best 11 drive-models.}
   \label{fig5}
