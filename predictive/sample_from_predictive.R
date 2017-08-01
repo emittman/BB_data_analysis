@@ -7,3 +7,11 @@ sample_glfp <- function(n,p,m1,s1,m2,s2){
   f1 <- ifelse(defective, pmin(f1,f2), f2)
   return(pmin(f1,f2))
 }
+
+sample_glfp_rep <- function(n,p,m1,s1,m2,s2){
+  f1 <- rweibull(n, 1/s1, exp(m1))
+  f2 <- rweibull(n, 1/s2, exp(m2))
+  defective <- sample(c(TRUE,FALSE), n, prob=c(p, 1-p), replace=TRUE)
+  f1 <- ifelse(defective, pmin(f1,f2), f2)
+  return(pmin(f1,f2))
+}

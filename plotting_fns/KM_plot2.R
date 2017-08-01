@@ -110,8 +110,33 @@ trimKMy <- function(fit, ylimits){
   fit
 }
 
+baseKMplot.multiple <- function(fit_list, xlimits=NULL, ylimits=NULL, color="black", linetype=1, logscale=NULL, prob=TRUE, label="nonparametric", alpha=1){
+  require(ggplot2)
+  classes <- sapply(fit_list, function(li) "myKM" %in% class(li))
+  if(!(all(classes))) stop("fits must be outputs from KM.survfit")
+  if(!is.null(xlimits)){
+    fit_list <- lapply(fit_list, function(li) trimKMx(li, xlimits))
+  }
+  if(!is.null(ylimits)){
+    fit_list <- lapply(fit_list, function(li) trimKMy(li, ylimits))
+  }
+  fit_list <- lapply(1:length(fit_list), function(i) cbind(fit_list[[i]], rep=i))
+  df.combined <- do.call(rbind, fit_list)
+  class(df.combined) <- c("data.frame", "myKM")
+  df.combined$grp <- as.character(1)
+  p <- ggplot(df.combined, aes(x=t, y=Ft, color=grp, linetype=grp)) + geom_step(aes(group=rep), alpha=alpha)
+  
+  #for scale_color_manual
+  scm <- list(colorvals=c("1"=color), linetypevals=c("1"=linetype), labels=label)
+  
+  out <- list(xlimits=xlimits, ylimits=ylimits, base=p, scm=scm, logscale=logscale, prob=prob)
+  attributes(out)$greenwood <- attr(df.combined, "green")
+  class(out) <- "myPlotList"
+  return(out)
+}
+
 #Make base KMplot
-baseKMplot <- function(fit, xlimits=NULL, ylimits=NULL, color="black", linetype=1, logscale=NULL, prob=TRUE, label="nonparametric"){
+baseKMplot <- function(fit, xlimits=NULL, ylimits=NULL, color="black", linetype=1, logscale=NULL, prob=TRUE, label="nonparametric", alpha=1){
   require(ggplot2)
   if(!("myKM" %in% class(fit))) stop("fit must be output from KM.survfit")
   if(!is.null(xlimits)){
@@ -194,6 +219,30 @@ bandTrimx <- function(bandObj, xlimits){
   id <- which(bandObj$band$t > xlimits[2] | bandObj$band$t < xlimits[1])
   bandObj$band <- bandObj$band[-id,]
   bandObj
+}
+
+addKmToBaseplot <- function(baseplot, fitObj, color, linetype, label=""){
+  stopifnot(class(baseplot) == "myPlotList")
+  stopifnot("myKM" %in% class(fitObj))
+  if(!is.null(baseplot$xlimits)){
+    fitObj <- trimKMx(fitObj, baseplot$xlimits)
+  }
+  if(!is.null(baseplot$ylimits)){
+    fitObj <- trimKMy(fitObj, baseplot$ylimits)
+  }
+  grp_num <- as.character(length(baseplot$scm$colorvals)+1)
+  fitObj$grp <- grp_num
+  baseplot$base <- baseplot$base +
+    geom_step(data=fitObj, inherit.aes=FALSE, aes(x=t, y=Ft, color=grp, linetype=grp))
+  
+  concat_names <- c(names(baseplot$scm$colorvals), grp_num)
+  baseplot$scm$colorvals <- with(baseplot$scm, c(colorvals, color))
+  baseplot$scm$linetypevals <- with(baseplot$scm, c(linetypevals, linetype))
+  names(baseplot$scm$colorvals) <- concat_names
+  names(baseplot$scm$linetypevals) <- concat_names
+  baseplot$scm$labels <- c(baseplot$scm$labels, label)
+  
+  baseplot
 }
 
 addBandToBaseplot <- function(baseplot, bandObj, color, linetype, alpha=.5, label=""){
