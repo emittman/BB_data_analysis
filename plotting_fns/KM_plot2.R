@@ -65,7 +65,8 @@ KM.survfit <- function(life.data, greenwood = FALSE, alpha = .05){
 }
 
 #Given a KM truncation adjustment estimate (Ft at min(starttime)), adjust myKM object
-tr.adj <- function(fit){
+tr.adj <- function(fit, tr_adj){
+  stopifnot(tr_adj>=0)
   if(!("myKM" %in% class(fit))) stop("fit must be output from KM.survfit")
   fit$Ft <- fit$Ft * (1 - tr_adj) + tr_adj
   fit
@@ -120,6 +121,11 @@ baseKMplot.multiple <- function(fit_list, xlimits=NULL, ylimits=NULL, color="bla
   if(!is.null(ylimits)){
     fit_list <- lapply(fit_list, function(li) trimKMy(li, ylimits))
   }
+  
+  #check to see if any KMs are now empty
+  empty_id <- which(sapply(fit_list, nrow)==0)
+  if(length(empty_id)>0) {fit_list <- fit_list[ -empty_id]}
+  
   fit_list <- lapply(1:length(fit_list), function(i) cbind(fit_list[[i]], rep=i))
   df.combined <- do.call(rbind, fit_list)
   class(df.combined) <- c("data.frame", "myKM")

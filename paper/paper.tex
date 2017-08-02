@@ -168,6 +168,7 @@ L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{f(y_i;\bm{\theta})}{1-F(t_i^L;\bm{\t
 \end{equation*}
 
 \subsection{Example 1}
+\label{subsec:ex1}
 We fit the GLFP model on real hard drive failure data from a cloud-based storage company.  Computer hard drives are known to have a mixture of early and late failures, making the GLFP an appropriate parametric model \cite{chan}.  The data contains the number of hours the hard drive was in operation, and whether the drive failed or was right censored.  No information is available about the cause of failure.  We first focus on the drive brand model with the most observed failures to demonstrate the GLFP model.  We fit the GLFP using a Bayesian framework and specified the following proper priors to ensure a proper posterior distribution.
 $$t_{0.5,1} \sim \op{N}(8,4), \quad t_{0.2,2} \sim \op{N}(10,4)$$
 $$\mbox{logit}^{-1}\pi_1 \sim \op{Normal}(-3,2),\quad \sigma_1 \sim \op{Lognormal}(0, 2.5), \quad \sigma_2 \sim \op{Lognormal}(0, 2.5) $$
@@ -202,7 +203,7 @@ $\pi$ & 0.03 & 0.05 & 0.10 \\
 
 Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with simultaneous confidence bands provides a visual check for distributional goodness of fit.  We applied this method using the Kaplan-Meier non-parametric estimate of the empirical cdf \cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version (see Appendix for a more detailed description).   
 
-In Figure 1 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull paper.  The solid stepwise curve corresponds to the observed failures.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method \cite{green}.  Also plotted is the median of the posterior draws for the GLFP model along with 90\% pointwise credible interval bands.  The non-parametric and parametric model align up quite closely.  Moreover, evidence of at least two failure modes is seen in the acceleration of the hazard rate between 8000 and 20,000 hours.  Therefore, a single Weibull model is clearly not flexible enough to characterize this lifetime distribution.
+In Figure 1 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull paper.  The solid stepwise curve corresponds to the observed failures.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method \cite{green}.  Also plotted is the median of the posterior draws for the GLFP model along with 90\% pointwise credible interval bands.  The non-parametric and parametric model align up quite closely.  Moreover, evidence of at least two failure modes is seen in the acceleration of the hazard rate between 8000 and 20,000 hours.  Therefore, a single Weibull model is clearly not flexible enough to characterize this lifetime distribution. The discrepancy in the right tail of the distribution appears to be real. We don't provide a solution to this problem here. Certainly, if there are clearly more that two well-separated failure modes, the GLFP will not fit the data well. However, we consider it satisfactory if we can provide a good approximation to the observed lifetime distribution over the bulk of the product life. In practical terms, the right tail is of less importance for electronic goods, due to obsolescence.
 
 \begin{figure}[H]
 \centering
@@ -245,9 +246,9 @@ As discussed in section \ref{sec:Weibull parameterization}, we reparameterize th
 In principle, we prefer this full model because we tend to believe that every population has a distribution with a distinct set of parameters. In practice, however, we may consider restrictions to reduce the number of parameters if the data do not support their inclusion. For example, we may consider a model with a common $\sigma_{1}$, letting $\sigma_{1g}=\sigma_1$ for all $g=1,\ldots,G$. A practical strategy is to begin with a simple model and gradually add complexity, reevaluating model adequacy at each iteration. In section \ref{sec:Model Comparisons}, we illustrate this process, fitting a series of models with increasing complexity and evaluating their performance using a measure of leave-one-out predictive error.
 
 
-\section{Data analysis}
+\section{Real data analysis}
 \label{sec:Data analysis}
-\subsection{Data}
+\subsection{Backblaze hard drive data}
 \label{sec:Data}
 Backblaze is a company that offers cloud backup storage to protect against data loss.  Since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive-models.  The hard drives continuously spin in controlled storage pods.  Drives are run until failure.  When a hard drive fails it is permanently removed and replaced.  In addition, the number of storage pods is increasing as Backblaze adds to its storage capacity.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}. In addition, Backblaze publishes summary statistics of the different hard drive-models currently operating.  No other analysis or modeling of the failure data is provided.  Backblaze does, however, encourage others to further analyze its data. 
 
@@ -260,7 +261,8 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
   \label{fig1}
 \end{figure}
 
-\subsection{Candidate Models}
+\subsection{Modeling}
+\subsubsection{Candidate Models}
 We considered four models, all based on \ref{eq:hier-model}, which are identified by which model parameters are held constant across drive-models. These are (from most to least restrictive):
 
 \begin{enumerate}
@@ -274,7 +276,7 @@ The set of model specifications were chosen based data, interpretation of the mo
 
 For all of the models we consider, the parameters for the infant mortality failure mode are held in common across products.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality provides a meaningful interpretation and comparison of $\pi_g$ and $\pi_{g'}$ ($g \neq g'$). 
 
-\subsection{Prior Distributions}
+\subsubsection{Prior Distributions}
 \label{sec:Prior Distributions}
 To complete the full probability model, we need to select prior distributions for the parameters governing the hierarchical model. We select proper priors to ensure a proper posterior.
 
@@ -313,7 +315,7 @@ plots and checking that potential scale reduction factors (Rhat) \cite{gelman201
 
 
 
-\subsection{Model Comparisons}
+\subsection{Model Selection}
 \label{sec:Model Comparisons}
 The right side of Figure \ref{fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive-model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive-models; note that, because the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
 
@@ -353,9 +355,39 @@ Model 1 & -17483.6  \\
 \label{table:1}
 \end{table}
 
+\subsection{Results}
+\subsubsection{Model Assessment}
+To assess the goodness of fit, we use a graphical posterior predictive check. As stated by \citet{gelman1996postpred}, a graphical comparison of replicated data sets from the fitted model with the observed data can be very informative with regard to identification of problems with the model.
 
-\subsection{Drive-model Comparisons}
-\label{sec:Drive-model Comparisons}
+To generate replicate data sets, we must first decide what to do with regard to censoring and truncation. The representation we choose to display the data, non-parametric probability plots, guides us in making this decision. The variability of this estimator arises primarily from the number of ``at risk" units at any given time, which depends in part on these processes. Since we are not modeling the mechanisms of truncation nor censoring, we want to try to duplicate these mechanisms in the replicated data. Our method for generating replicate a replicate data set $y_{rep,gi}^{(s)}$ is as follows:
+\begin{enumerate}
+\item Simulate $\tilde{y}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)}$
+\item If $\tilde{y}_{rep,g,i} < t_{g,i}^L$, then remove this time as this record is not observed
+\item Define $m_{g,i}>0$ for each $g$ and $i$. If $c_{g,i}=0$, let $m_{g,i}=\max \{y_{G,i}: G=g\}$, else let $m_{g,i}=y_{g,i}$.\\
+If $\tilde{y}_{rep,g,i}^{(s)}>m_{g,i}$, set $y_{rep,g,i}^{(s)}:=m_{g,i},\; c_{rep,g,i}^{(s)}=1$, otherwise set $y_{rep,g,i}^{(s)}=\tilde{y}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
+\end{enumerate}
+
+We can compare the realizations of $y_{rep,g}$ to $y_g$ by using them to reestimate the nonparametric estimator. The resulting plots are displayed in figure \ref{post-pred-KM}. For most drive-models, the observed estimates appear to behave similarly to those derived from the replicated data. As discussed in \ref{subsec:ex1}, drive-model 14 has a discrepancy in the right tail, which we addressed there. Drive-moodel 4 also appears as an exception, which we discuss now.
+
+To better understand the reason for the discrepancy between the observed data for drive-model 4 and its posterior predictive distribution, we plot the raw data using a version of the lifetime plot due to WHOM?? along with the truncation-adjusted nonparametric estimate of time to failure and the posterior estimate. The lifetime plot makes it clear that the large discrepancy between the posterior and the nonparametric estimate is driven by a small number of failures (4 or 5) that occur in the first quarter year. Indeed, if we ignore records with observation periods that include the first quarter, the modified nonparametric estimate falls within the posterior 90\% pointwise credible band. Our trouble with fitting this drive-model is that while there is evidence of infant mortality in the relatively few units that were observed in the first quarter, the problem seems to go away much quicker than the early failure mode (shared across drive models) would predict. 
+
+Similar plots can help to illustrate the 
+and what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_pi, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. These are shown in figure \ref{}.
+
+\begin{figure}
+\includegraphics[width=\textwidth,height=.9\textheight]{post-pred-KM-all}
+\caption{Nonparametric estimates of proportion failing for each drive-model. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
+\label{post-pred-KM}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\textwidth,height=.9\textheight]{post-pred-KM-all}
+\caption{}
+\label{mod4}
+\end{figure}
+
+\subsubsection{Drive-model Comparisons}
+\label{subsubsec:Drive-model Comparisons}
 We consider the problem of ranking drive-models. From a
 business perspective, it is clear
 that we should prefer the drive-models which will provide more years

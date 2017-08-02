@@ -71,34 +71,41 @@ get_plotlist <- function(dms){
   replicates <- make_replicate_data(orig = dat_dm, mcmc_samp = sampfull, dm=dm, samp_id = samp_id)
   
   
-  xlimits <- c(100,50000)
+  xlimits <- c(100,80000)
   ylimits <- c(.001, .9)
-  
+  xbrks <- c(.01, 0.1, 0.5, 1, 2, 5) * 24*365
+  ybrks <- c(.001,.01,.1,.25,.5,.75,.9)
   bp <- baseKMplot.multiple(replicates, xlimits=xlimits, ylimits=ylimits,
                             color="black",linetype = "dashed", logscale = TRUE,
                             label="replicates", alpha=.4)
   
   km_obs <- KM.survfit(dat_dm)
   bp <- addKmToBaseplot(bp, km_obs, color="red",linetype = "solid", label = "observed")
-  plist[[i]] <- plotFinally(bp, xbrks = c(100, 1000, 5000, 10000, 20000, 40000),
-              ybrks = c(.001,.01,.1,.25,.5,.75,.9), years=TRUE) +
+  plist[[i]] <- plotFinally(bp, xbrks=xbrks, ybrks=ybrks, years=TRUE) +
     theme_bw(base_size=14)+
-    theme(panel.grid=element_blank(),
-          legend.position = "none",
+    theme(legend.position = "none",
           axis.title.x=element_blank(),
-          axis.title.y=element_blank()) + ggtitle(as.character(dm))
+          axis.title.y=element_blank(),
+          axis.text.x=element_blank(),
+          axis.text.y=element_blank()) + ggtitle(as.character(dm))
   }
   plist
 }
 set.seed(10438)
-ran_set <- sort(sample(44, 6))
-plist <- get_plotlist(ran_set)
-
+# ran_set <- sort(sample(44, 6))
+all <- 1:44
+plist <- get_plotlist(all)
 library(cowplot)
-# length(plist)
-pdf("../paper/fig/pospredictKM.pdf")
-plot_grid(plist[[1]], plist[[2]],plist[[3]],plist[[4]],plist[[5]],plist[[6]], ncol=3)
+pdf("../paper/fig/post-pred-KM-all.pdf", height=14, width=9)
+plot_grid(plotlist = plist, ncol=5)
 dev.off()
+#debug
+# p <- get_plotlist(42)
+# 
+# # length(plist)
+# pdf("../paper/fig/pospredictKM.pdf")
+# plot_grid(plist[[1]], plist[[2]],plist[[3]],plist[[4]],plist[[5]],plist[[6]], ncol=3)
+# dev.off()
 # 
 # plist2 <- get_plotlist(7:12)
 # plot_grid(plist2[[7]], plist2[[8]],plist2[[9]],plist2[[10]],plist2[[11]],plist2[[12]], ncol=3)
