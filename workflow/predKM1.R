@@ -59,12 +59,14 @@ make_replicate_data <- function(orig, mcmc_samp, dm, samp_id){
 
 get_plotlist <- function(dms){
   plist <- list()
-  for(dm in dms){
+  n <- length(dms)
+  for(i in 1:n){
+  dm <- dms[i]
   dat_dm <- filter(dat, model==overview$model[which(overview$stan_id==dm)])
   
   
   
-  reps <- 15
+  reps <- 19
   samp_id <- sample(length(sampfull$mu1), reps)
   replicates <- make_replicate_data(orig = dat_dm, mcmc_samp = sampfull, dm=dm, samp_id = samp_id)
   
@@ -78,36 +80,42 @@ get_plotlist <- function(dms){
   
   km_obs <- KM.survfit(dat_dm)
   bp <- addKmToBaseplot(bp, km_obs, color="red",linetype = "solid", label = "observed")
-  plist[[dm]] <- plotFinally(bp, xbrks = c(100, 1000, 5000, 10000, 20000, 40000),
+  plist[[i]] <- plotFinally(bp, xbrks = c(100, 1000, 5000, 10000, 20000, 40000),
               ybrks = c(.001,.01,.1,.25,.5,.75,.9), years=TRUE) +
     theme_bw(base_size=14)+
-    theme(panel.grid=element_blank()) + ggtitle(as.character(dm))
+    theme(panel.grid=element_blank(),
+          legend.position = "none",
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank()) + ggtitle(as.character(dm))
   }
   plist
 }
-
-plist <- get_plotlist(1:6)
+set.seed(10438)
+ran_set <- sort(sample(44, 6))
+plist <- get_plotlist(ran_set)
 
 library(cowplot)
-length(plist)
+# length(plist)
+pdf("../paper/fig/pospredictKM.pdf")
 plot_grid(plist[[1]], plist[[2]],plist[[3]],plist[[4]],plist[[5]],plist[[6]], ncol=3)
-
-plist2 <- get_plotlist(7:12)
-plot_grid(plist2[[7]], plist2[[8]],plist2[[9]],plist2[[10]],plist2[[11]],plist2[[12]], ncol=3)
-
-plist3 <- get_plotlist(13:18)
-plot_grid(plist3[[13]], plist3[[14]], plist3[[15]], plist3[[16]], plist3[[17]], plist3[[18]], ncol=3)
-
-plist4 <- get_plotlist(19:24)
-plot_grid(plist4[[19]], plist4[[20]], plist4[[21]], plist4[[22]], plist4[[23]], plist4[[24]], ncol=3)
-
-plist5 <- get_plotlist(25:30)
-plot_grid(plist5[[25]], plist5[[26]], plist5[[27]], plist5[[28]], plist5[[29]], plist5[[30]], ncol=3)
-
-plist6 <- get_plotlist(c(31:33,35:36))
-plot_grid(plist6[[31]], plist6[[32]], plist6[[33]], plist6[[35]], plist6[[36]], ncol=3)
-
-plist7 <- get_plotlist(c(37:39))
-plist8 <- get_plotlist(c(40:41))
-plist9 <- get_plotlist(c(44))
-plot_grid(plist7[[37]],plist7[[38]],plist7[[39]],plist8[[40]],plist8[[41]],plist9[[44]], ncol=3)
+dev.off()
+# 
+# plist2 <- get_plotlist(7:12)
+# plot_grid(plist2[[7]], plist2[[8]],plist2[[9]],plist2[[10]],plist2[[11]],plist2[[12]], ncol=3)
+# 
+# plist3 <- get_plotlist(13:18)
+# plot_grid(plist3[[13]], plist3[[14]], plist3[[15]], plist3[[16]], plist3[[17]], plist3[[18]], ncol=3)
+# 
+# plist4 <- get_plotlist(19:24)
+# plot_grid(plist4[[19]], plist4[[20]], plist4[[21]], plist4[[22]], plist4[[23]], plist4[[24]], ncol=3)
+# 
+# plist5 <- get_plotlist(25:30)
+# plot_grid(plist5[[25]], plist5[[26]], plist5[[27]], plist5[[28]], plist5[[29]], plist5[[30]], ncol=3)
+# 
+# plist6 <- get_plotlist(c(31:33,35:36))
+# plot_grid(plist6[[31]], plist6[[32]], plist6[[33]], plist6[[35]], plist6[[36]], ncol=3)
+# 
+# plist7 <- get_plotlist(c(37:39))
+# plist8 <- get_plotlist(c(40:41))
+# plist9 <- get_plotlist(c(44))
+# plot_grid(plist7[[37]],plist7[[38]],plist7[[39]],plist8[[40]],plist8[[41]],plist9[[44]], ncol=3)

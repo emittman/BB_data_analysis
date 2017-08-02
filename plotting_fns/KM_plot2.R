@@ -221,7 +221,7 @@ bandTrimx <- function(bandObj, xlimits){
   bandObj
 }
 
-addKmToBaseplot <- function(baseplot, fitObj, color, linetype, label=""){
+addKmToBaseplot <- function(baseplot, fitObj, color, linetype, size=1, label=""){
   stopifnot(class(baseplot) == "myPlotList")
   stopifnot("myKM" %in% class(fitObj))
   if(!is.null(baseplot$xlimits)){
@@ -233,7 +233,7 @@ addKmToBaseplot <- function(baseplot, fitObj, color, linetype, label=""){
   grp_num <- as.character(length(baseplot$scm$colorvals)+1)
   fitObj$grp <- grp_num
   baseplot$base <- baseplot$base +
-    geom_step(data=fitObj, inherit.aes=FALSE, aes(x=t, y=Ft, color=grp, linetype=grp))
+    geom_step(data=fitObj, inherit.aes=FALSE, aes(x=t, y=Ft, color=grp, linetype=grp), size=size)
   
   concat_names <- c(names(baseplot$scm$colorvals), grp_num)
   baseplot$scm$colorvals <- with(baseplot$scm, c(colorvals, color))
