@@ -317,7 +317,7 @@ plots and checking that potential scale reduction factors (Rhat) \cite{gelman201
 
 \subsection{Model Selection}
 \label{sec:Model Comparisons}
-The right side of Figure \ref{fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive-model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive-models; note that, because the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
+The right side of Figure \ref{fig:fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive-model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive-models; note that, because the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
 
 The lower left panel, representing Model 3, suggests differing shape parameters in the wearout failure mode which means that the ranking of drive-models with respect to fraction failing differs over time.
 
@@ -326,14 +326,14 @@ Finally, the lower right panel, corresponding to Model 4, shows that, by allowin
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{heterogeneity-compare-preliminary}
 \caption{Left: Kaplan-Meier estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, ordered left to right, top to bottom.}
-\label{fig2}
+\label{fig:fig2}
 \end{figure}
 
-We can also compare the model fits for each drive-model individually.  Using the set of parameters that maximize the posterior log probability, we examine the GLFP cdf for each of the 4 model specifications.  The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure 4.  The black step functions again corresponds to the adjusted non-parametric estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All of the GLFP models appear to overestimate the proportion of failed hard drives for drive-model 2, but Model 4 agrees best with the nonparametric estimate.  For drive-model 14, Models 1-3 underestimate the proportion of drives failing, and for drive-model 40, they slightly overestimate the data.  Conversely, Model 4 follows the observed failures quite closely--accurately capturing failures at the lower and upper ends of the distribution.  The difference in accuracy between Models 3 and 4 are and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the fits from Model 3 and 4 line almost exactly on top of each other for drive-model 40.
+We can also compare the model fits for each drive-model individually.  Using the set of parameters that maximize the posterior log probability, we examine the GLFP cdf for each of the 4 model specifications.  The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure \ref{fig:mod_comp_leg}.  The black step functions again corresponds to the adjusted non-parametric estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All of the GLFP models appear to overestimate the proportion of failed hard drives for drive-model 2, but Model 4 agrees best with the nonparametric estimate.  For drive-model 14, Models 1-3 underestimate the proportion of drives failing, and for drive-model 40, they slightly overestimate the data.  Conversely, Model 4 follows the observed failures quite closely--accurately capturing failures at the lower and upper ends of the distribution.  The difference in accuracy between Models 3 and 4 are and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the fits from Model 3 and 4 line almost exactly on top of each other for drive-model 40.
 \begin{figure}[H]
     \centering
    \includegraphics[width=\textwidth]{mod_compare_legend}
-		\caption{Estimated GLFP for 4 drive-models plotted on Weibull paper.  The solid step function is the truncated adjusted Kaplan-Meier points.  \label{fig:first}} 
+		\caption{Estimated GLFP for 4 drive-models plotted on Weibull paper.  The solid step function is the truncated adjusted Kaplan-Meier points.  \label{fig:mod_comp_leg}} 
 \end{figure}
 
 
@@ -367,23 +367,30 @@ To generate replicate data sets, we must first decide what to do with regard to 
 If $\tilde{y}_{rep,g,i}^{(s)}>m_{g,i}$, set $y_{rep,g,i}^{(s)}:=m_{g,i},\; c_{rep,g,i}^{(s)}=1$, otherwise set $y_{rep,g,i}^{(s)}=\tilde{y}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
 \end{enumerate}
 
-We can compare the realizations of $y_{rep,g}$ to $y_g$ by using them to reestimate the nonparametric estimator. The resulting plots are displayed in figure \ref{post-pred-KM}. For most drive-models, the observed estimates appear to behave similarly to those derived from the replicated data. As discussed in \ref{subsec:ex1}, drive-model 14 has a discrepancy in the right tail, which we addressed there. Drive-moodel 4 also appears as an exception, which we discuss now.
+We can compare the realizations of $y_{rep,g}$ to $y_g$ by using them to reestimate the nonparametric estimator. The resulting plots are displayed in figure \ref{fig:post-pred-KM}. For most drive-models, the observed estimates appear to behave similarly to those derived from the replicated data. As discussed in \ref{subsec:ex1}, drive-model 14 has a discrepancy in the right tail, which we addressed there. Drive-moodel 4 also appears as an exception, which we discuss now.
 
-To better understand the reason for the discrepancy between the observed data for drive-model 4 and its posterior predictive distribution, we plot the raw data using a version of the lifetime plot due to WHOM?? along with the truncation-adjusted nonparametric estimate of time to failure and the posterior estimate. The lifetime plot makes it clear that the large discrepancy between the posterior and the nonparametric estimate is driven by a small number of failures (4 or 5) that occur in the first quarter year. Indeed, if we ignore records with observation periods that include the first quarter, the modified nonparametric estimate falls within the posterior 90\% pointwise credible band. Our trouble with fitting this drive-model is that while there is evidence of infant mortality in the relatively few units that were observed in the first quarter, the problem seems to go away much quicker than the early failure mode (shared across drive models) would predict. 
+To better understand the reason for the discrepancy between the observed data for drive-model 4 and its posterior predictive distribution, we plot the raw data along with the truncation-adjusted nonparametric estimate of time to failure and the posterior estimate (see figure \ref{fig:ex-mod-4}. From these plots, it is clear that the large discrepancy between the posterior and the nonparametric estimate is driven by a small number of failures that occur in the first quarter year. Indeed, if we ignore records with observation periods that include the first quarter, the modified nonparametric estimate falls within the posterior 90\% pointwise credible band. Our trouble with fitting this drive-model is that while there is evidence of infant mortality in the relatively few units that were observed in the first quarter, the problem seems to go away much quicker than would be expected if there were a large number of units susceptible to the early failure mode. 
 
-Similar plots can help to illustrate the 
-and what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_pi, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. These are shown in figure \ref{}.
+We can use a similar plot to see how information is borrowed across drive-models. Drive-model 43 is an older model, so that the observed units had run for quite some time before data was made available. In figure \ref{fig:ex-mod-43} we see that the lack of data for this drive-model at early ages results in a diffuse posterior centered around the what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_pi, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. Then, in the period where records exist for this drive model, the posterior deviates from the global model, acheiving a compromise between it and the nonparametric estimate.
 
 \begin{figure}
 \includegraphics[width=\textwidth,height=.9\textheight]{post-pred-KM-all}
 \caption{Nonparametric estimates of proportion failing for each drive-model. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
-\label{post-pred-KM}
+\label{fig:post-pred-KM}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=\textwidth,height=.9\textheight]{post-pred-KM-all}
+\centering
+\includegraphics{dm4-exception}
 \caption{}
-\label{mod4}
+\label{fig:ex-mod-4}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{dm43-shrinkage}
+\caption{}
+\label{fig:ex-mod-43}
 \end{figure}
 
 \subsubsection{Drive-model Comparisons}
@@ -412,8 +419,8 @@ $$\frac{1}{S} \sum_{s=1}^{S} t_{d,new}^{(s)}.$$
 
 While TTF is clearly important, due to the
 anticipation of advancements in technology, we can expect that the
-relative value of computer hardware will depreciate rather quickly. To account
-for this depreciation, rather than using TTF as the metric for drive-model comparison, we use the value at replacement. The IRS considers
+relative value of computer hardware will depreciate rather quickly. In simple terms, given two hard drives, I would prefer to have both of them work for five years than for one to work for ten years and the other to not work at all. To account
+for depreciation, rather than using TTF as the metric for drive-model comparison, we use the value at replacement. The IRS considers
 computer hardware to be ``5-year'' equipment\cite{f4562}. Using``the declining
 balance method'' the rate of depreciation is 40\% per year.
 
@@ -421,8 +428,9 @@ Let $L(t) = e^{-.4t}$ represent the value at the time of failure
 relative to a new unit. We can rank the drive-models by 
 $$\op{E}(L(t_{d,new})|t))\approx \frac{1}{S} \sum_{s=1}^{S} L(t_{d,new}^{(s)}).$$
 
+Posterior credible intervals for $L(t_{d,new})$ are shown in the left panel of figure \ref{fig5}. A zoomed version of the top 8 drive-models, as ranked by $\op{E}(L(t_{d,new})|y)$ are shown in the bottom right panel. The panel above shows credible intervals for TTF. We can see that ranking by TTF would lead to a different result -- a new drive-model 8 unit expected to have the last the longest, but possibility of it failing early is higher that for the drive-models ranked highest by our depreciation-aware metric. The top four drive-models (4,5,2,3) seem very comparable, with a new drive-model 4 unit expected to depreciate the most. However, given the discrepancy of the model fit for drive-model 4, noted in the previous subsection, in the absence of more early life data, we might harbor some lingering concern about possible quality-control issues with this drive-model.
 
-We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a central measure of tendency.  On the left panel of Figure 5 we plot $t_{0.10}$, the .10 quantile (i.e., the amount of time it takes for 10\% of hard drives to fail), for all drive-models. The best six drive-models ranked by TTF are also the drive-models with the longest time to $t_{0.10}$.  Drive-models 5, 2, 4, and 3 seem to really stick out as the most reliable as there is a larger gap separating them from the rest of the group.  Another interesting feature to compare is $\pi$, the proportion failing due to infant mortality.  One the right panel of Figure 5 are the posterior credible intervals of $\pi$ for each drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the left hand side.  While for many of the drive-models the ordinal ranking is the same as on the left, there are some drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10}$ or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.   
+We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a central measure of tendency.  On the left panel of Figure 5 we plot $t_{0.10}$, the .10 quantile (i.e., the amount of time it takes for 10\% of hard drives to fail), for all drive-models. The best six drive-models ranked by TTF are also the drive-models with the longest time to $t_{0.10}$.  Drive-models 5, 2, 4, and 3 seem to really stick out as the most reliable as there is a larger gap separating them from the rest of the group.  Another interesting feature to compare is $\pi$, the proportion defective.  One the right panel of Figure 5 are the posterior credible intervals of $\pi$ for each drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the left hand side.  While for many of the drive-models the ordinal ranking is the same as on the left, there are some drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10}$ or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.   
  
 \begin{figure}[H]
   \centering
@@ -444,7 +452,7 @@ We can also use the posterior draws to compute quantiles of interest, which in r
 \label{sec:Conclusions}
 We should point out some assumptions made in this analysis. First, we assume exchangability of units within drive-models. This assumption is due to our ignorance about the causes of failure and of potentially important covariates. If we had information about distinguishing characteristics of the two identified failure modes, then we should use this information. Also, there could be many environmental or human-related factors that impact lifetime, such as operating conditions associated with location in the data center, which are likely confounded with drive-model.
 
-Second, it is probably true that many modes of failure occur and that the heterogeneity that we observe among drive models is due to different combinations of these. Our ignorance of the causes of failure leads us to approximate the main failure mode with a single drive-model specific Weibull distribution. Because of this, we suspect that our forecasts are too confident; especially for ``well-estimated" models, our uncertainty in the right tail of the distribution is probably too small. On the other hand, our model borrows strength across drive-models, including those with information about late failures. In addition, we suggest that using metrics for comparing drive-models that reduce the importance of the right tail of the distribution are appropriate for these data. With respect to decisions based on such metrics, we believe the assumptions in the previous paragraph to be the most critical. Those issues are typical to observational data such as these.
+Second, as discussed in subsection \ref{subsec:mod_assess}, if there are causes which lead to clusters of failures at spaced-out intervals, the GLFP is not flexible enough. What we assume is that the failures that occur from various causes can be approximately assigned to two phases of product life, so that the heterogeneity that we observe among drive models is due to different combinations of deficiencies. Our ignorance of the causes of failure leads us to approximate the main failure mode with a single drive-model specific Weibull distribution. Because of this, we suspect that our forecasts are too confident; especially for ``well-estimated" models, our uncertainty in the right tail of the distribution is probably too small. On the other hand, our model borrows strength across drive-models, including those with information about late failures -- information which is entirely missing in some cases. In addition, we suggest that using metrics for comparing drive-models that reduce the importance of the right tail of the distribution are appropriate for these data. With respect to decisions based on such metrics, we believe the assumptions in the previous paragraph to be the most critical. Those issues are typical to observational data such as these.
 
 Consumers of high-tech manufactured goods usually lack the expertise to perform a failure analysis to determine the cause of failure. The ability to fit marginal models, such as GLFP, can allow investigators to answer many pertinent questions while still appropriately accounting for uncertainty and avoiding substantial model bias.
 

@@ -223,7 +223,7 @@ bandTrimy <- function(bandObj, ylimits){
 bandTrimx <- function(bandObj, xlimits){
   stopifnot("myBand" %in% class(bandObj))
   id <- which(bandObj$band$t > xlimits[2] | bandObj$band$t < xlimits[1])
-  bandObj$band <- bandObj$band[-id,]
+  if(length(id)>0) {bandObj$band <- bandObj$band[-id,]}
   bandObj
 }
 
