@@ -91,9 +91,9 @@ The reliability of many engineered products follow a similar pattern. Relatively
 
 Nonparametric methods, which provide such flexibility are well-known, Kaplan-Meier for example. However, truncation, censoring and finite samples limit the scope of inference for these methods. Parametric models do not have these limitations. Truncated and/or censored data can be accommodated simply by adjusting the likelihood. Additionally, because they assume a parsimonious representation of the data-generating process, they provide simpler, more intuitive means by which to compare populations of interest, borrow strength across groups, and incorporate prior information. 
 
-Often no information is available to identify if a failure is due to infant mortality. This presents a dilemma for analysts: the data may indicate more than one failure mode, contraindicating the use of a unimodal parametric distribution. However, without any knowledge of cause of failure, traditional competing risk models are not identifiable. \citet{chan} proposed the Generalized Limited Failure Population (GLFP) model. This model can provide a solution to the problem of unknown cause of failure (masking) in the special case where there is evidence of two modes of failure which impact different stages of product life. It avoids non-identifiability by introducing a parameter representing the population proportion defective. Where this parameter is zero, the GLFP model reduces to a unimodal distribution. \\
+Often no information is available to identify why a unit failed. This presents a dilemma for analysts: the data may indicate multiple failure modes, contraindicating the use of a unimodal parametric distribution. However, without any knowledge of cause of failure, traditional competing risk models are not identifiable. \citet{chan} proposed the Generalized Limited Failure Population (GLFP) model. This model can provide a solution to the problem of unknown cause of failure (masking) in the special case where there is evidence of two modes of failure which impact different stages of product life. It avoids non-identifiability by introducing a parameter representing the population proportion defective. Where this parameter is zero, the GLFP model reduces to a unimodal distribution. \\
 
-The GLFP model has a meaningful parameterization and accommodates lifetime data with infant mortality and wearout.  Unfortunately, it can require a lot of data to fit due to the model's complexity. When multiple sources of information are available, partial pooling via hierarchical modeling is a way to reduce the amount of data required to produce stable estimates of the model parameters. When multiple populations are of interest, comparisons based on separate, unrestricted GLFP model fits will be limited to those products with sufficient data. As we will show, hierarchical modeling of the GLFP parameters allows for borrowing of information across populations which imposes "soft" constraints on model parameters. This enables estimation of the lifetime distribution for all populations via shrinkage toward a "pooled" model, with the degree of shrinkage inversely related to the amount of population specific information. We demonstrate computation of various quantities of interest while comparing reliability across populations using numerical integration over the posterior distribution with samples obtained via  Markov Chain Monte Carlo. 
+The GLFP model has a meaningful parameterization and accommodates lifetime data with infant mortality and wearout.  Unfortunately, it can require a lot of data to fit due to the model's complexity. When multiple sources of information are available, partial pooling via hierarchical modeling is a way to reduce the amount of data required to produce stable parameter estimates. When multiple populations are of interest, comparisons based on separate, unrestricted GLFP model fits will be limited to those products with sufficient data. As we will show, hierarchical modeling of the GLFP parameters allows for borrowing of information across populations which imposes "soft" constraints on model parameters. This enables estimation of the lifetime distribution for all populations via shrinkage toward a "pooled" model, with the degree of shrinkage inversely related to the amount of population specific information. We demonstrate computation of various quantities of interest while comparing reliability across populations using numerical integration over the posterior distribution with samples obtained via  Markov Chain Monte Carlo. 
 
 
 
@@ -173,12 +173,14 @@ We fit the GLFP model on real hard drive failure data from a cloud-based storage
 $$t_{0.5,1} \sim \op{N}(8,4), \quad t_{0.2,2} \sim \op{N}(10,4)$$
 $$\mbox{logit}^{-1}\pi_1 \sim \op{Normal}(-3,2),\quad \sigma_1 \sim \op{Lognormal}(0, 2.5), \quad \sigma_2 \sim \op{Lognormal}(0, 2.5) $$
 
-\begin{figure}[H]
-\centering
-\includegraphics{np_ex1}
-\caption{Top: Lifetime plot of data from 75 randomly selected units of drive-model `14'. Bottom: Kaplan-Meier estimate for drive-model `14'.}
-\label{dm14}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\includegraphics{np_ex1}
+%\caption{Top: Lifetime plot of data from 75 randomly selected units of drive-model `14'. Bottom: Kaplan-Meier estimate for drive-model `14'.}
+%\label{dm14}
+%\end{figure}
+
+
 The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$.  Given the interpretation of $\pi$ as the proportion of defective units, which we would expect to be small, a range primarily covering the left side of 0.50 is reasonable and weakly informative.  The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability.  Again, this allows for a wide range of hazards, larger than we would expect to see in the data.  The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ the range is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.  They do, however, help separate the early and late failure modes--the earlier infant mortality mode having a lower mean time to failure than the wearout mode.  This is helpful for estimation since, as discussed in Chan \& Meeker, ML had difficulty identifying the two sets of GLFP parameters without making strong assumptions about the data.  \\
 
 
@@ -252,12 +254,12 @@ In principle, we prefer this full model because we tend to believe that every po
 \label{sec:Data}
 Backblaze is a company that offers cloud backup storage to protect against data loss.  Since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive-models.  The hard drives continuously spin in controlled storage pods.  Drives are run until failure.  When a hard drive fails it is permanently removed and replaced.  In addition, the number of storage pods is increasing as Backblaze adds to its storage capacity.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}. In addition, Backblaze publishes summary statistics of the different hard drive-models currently operating.  No other analysis or modeling of the failure data is provided.  Backblaze does, however, encourage others to further analyze its data. 
 
-As of the first quarter of 2016, Backblaze was collecting and reporting data on 63 different drive-models.  Some drive-models have been running since 2013 or before, while others were added at a later date.  Data have been reported on 75,297 different hard drives that are or where in operation.  The distribution of drives by drive-model varies: some drive-models have only have a service record for a single drive whereas the maximum number of daily service records for a single drive model is 35,860.  Figure \ref{fig1} shows the distribution of total number of failures and total observed running time for drive-models with at least 3 failures.  For model identification, a minimum of three failures was the criterion for hard drive brands to be included in our analyses.  
+As of the first quarter of 2016, Backblaze was collecting and reporting data on 63 different drive-models.  Some drive-models have been running since 2013 or before, while others were added at a later date.  Data have been reported on 75,297 different hard drives that are or where in operation.  The distribution of drives by drive-model varies: some drive-models have only have a service record for a single drive whereas the maximum number of daily service records for a single drive model is 35,860.  Figure \ref{fig1} shows a scatterplot of the total observed running time in hours versus the total number of failures for drive-models with at least 3 failures.  For model identification, a minimum of three failures was the criterion for hard drive brands to be included in our analyses.  
 
 \begin{figure}[H]
-  \includegraphics[width=.9\textwidth]{data-sum.pdf}
+  %\includegraphics[width=.9\textwidth]{data-sum.pdf}
   \includegraphics[width=.9\textwidth]{dm-summ-scatter.pdf}
-  \caption{Left: Total number of failures (log scale) for drive-models with at least 3 observed failures in the Backblaze data. Right: Total accumulated time in operation (log scale) for each of the drive-models in the Backblaze data.  The plots are sorted based on the total number of failures on the left.}
+  \caption{Scatterplot of total observed running time (hours) versus total number of observed failures.  Each number labels a unique drive brand model.}
   \label{fig1}
 \end{figure}
 
@@ -357,27 +359,29 @@ Model 1 & -17483.6  \\
 
 \subsection{Results}
 \subsubsection{Model Assessment}
-To assess the goodness of fit, we use a graphical posterior predictive check. As stated by \citet{gelman1996postpred}, a graphical comparison of replicated data sets from the fitted model with the observed data can be very informative with regard to identification of problems with the model.
+To assess the goodness of fit for our final model (Model 4), we use a graphical posterior predictive check. As stated by \citet{gelman1996postpred}, a graphical comparison of replicated data sets from the fitted model with the observed data can be very informative with regard to identification of problems with the model.
 
-To generate replicate data sets, we must first decide what to do with regard to censoring and truncation. The representation we choose to display the data, non-parametric probability plots, guides us in making this decision. The variability of this estimator arises primarily from the number of ``at risk" units at any given time, which depends in part on these processes. Since we are not modeling the mechanisms of truncation nor censoring, we want to try to duplicate these mechanisms in the replicated data. Our method for generating replicate a replicate data set $y_{rep,gi}^{(s)}$ is as follows:
+To generate replicate data sets, we must first decide what to do with regard to censoring and truncation. The representation we choose to display the data, non-parametric probability plots, guides us in making this decision. The variability of this estimator arises primarily from the number of ``at risk" units at any given time, which depends in part on these processes. Since we are not modeling the mechanisms of truncation nor censoring, we want to try to duplicate these mechanisms in the replicated data. Our method for generating a replicate data set  $y_{rep,g,i}^{(s)}}$ for $s = 1 \dots 19$ is as follows:
 \begin{enumerate}
-\item Simulate $\tilde{y}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)}$
+\item Simulate $\tilde{y}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)})$.  Where each set of parameters is randomly drawn from the full posterior distribution.
 \item If $\tilde{y}_{rep,g,i} < t_{g,i}^L$, then remove this time as this record is not observed
 \item Define $m_{g,i}>0$ for each $g$ and $i$. If $c_{g,i}=0$, let $m_{g,i}=\max \{y_{G,i}: G=g\}$, else let $m_{g,i}=y_{g,i}$.\\
-If $\tilde{y}_{rep,g,i}^{(s)}>m_{g,i}$, set $y_{rep,g,i}^{(s)}:=m_{g,i},\; c_{rep,g,i}^{(s)}=1$, otherwise set $y_{rep,g,i}^{(s)}=\tilde{y}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
+If $\tilde{y}_{rep,g,i}^{(s)}>m_{g,i}$, set $y_{rep,g,i}^{(s)}=m_{g,i},\; c_{rep,g,i}^{(s)}=1$, otherwise set $y_{rep,g,i}^{(s)}=\tilde{y}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
 \end{enumerate}
 
-We can compare the realizations of $y_{rep,g}$ to $y_g$ by using them to reestimate the nonparametric estimator. The resulting plots are displayed in figure \ref{fig:post-pred-KM}. For most drive-models, the observed estimates appear to behave similarly to those derived from the replicated data. As discussed in \ref{subsec:ex1}, drive-model 14 has a discrepancy in the right tail, which we addressed there. Drive-moodel 4 also appears as an exception, which we discuss now.
+We can compare the 19 simulated data sets $y_{rep,g, i}}$ to the observed data $y_{g,i}$ by using them to reestimate the Kaplan-Meier nonparametric estimator. The resulting plots are displayed in figure \ref{fig:post-pred-KM}. For most drive-models, the observed estimates appear to behave similarly to those derived from the replicated data. As discussed in \ref{subsec:ex1}, drive-model 14 has a discrepancy in the right tail, which we addressed there. Drive-model 4 also appears as an exception, which we discuss now.
 
-To better understand the reason for the discrepancy between the observed data for drive-model 4 and its posterior predictive distribution, we plot the raw data along with the truncation-adjusted nonparametric estimate of time to failure and the posterior estimate (see figure \ref{fig:ex-mod-4}. From these plots, it is clear that the large discrepancy between the posterior and the nonparametric estimate is driven by a small number of failures that occur in the first quarter year. Indeed, if we ignore records with observation periods that include the first quarter, the modified nonparametric estimate falls within the posterior 90\% pointwise credible band. Our trouble with fitting this drive-model is that while there is evidence of infant mortality in the relatively few units that were observed in the first quarter, the problem seems to go away much quicker than would be expected if there were a large number of units susceptible to the early failure mode. 
-
-We can use a similar plot to see how information is borrowed across drive-models. Drive-model 43 is an older model, so that the observed units had run for quite some time before data was made available. In figure \ref{fig:ex-mod-43} we see that the lack of data for this drive-model at early ages results in a diffuse posterior centered around the what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_pi, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. Then, in the period where records exist for this drive model, the posterior deviates from the global model, acheiving a compromise between it and the nonparametric estimate.
-
-\begin{figure}
+\begin{figure}[H]
 \includegraphics[width=\textwidth,height=.9\textheight]{post-pred-KM-all}
 \caption{Nonparametric estimates of proportion failing for each drive-model. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
 \label{fig:post-pred-KM}
 \end{figure}
+
+To better understand the reason for the discrepancy between the observed data for drive-model 4 and its posterior predictive distribution, we plot the raw data along with the truncation-adjusted nonparametric estimate of time to failure and the posterior estimate (see figure \ref{fig:ex-mod-4}). From these plots, it is clear that the large discrepancy between the posterior and the nonparametric estimate is driven by a small number of failures that occur in the first quarter year. Indeed, if we ignore records with observation periods that include the first quarter, the modified nonparametric estimate falls within the posterior 90\% pointwise credible band. Our trouble with fitting this drive-model is that while there is evidence of infant mortality in the relatively few units that were observed in the first quarter, the problem seems to go away much quicker than would be expected if there were a large number of units susceptible to the early failure mode. 
+
+We can use a similar plot to see how information is borrowed across drive-models. Drive-model 43 is an older model, so that the observed units had run for quite some time before data was made available. In figure \ref{fig:ex-mod-43} we see that the lack of data for this drive-model at early ages results in a diffuse posterior centered around the what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_{\pi}, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. Then, in the period where records exist for this drive model, the posterior deviates from the global model, acheiving a compromise between it and the nonparametric estimate.
+
+
 
 \begin{figure}
 \centering
