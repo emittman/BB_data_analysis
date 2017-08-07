@@ -20,6 +20,7 @@ overview[id,]$stan_id <- 1:length(id)
 
 sfull <- readRDS("../workflow/samples_lor_only3fails.rds")
 tr_adj <- readRDS("../BB_data/tr_adj_tp2s2pi.rds")$median
+tr_adj2 <- readRDS("../BB_data/tr_adj_fullmodel2.rds")
 
 sampfull <- extract(sfull)
 source("../plotting_fns/KM_plot2.R")
@@ -33,14 +34,16 @@ ylimits=c(.001,.8)
 
 dat4 <- filter(dat, model==overview$model[which(overview$stan_id==4)])
 dat4 <- arrange(dat4, endtime)
-dat4_tr <- dat4[which(dat4$starttime>.2*24*365),]
+dat4_tr <- dat4[which(dat4$starttime>.25*24*365),]
+
+set.seed(80717)
 
 lt_plot <- lifetime_plot3(dat4, n_to_show=200, in_years=TRUE, lab="Drive-model 4", trans="log", xlimits = xlimits, xlabels=xlabels)
 
 km4 <- KM.survfit(dat4)
 km4 <- tr.adj(km4, tr_adj[4])
 km4_tr <- KM.survfit(dat4_tr)
-km4_tr <- tr.adj(km4_tr, tr_adj[4])
+km4_tr <- tr.adj(km4_tr, tr_adj2$median[tr_adj2$modelid==4])
 
 bp <- baseKMplot(fit=km4, xlimits=xlimits, ylimits=ylimits, color="black",
                  linetype = "solid", alpha = 1, logscale = TRUE, label="nonparametric")

@@ -1,5 +1,5 @@
 setwd("workflow/")
-
+dm=1
 
   dat <- readRDS("../BB_data/clean_unit_summaries.rds")
   dat$model <- as.integer(dat$model)
