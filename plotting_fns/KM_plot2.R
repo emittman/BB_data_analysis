@@ -291,16 +291,16 @@ plotFinally <- function(plotList, xbrks, ybrks, years=FALSE, greenwood=FALSE, al
   
   
   if(plotList$logscale & years){
-    p <- p + scale_x_continuous(name="time(years)", trans="log",
+    p <- p + scale_x_continuous(name="Time (Years)", trans="log",
                                             breaks = xbrks, labels=signif(xbrks/365/24, 0), limits = plotList$xlimits)
   } else if(plotList$logscale & !years) {
-    p <- p + scale_x_continuous(name="time(hours)", trans="log",
+    p <- p + scale_x_continuous(name="Time (Hours)", trans="log",
                                             breaks = xbrks, limits = plotList$xlimits)
   } else if(years){
-    p <- p + scale_x_continuous(name="time(years)", breaks = xbrks,
+    p <- p + scale_x_continuous(name="Time (Years)", breaks = xbrks,
                                             labels=signif(xbrks/365/24, 0), limits = plotList$xlimits)
   } else{
-    p <- p + scale_x_continuous(name="time(hours)", breaks = xbrks
+    p <- p + scale_x_continuous(name="Time (Hours)", breaks = xbrks
                                             , limits = plotList$xlimits)
   }
   
