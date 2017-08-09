@@ -72,7 +72,7 @@
 % Consumers have an interest in accurate assessment of product reliability.  However, lifetime data is often sparse and has limited information.  
 When the information carried by lifetime data are limited by sample size, censoring and truncation, lifetime analysis can suffer from imprecision. These limitations are not atypical; for example, lifetime data for high-reliability products will tend to be right-censored.
 
-With field data on consumer products, model-based appproaches to inference require a model with sufficient flexibility to account for multiple kinds of failure. The causes of these, while not interesting to the consumer per se, can lead to various observed lifetime distributions. Because of this, standard lifetime models, such as Weibull or lognormal may be inadequate. 
+With field data on consumer products, model-based approaches to inference require a model with sufficient flexibility to account for multiple kinds of failure. The causes of these, while not interesting to the consumer per se, can lead to various observed lifetime distributions. Because of this, standard lifetime models, such as Weibull or lognormal may be inadequate. 
 
 In this paper we present a method for joint estimation of multiple lifetime distributions based on the Generalized Limited Failure Population (GLFP) model \citep{chan}. This 5-parameter model for lifetime data accommodates lifetime distributions with multiple failure modes:  early failure due to "infant mortality" and failure due to wearout. We fit the GLFP model using a hierarchical modeling approach.  Borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures.  Moreover, using our Bayesian method, comparison of different product brands is straightforward because estimation of arbitrary functionals are easily computable using samples from the posterior distribution.
 \end{abstract}
@@ -172,13 +172,6 @@ We fit the GLFP model on real hard drive failure data from a cloud-based storage
 $$t_{0.5,1} \sim \op{N}(8,4), \quad t_{0.2,2} \sim \op{N}(10,4)$$
 $$\mbox{logit}^{-1}\pi_1 \sim \op{Normal}(-3,2),\quad \sigma_1 \sim \op{Lognormal}(0, 2.5), \quad \sigma_2 \sim \op{Lognormal}(0, 2.5) $$
 
-%\begin{figure}[H]
-%\centering
-%\includegraphics{np_ex1}
-%\caption{Top: Lifetime plot of data from 75 randomly selected units of drive-model `14'. Bottom: Kaplan-Meier estimate for drive-model `14'.}
-%\label{dm14}
-%\end{figure}
-
 
 The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$.  Given the interpretation of $\pi$ as the proportion of defective units, which we would expect to be small, a range primarily covering the left side of 0.50 is reasonable and weakly informative.  The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability.  Again, this allows for a wide range of hazards, larger than we would expect to see in the data.  The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ the range is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.  They do, however, help separate the early and late failure modes--the earlier infant mortality mode having a lower mean time to failure than the wearout mode.  This is helpful for estimation since, as discussed in Chan \& Meeker, ML had difficulty identifying the two sets of GLFP parameters without making strong assumptions about the data.  \\
 
@@ -208,8 +201,8 @@ In Figure 1 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull 
 
 \begin{figure}[H]
 \centering
-  \includegraphics[width=.8\textwidth]{drive14cred.pdf}
-  \caption{Estimated GLFP for drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws.  Solid blue line is a non-parametric Kaplan-Meier estimator.  Credible 90\% bands are in red.  Greenwood non-parametric error bands are in blue.}
+  \includegraphics[width=.8\textwidth]{mod14_example1.pdf}
+  \caption{Estimated GLFP for drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws.  Solid line is a non-parametric Kaplan-Meier estimator.  Credible 90\% bands are in red.  Greenwood non-parametric error bands are in gray.}
   \label{fig1}
 \end{figure}
 
@@ -453,8 +446,10 @@ We can also use the posterior draws to compute quantiles of interest, which in r
 \end{figure}
 
 
-\section{Conclusions}
-\label{sec:Conclusions}
+\section{Discussion}
+\label{sec:Discussion}
+This paper has shown how to model and make inference for the kind of product reliability data commonly found in the field.  Products with long lifetimes often have few failures and when failures do occur the cause is frequently unknown to the analyst.  The hierarchical GLFP model provides a unified framework to accurately model data with multiple failure modes, and provide a measure of uncertainty.  Moreover, when there are multiple brands within the same product class, the hierarchical approach allows the model to borrow strength from brands with lots of failures in order to fit and make inference for groups with little information.  This is extremely advantageous since many products have time (e.g., left truncation and right censoring) and resource constraints (unidentified failure modes) that limit the amount of information in the data.  This makes standard parametric lifetime models inaccurate and difficult to estimate using classical estimation techniques such as ML.  
+  
 We should point out some assumptions made in this analysis. First, we assume exchangability of units within drive-models. This assumption is due to our ignorance about the causes of failure and of potentially important covariates. If we had information about distinguishing characteristics of the two identified failure modes, then we should use this information. Also, there could be many environmental or human-related factors that impact lifetime, such as operating conditions associated with location in the data center, which are likely confounded with drive-model.
 
 Second, as discussed in subsection \ref{subsec:mod_assess}, if there are causes which lead to clusters of failures at spaced-out intervals, the GLFP is not flexible enough. What we assume is that the failures that occur from various causes can be approximately assigned to two phases of product life, so that the heterogeneity that we observe among drive models is due to different combinations of deficiencies. Our ignorance of the causes of failure leads us to approximate the main failure mode with a single drive-model specific Weibull distribution. Because of this, we suspect that our forecasts are too confident; especially for ``well-estimated" models, our uncertainty in the right tail of the distribution is probably too small. On the other hand, our model borrows strength across drive-models, including those with information about late failures -- information which is entirely missing in some cases. In addition, we suggest that using metrics for comparing drive-models that reduce the importance of the right tail of the distribution are appropriate for these data. With respect to decisions based on such metrics, we believe the assumptions in the previous paragraph to be the most critical. Those issues are typical to observational data such as these.
