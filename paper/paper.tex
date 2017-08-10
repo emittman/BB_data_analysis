@@ -70,9 +70,9 @@
 \bigskip
 \begin{abstract}
 % Consumers have an interest in accurate assessment of product reliability.  However, lifetime data is often sparse and has limited information.  
-When the information carried by lifetime data are limited by sample size, censoring and truncation, lifetime analysis can suffer from imprecision. These limitations are not atypical; for example, lifetime data for high-reliability products will tend to be right-censored.
+When conducting lifetime analysis with field data on consumer products, model-based approaches to inference require a model with sufficient flexibility to account for multiple kinds of failure. The causes of these, while not interesting to the consumer per se, can lead to various observed lifetime distributions. Because of this, standard lifetime models, such as Weibull or lognormal may be inadequate. 
+Furthermore, when the information carried by lifetime data are limited by sample size, censoring and truncation, estimates can be unstable and suffer from imprecision. These limitations are typical; for example, lifetime data for high-reliability products will naturally tend to be right-censored.
 
-With field data on consumer products, model-based approaches to inference require a model with sufficient flexibility to account for multiple kinds of failure. The causes of these, while not interesting to the consumer per se, can lead to various observed lifetime distributions. Because of this, standard lifetime models, such as Weibull or lognormal may be inadequate. 
 
 In this paper we present a method for joint estimation of multiple lifetime distributions based on the Generalized Limited Failure Population (GLFP) model \citep{chan}. This 5-parameter model for lifetime data accommodates lifetime distributions with multiple failure modes:  early failure due to "infant mortality" and failure due to wearout. We fit the GLFP model using a hierarchical modeling approach.  Borrowing strength across populations, our method enables estimation with uncertainty of lifetime distributions even in cases where the number of model parameters is larger than the number of observed failures.  Moreover, using our Bayesian method, comparison of different product brands is straightforward because estimation of arbitrary functionals are easily computable using samples from the posterior distribution.
 \end{abstract}
