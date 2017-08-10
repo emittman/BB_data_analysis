@@ -47,8 +47,7 @@
 \if0\blind
 {
   \title{\bf A Hierarchical Bayesian Approach for Modeling Infant-Mortality and Wearout Failure Modes}
-  \author{Eric Mittman\thanks{
-    The authors gratefully acknowledge Bill Meeker for his comments and suggestions}\hspace{.2cm}\\
+  \author{Eric Mittman \\
     Department of Statistics, Iowa State University\\
     and \\
     Colin Lewis-Beck \\
@@ -279,13 +278,13 @@ For models 1-4, different sets of restrictions required different prior specific
 \begin{enumerate}
 \item This model constrains all drive-models to the same failure distribution. For this ``reduced" model we assume the same priors as in Example 1.
 
-\item We allow $t_{pd}$ to vary by drive-model. To help with model identifiably, we tighten the priors on the defective mode:
+\item We allow $t_{pg}$ to vary by drive-model. To help with model identifiably, we tighten the priors on the defective mode:
 $$ \mbox{logit}^{-1}\pi \sim \op{Normal}(-3,1),\quad \sigma_1 \sim \op{Lognormal}(0, 1), \quad t_{p1} \sim \op{Normal}(7,2),$$
 implying now a prior $90\%$ probability that $\sigma_1$ is between $0.19$ and $5.18$ and $t_{0.5,1}$ between $3.7$ and $10.3$, which, translating from the log-scale, is equivalent to an interval from 1.5 days to 3.4 years.
 
-\item $\sigma_{d2}$ is allowed to vary. Priors for constrained parameters are the same as for model 2.
+\item $\sigma_{g2}$ is allowed to vary. Priors for constrained parameters are the same as for model 2.
 
-\item $\pi_d$ varies. Priors for constrained parameters are the same as for model 2.
+\item $\pi_g$ varies. Priors for constrained parameters are the same as for model 2.
 
 \end{enumerate}
 
@@ -452,13 +451,18 @@ This paper has shown how to model and make inference for the kind of product rel
   
 We should point out some assumptions made in this analysis. First, we assume exchangability of units within drive-models. This assumption is due to our ignorance about the causes of failure and of potentially important covariates. If we had information about distinguishing characteristics of the two identified failure modes, then we should use this information. Also, there could be many environmental or human-related factors that impact lifetime, such as operating conditions associated with location in the data center, which are likely confounded with drive-model.
 
-Second, as discussed in subsection \ref{subsec:mod_assess}, if there are causes which lead to clusters of failures at spaced-out intervals, the GLFP is not flexible enough. What we assume is that the failures that occur from various causes can be approximately assigned to two phases of product life, so that the heterogeneity that we observe among drive models is due to different combinations of deficiencies. Our ignorance of the causes of failure leads us to approximate the main failure mode with a single drive-model specific Weibull distribution. Because of this, we suspect that our forecasts are too confident; especially for ``well-estimated" models, our uncertainty in the right tail of the distribution is probably too small. On the other hand, our model borrows strength across drive-models, including those with information about late failures -- information which is entirely missing in some cases. In addition, we suggest that using metrics for comparing drive-models that reduce the importance of the right tail of the distribution are appropriate for these data. With respect to decisions based on such metrics, we believe the assumptions in the previous paragraph to be the most critical. Those issues are typical to observational data such as these.
+Second, as discussed in subsection \ref{subsec:mod_assess}, if there are causes which lead to clusters of failures at spaced-out intervals, the proposed GLFP is not flexible enough. We assume the failures that occur from various causes can be approximately assigned to two phases of product life.  Heterogeneity observed across drive models is due to different combinations of the two lifetime distributions.  In practice there might be groups of products or individual brands that exhibit more than two failure modes.  Extending the GLFP model to incorporate more than two failure distributions or a mixture of different lifetime models is possible.  However, additional information about the failure modes or more informative priors may be necessary for model identification and estimation. 
 
-Consumers of high-tech manufactured goods usually lack the expertise to perform a failure analysis to determine the cause of failure. The ability to fit marginal models, such as GLFP, can allow investigators to answer many pertinent questions while still appropriately accounting for uncertainty and avoiding substantial model bias.
+Another limitation is our ignorance of the causes of failure.  We approximated the main failure mode with a single drive-model specific Weibull distribution. Because of this, we suspect our forecasts are too confident; especially for ``well-estimated" models, our uncertainty in the right tail of the distribution is probably too small. On the other hand, our model borrows strength across drive-models, including those with information about late failures -- information which is entirely missing in some cases. In addition, we suggest that using metrics for comparing drive-models that reduce the importance of the right tail of the distribution are appropriate for these data.  With respect to decisions based on such metrics, we believe the assumptions in the previous paragraph to be the most critical.
 
-Advances in technology have made computationally intensive Bayesian methods for fitting hierarchical models feasible in practice. Hierarchical modeling can be an effective way to regularize a large number of models fits by borrowing information. Because all the data contribute some information about the global parameters, it is often sufficient to use weakly informative priors on the global parameters, making the resulting shrinkage data dependent. Using samples from the full joint posterior avoids the need for potential problematic asymptotic approximations.
+Consumers of manufactured goods usually lack the data and expertise to perform a failure analysis to determine the cause of failure.  Moreover, their interest is primarily in the lifetime distribution of a product rather than the specific cause of failure.  The ability to fit marginal models, such as GLFP, allow consumers and manufacturers to accurately model bathtub hazard lifetime distributions and make comparisons across different product groups.  Because the Bayesian approach provides full posteriors distributions once a model is fit, the analyst can easily estimate a functional, such as a quantile or depreciation factor, that allow products to be compared using statistics meaningful for the context of the data. 
 
-Analysis using HMC is accessible to practitioners by Stan. HMC has been shown to be very efficient in effective samples per iteration because its joint updating scheme.
+Advances in technology have made computationally intensive Bayesian methods for fitting hierarchical models available to practitioners.  When there are many product groups and model parameters efficient MCMC algorithms, such as HMC, can speed up computation due to its joint updating scheme that efficiently explores the parameter space.  In addition, black box Bayesian software, like R Stan, makes programing HMC straightforward once the full model and likelihood are specified.  We hopes this makes the hierarchical GLFP model a useful tool for engineers and reliability analysts.   
+
+\section{Acknowledgments}    
+The authors gratefully acknowledge Bill Meeker for his comments and suggestions.
+
+%Hierarchical modeling can be an effective way to regularize a large number of models fits by borrowing information.  %Because all the data contribute some information about the global parameters, it is often sufficient to use weakly %informative priors on the global parameters, making the resulting shrinkage data dependent.  Analysis using HMC is %accessible to practitioners by Stan. HMC has been shown to be very efficient in effective samples per iteration because %its joint updating scheme.  
 
 \section{Appendix}
 \label{sec:Appendix}
@@ -621,7 +625,8 @@ model{
 
 \pagebreak
 
-\bibliographystyle{apalike}
+\bibliographystyle{plainnat}
+%\bibliographystyle{apalike}
 \bibliography{sample}
 
 \end{document}
