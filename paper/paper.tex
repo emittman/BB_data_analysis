@@ -463,9 +463,11 @@ Advances in technology have made computationally intensive Bayesian methods for 
 The authors gratefully acknowledge Bill Meeker for his comments and suggestions.
 
 %Hierarchical modeling can be an effective way to regularize a large number of models fits by borrowing information.  %Because all the data contribute some information about the global parameters, it is often sufficient to use weakly %informative priors on the global parameters, making the resulting shrinkage data dependent.  Analysis using HMC is %accessible to practitioners by Stan. HMC has been shown to be very efficient in effective samples per iteration because %its joint updating scheme.  
+\clearpage
 
-\section{Appendix}
-\label{sec:Appendix}
+\appendix
+\section{Truncation adjusted nonparametric estimate of lifetime}
+\label{sec:trunc-adj}
 We first start with a non-parametric estimate of the empirical cdf for each drive-model using the Kaplan-Meier estimator
 \cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $d$, denoted by
 $\widehat{F_d(t)}_{KM}$, is conditional on survival up to
@@ -487,18 +489,19 @@ While this adjustment is negligible for the majority of drive-models, five drive
 
 \pagebreak
 
-\begin{center}
-{\large\bf SUPPLEMENTARY MATERIAL}
-\end{center}
+% \begin{center}
+% {\large\bf SUPPLEMENTARY MATERIAL}
+% \end{center}
+% 
+% \begin{description}
+% 
+% \item Put R Stan code here
+% 
+% \end{description}
 
-\begin{description}
-
-\item Put R Stan code here
-
-\end{description}
-
-\begin{appendix}
-\scriptsize
+\section{Stan code for model 4}
+\label{sec:stan-code}
+{\scriptsize
 \begin{verbatim}
 functions {
   real sev_logpdf(real y, real mu, real sigma){
@@ -612,16 +615,16 @@ model{
   sigma1         ~ lognormal(0, 1);
   sigma2         ~ lognormal(eta_s2, tau_s2);
   logit_pi_raw   ~ normal(0, 1);
-  eta_tp2       ~ normal(9, 2);
+  eta_tp2        ~ normal(9, 2);
   eta_s2         ~ normal(0, 2);
   eta_pi         ~ normal(-3, 1);
-  tau_tp2       ~ cauchy(0,1);
+  tau_tp2        ~ cauchy(0,1);
   tau_s2         ~ cauchy(0,1);
   tau_pi         ~ cauchy(0,1);
 }
 
 \end{verbatim}
-\end{appendix}
+}
 
 \pagebreak
 
