@@ -303,7 +303,7 @@ For the scale hyper-parameters we follow the recommendations of \citet{gelman201
 \label{sec:Computation}
 Each model was fit using the {\tt
   rstan}\cite{rstan} package in {\tt R} \cite{r}, which implements a variant of Hamiltonian Monte Carlo (HMC)
-\cite{betancourt}. HMC jointly updates all model parameters by simulating paths along the posterior density. This is done to reduce autocorrelation and efficiently explore the posterior. Multiple chains were run for 1500 iterations after 1500 warmup iterations: 4 chains were run for Models 1,2 and 3 and 16 chains were run for Model 4. The Gelman-Rubin potential scale reduction factors, ``R-hat", which test for lack of convergence by comparing the between versus within chain variability were used. Upon convergence, R-hat converges to 1. For the four model fits, the  maximum values over all the model parameters were 1.005, 1.028, 1.009 and 1.004, respectively. The minimum estimated effective sample size over all the model parameters for the four model fits were 567, 205, 672 and 3330, respectively. No divergent transitions occurred after warmup.
+\cite{betancourt}. HMC jointly updates all model parameters by simulating energy preserving paths with random initial momentums along the posterior density. This is done to reduce autocorrelation and efficiently explore the posterior. Multiple chains were run for 1500 iterations after 1500 warmup iterations: 4 chains were run for Models 1,2 and 3 and 16 chains were run for Model 4. The Gelman-Rubin potential scale reduction factors, ``R-hat", which test for lack of convergence by comparing the between versus within chain variability were used. Upon convergence, R-hat converges to 1. For the four model fits, the  maximum values over all the model parameters were 1.005, 1.028, 1.009 and 1.004, respectively. The minimum estimated effective sample size over all the model parameters for the four model fits were 567, 205, 672 and 3330, respectively. No divergent transitions occurred after warmup.
 
 % HMC generates proposals by simulating paths along the posterior density. This is done to reduce autocorrelation between samples, but doing so also provides a useful diagnostic. \textit{Divergent transitions} will tend to occur when the posterior has regions of high curvature, which can present problems for MCMC by making it difficult to fully explore the posterior distribution. This feedback can be useful 
 
@@ -625,8 +625,8 @@ model{
 
 \pagebreak
 
-\bibliographystyle{plainnat}
-%\bibliographystyle{apalike}
+% \bibliographystyle{plainnat}
+\bibliographystyle{apalike}
 \bibliography{sample}
 
 \end{document}
