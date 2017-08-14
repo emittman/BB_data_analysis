@@ -96,12 +96,12 @@ lifetime_plot2 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
 }
 
 lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans="identity",
-                           xlabels=c(.01,.05,.25,1,2,5), xlimits=c(100, 50000)){
+                           xlabels=c(.01,.05,.25,1,2,5), xlimits=c(100, 50000), font_size=10){
   if(!in_years){
     xlabels <- signif(xlabels * 24*365, 0)
   } 
   if(!is.null(n_to_show)){
-    N = nrow(data)
+    N = nrow(data) #referenced in plot main title
     data <- sample_n(data, size=n_to_show)
   }
   n <- nrow(data)
@@ -128,20 +128,21 @@ lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
   p <- ggplot(data_new, aes(x=ID, xend=ID, y=starttime, yend=endtime, color=status, linetype=status, alpha=status)) +
     geom_segment()+
     coord_flip(expand=F) +
-    theme_dark() +
+    theme_dark(base_size=font_size) +
     theme(axis.title.y= element_blank(),
           axis.ticks.y= element_blank(),
           axis.text.y = element_blank(),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
-          panel.border = element_blank())
+          panel.border = element_blank()) +
+    scale_x_continuous(limits=c(0, n+1))
   
   transform <- switch(trans,
                       "log" = scales::log_trans,
                       "identity" = scales::identity_trans)
   
   if(in_years){
-    p <-   p + scale_y_continuous(name="time(years)",limits = xlimits,
+    p <-   p + scale_y_continuous(name="time(years)", limits=xlimits,
                                   breaks=xlabels*365*24,
                                   labels=xlabels,
                                   trans=trans)

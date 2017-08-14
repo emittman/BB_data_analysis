@@ -11,12 +11,10 @@ overview <- ddply(dat, .(model), summarise,
                   f=sum(failed>0),
                   early_f = sum(failed>0 & endtime<365*24*1),
                   late_f = sum(failed>0 & endtime>365*24*2))
-# id <- unique(dat$model)
+
 id <- with(overview, which(overview$early >= 0 & overview$late_f >= 0 & f >=3))
 overview$stan_id <- NA
 overview[id,]$stan_id <- 1:length(id)
-
-# s <- readRDS("../workflow/samples_lor_only3fails.rds")
 
 sfull <- readRDS("../workflow/samples_lor_only3fails.rds")
 tr_adj <- readRDS("../BB_data/tr_adj_tp2s2pi.rds")$median
@@ -31,6 +29,7 @@ xlabels=c(.01,.05,.2,1,2,5)
 ylabels=c(.001,.01,.1,.5,.8)
 xlimits=c(100, 50000)
 ylimits=c(.001,.8)
+font_size=12
 
 dat4 <- filter(dat, model==overview$model[which(overview$stan_id==4)])
 dat4 <- arrange(dat4, endtime)
@@ -38,7 +37,11 @@ dat4_tr <- dat4[which(dat4$starttime>.25*24*365),]
 
 set.seed(80717)
 
-lt_plot <- lifetime_plot3(dat4, n_to_show=200, in_years=TRUE, lab="Drive-model 4", trans="log", xlimits = xlimits, xlabels=xlabels)
+lt_plot <- lifetime_plot3(dat4, n_to_show=200, in_years=TRUE, lab="Drive-model 4",
+                          trans="log", xlimits = xlimits, xlabels=xlabels, font_size = font_size) +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank())
+  
 
 km4 <- KM.survfit(dat4)
 km4 <- tr.adj(km4, tr_adj[4])
@@ -56,14 +59,12 @@ bpp <- addBandToBaseplot(baseplot=bp, bandObj=band4, color="black",
 bppp <- addKmToBaseplot(baseplot = bpp, fitObj = km4_tr, color="black",
                         linetype="dotted", label="NP (truncated)")
 
-bpppp <- addKmToBaseplot(baseplot = bppp, fitObj = km4p, color="black",
-                         linetype="dotdash", label="nonparametric(excl. 4)")
-
 combined <- plotFinally(plotList=bppp, xbrks=xlabels*24*365, ybrks=ylabels, years=TRUE) +
   guides(fill=FALSE)
 
 
 library(cowplot)
+
 # now extract the legends
 legendLT <- get_legend(lt_plot + theme(legend.text = element_text(size=7)))
 legendcomb <- get_legend(combined+ theme(legend.text = element_text(size=7)))

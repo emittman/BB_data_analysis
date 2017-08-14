@@ -27,8 +27,8 @@ xbrks=c(10, 100, 1000, 10000)
 
 setwd("paper/fig/")
 pdf("dm-summ-scatter.pdf", width=7, height=5)
-ggplot(my_summary, aes(x=tt, y=fs)) + geom_text(aes(label=model), size=5) +
-  scale_x_continuous(name="Total time observed", trans="log", breaks=xbrks*24*365, labels=xbrks)+
+ggplot(my_summary, aes(x=tt, y=fs)) + geom_text(aes(label=model), size=4) +
+  scale_x_continuous(name="Total time observed (years)", trans="log", breaks=xbrks*24*365, labels=xbrks)+
   scale_y_continuous(name="Observed failures", trans="log", breaks = c(1, 10, 100, 1000))+
   theme_bw(base_size=14)#+geom_smooth(method = "lm", se = F, linetype="dashed")
 dev.off()
