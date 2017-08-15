@@ -201,7 +201,7 @@ In Figure 1 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull 
 \begin{figure}[H]
 \centering
   \includegraphics[width=.8\textwidth]{mod14_example1.pdf}
-  \caption{Estimated GLFP for drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws.  Solid line is a non-parametric Kaplan-Meier estimator.  Credible 90\% bands are in red.  Greenwood non-parametric error bands are in gray.}
+  \caption{Estimated GLFP for drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws; pointwise 90\% credible band is in red.  Solid line is a non-parametric estimate with pointwise 90\% uncertainty band in gray.}
   \label{fig1}
 \end{figure}
 
@@ -357,14 +357,14 @@ Due to censoring, it is not entirely clear how to generate the replicate data se
 \begin{enumerate}
 \item Simulate $\tilde{y}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)})$.  Where each set of parameters, $\left( \pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)} \right) $, is a random draw from the full posterior distribution.
 \item Repeat step 1 until $\tilde{y}_{rep,g,i} > t_{g,i}^L$.
-\item If $c_{g,i}=0$, let $c_{rep,g,i}^(s)=\max \{y_{g,i}: i \ge 1\}$, otherwise let $c_{rep,g,i}^{(s)}=y_{g,i}$.\\
+\item If $c_{g,i}=0$, let $c_{rep,g,i}^{(s)}=\max \{y_{g,i}: i \ge 1\}$, otherwise let $c_{rep,g,i}^{(s)}=y_{g,i}$.\\
 If $\tilde{y}_{rep,g,i}^{(s)}>m_{g,i}$, set $y_{rep,g,i}^{(s)}=c_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=1$, otherwise set $y_{rep,g,i}^{(s)}=\tilde{y}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
 \end{enumerate}
 
 We can compare the 19 simulated data sets $y_{rep,g, i}$ to the observed data $y_{g,i}$ by using them to reestimate the Kaplan-Meier nonparametric estimator. The resulting plots are displayed in figure \ref{fig:post-pred-KM}. For most drive-models, the estimates from the observed data appear to behave similarly to those from the replicated data. As discussed in \ref{subsec:ex1}, drive-model 14 has a discrepancy in the right tail, which we addressed there. Drive-models 4 and 34 appear to be exceptions as well. We will focus our attention on drive-model 4, but our diagnosis of 34 is similar, so the following comments extend to that drive-model as well.
 
 \begin{figure}[H]
-\includegraphics[width=\textwidth,height=.9\textheight]{post-pred-KM-all}
+\includegraphics[width=\textwidth,height=.9\textheight]{post-pred-KM-all2}
 \caption{Nonparametric estimates of proportion failing for each drive-model. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
 \label{fig:post-pred-KM}
 \end{figure}
@@ -447,18 +447,18 @@ We can also use the posterior draws to compute quantiles of interest, which in r
 
 \section{Discussion}
 \label{sec:Discussion}
-This paper has shown how to model and make inference for consumer product reliability data commonly found in the field.  Products with long lifetimes often have few failures and when failures do occur the cause is frequently unknown to the analyst.  The hierarchical GLFP model provides a unified framework to accurately model data with multiple failure modes, and provide a measure of uncertainty.  Moreover, when there are multiple brands within the same product class, the hierarchical approach allows the model to borrow strength from brands with lots of failures to make inference for groups with little information.  This is extremely advantageous since many products have time (left truncation and right censoring) and resource constraints (unidentified failure modes) that limit the information in the data.  This makes standard parametric lifetime models inaccurate and difficult to estimate using classical estimation techniques such as ML.  
+This paper offers a new approach to modeling and making inference for the lifetime of consumer products using incomplete field reliability data.  Products with long lifetimes often have few failures and when failures do occur the cause is frequently unknown to the analyst.  The GLFP model provides a framework to accurately model real data with evidence of multiple failure modes. Moreover, when there are multiple product populations within the same product class, our hierarchical modeling approach borrows strength across brands with many observed failures to help make inference for those populations with little information.  This can be important when trying to leverage multiple sources of data with various sample sizes and levels of censoring and truncation.  We found that the use of weakly informative priors on the hyperparameters can increase the overall efficiency of the MCMC. %This makes standard parametric lifetime models inaccurate and difficult to estimate using classical estimation techniques such as ML.  
   
-We should point out some assumptions made in this analysis. First, we assume exchangability of units within drive-models. This assumption is due to our ignorance about the causes of failure and of potentially important covariates. If we had information about distinguishing characteristics of the two identified failure modes we should use this information. Also, there could be many environmental or human-related factors that impact lifetime, such as operating conditions associated with location in the data center, which are likely confounded with drive-model.
+We should point out some important caveats of our analyses, given certain model assumptions. 
 
-Second, as discussed in subsection \ref{subsec: Model Assessment}, if there are causes which lead to clusters of failures at spaced-out intervals, the proposed GLFP is too rigid.  We assume the failures that occur from various causes can be approximately assigned to two phases of product life.  Heterogeneity observed across drive models is due to different combinations of these two lifetime distributions.  In practice there might be groups of products or individual brands that exhibit more than two failure modes.  Extending the GLFP model to incorporate more than two failure distributions or a mixture of different lifetime models is possible.  However, additional information about the failure modes or more informative priors may be necessary for model identification and estimation. 
+First, we assume the failures occurring from various causes can be approximately assigned to two phases of product life.  In practice, there might be additional phases, clearly supported by the data, making the GLFP model too rigid. This rigidity is illustrated by the right tail of the estimated distribution in figure \ref{fig1}. Extrapolations of the fitted model appear to be very conservative and overly confident.
 
-Another limitation is our ignorance of the causes of failure.  We approximated the main failure mode with a single drive-model specific Weibull distribution. Because of this, we suspect our forecasts are too confident; especially for ``well-estimated" models, our uncertainty in the right tail of the distribution is probably too small. On the other hand, our model borrows strength across drive-models, including those with information about late failures -- information which is entirely missing in some cases. In addition, we suggest that using metrics for comparing drive-models that reduce the importance of the right tail of the distribution are appropriate for these data.  With respect to decisions based on such metrics, we believe the assumptions in the previous paragraph to be the most critical.
+Second, we assume exchangability of units within a population. This assumption is due in part to ignorance about which units are defective but also of potentially important covariates. We do not account for batch effects or varying conditions in the facility which have impacted the observed failure rates. These factors are confounded with drive-model in our analysis. This second issue is a more fundamental issue with observational data like the hard drive data we have analyzed here.
 
-Consumers of manufactured goods usually lack the data and expertise to perform a failure analysis to determine the cause of failure.  Moreover, their interest is primarily in the lifetime distribution of a product rather than the specific cause of failure.  The ability to fit marginal models, such as GLFP, allow consumers and manufacturers to accurately model bathtub hazard lifetime distributions and make comparisons across different product groups.  Because the Bayesian approach provides full posteriors distributions once a model is fit, the analyst can easily estimate a functional, such as a quantile or depreciation factor, that allow products to be compared using statistics meaningful for the context of the data. 
+Consumers of manufactured goods usually lack the data and expertise to perform a failure analysis to determine the cause of failure.  Moreover, their interest is primarily in the lifetime distribution of a product rather than the specific cause of failure.  The ability to fit marginal models, such as GLFP, allow consumers and manufacturers to accurately model products with bathtub hazard lifetime distributions and make comparisons across different product groups.  Because the Bayesian approach provides full posteriors distributions once a model is fit, the analyst can easily estimate a functional, such as a quantile or depreciation factor, that allow products to be compared using statistics meaningful in the context of the data. 
  
-\section{Acknowledgments}    
-The authors gratefully acknowledge Bill Meeker for his comments and suggestions.
+\section*{Acknowledgment}    
+The authors express their gratitude to Dr. \hspace{-.5em} Meeker for his comments and suggestions.
 
 %Hierarchical modeling can be an effective way to regularize a large number of models fits by borrowing information.  %Because all the data contribute some information about the global parameters, it is often sufficient to use weakly %informative priors on the global parameters, making the resulting shrinkage data dependent.  Analysis using HMC is %accessible to practitioners by Stan. HMC has been shown to be very efficient in effective samples per iteration because %its joint updating scheme.  
 \clearpage

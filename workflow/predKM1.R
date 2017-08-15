@@ -37,7 +37,8 @@ make_replicate_data <- function(orig, mcmc_samp, dm, samp_id){
   replicates <- lapply(samp_id, function(s){
   y <- with(mcmc_samp, sample_glfp_rep(n, p=exp(log_pi[s,dm]),
                                       m1=mu1[s], s1=sigma1[s],
-                                      m2=mu2[s,dm], s2=sigma2[s,dm]))
+                                      m2=mu2[s,dm], s2=sigma2[s,dm],
+                                      left_tr=t_tr))
   
     is_cens <- y>t_cens
     y[is_cens] <- t_cens[is_cens]
@@ -57,47 +58,58 @@ make_replicate_data <- function(orig, mcmc_samp, dm, samp_id){
   replicates
 }
 
-get_plotlist <- function(dms){
+get_plotlist <- function(dms, firstcol, lastrow){
   plist <- list()
+  xaxis <- NULL
+  yaxis <- NULL
+  legend <- NULL
   n <- length(dms)
   for(i in 1:n){
-  dm <- dms[i]
-  dat_dm <- filter(dat, model==overview$model[which(overview$stan_id==dm)])
+    dm <- dms[i]
+    dat_dm <- filter(dat, model==overview$model[which(overview$stan_id==dm)])
   
   
   
-  reps <- 19
-  samp_id <- sample(length(sampfull$mu1), reps)
-  replicates <- make_replicate_data(orig = dat_dm, mcmc_samp = sampfull, dm=dm, samp_id = samp_id)
+    reps <- 19
+    samp_id <- sample(length(sampfull$mu1), reps)
+    replicates <- make_replicate_data(orig = dat_dm, mcmc_samp = sampfull, dm=dm, samp_id = samp_id)
   
   
-  xlimits <- c(100,80000)
-  ylimits <- c(.001, .9)
-  xbrks <- c(.01, 0.1, 0.5, 1, 2, 5) * 24*365
-  ybrks <- c(.001,.01,.1,.25,.5,.75,.9)
-  bp <- baseKMplot.multiple(replicates, xlimits=xlimits, ylimits=ylimits,
-                            color="black",linetype = "dashed", logscale = TRUE,
-                            label="replicates", alpha=.4)
+    xlimits <- c(100,80000)
+    ylimits <- c(.001, .9)
+    xbrks <- c(.01, 0.1, 0.5, 1, 2, 5) * 24*365
+    ybrks <- c(.001,.01,.1,.25,.5,.75,.9)
+    bp <- baseKMplot.multiple(replicates, xlimits=xlimits, ylimits=ylimits,
+                              color="black",linetype = "dashed", logscale = TRUE,
+                              label="replicates", alpha=.4)
   
-  km_obs <- KM.survfit(dat_dm)
-  bp <- addKmToBaseplot(bp, km_obs, color="red",linetype = "solid", label = "observed")
-  plist[[i]] <- plotFinally(bp, xbrks=xbrks, ybrks=ybrks, years=TRUE) +
-    theme_bw(base_size=14)+
-    theme(legend.position = "none",
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank(),
-          axis.text.x=element_blank(),
-          axis.text.y=element_blank()) + ggtitle(as.character(dm))
+    km_obs <- KM.survfit(dat_dm)
+    bp <- addKmToBaseplot(bp, km_obs, color="red",linetype = "solid", label = "observed")
+    pnew <- plotFinally(bp, xbrks=xbrks, ybrks=ybrks, years=TRUE) +
+      theme_bw(base_size=14) + theme(legend.position = "none",
+                                     axis.title.y=element_blank(),
+                                     plot.margin = unit(c(0,0,0,0), "cm")) + 
+      ggtitle(as.character(dm))
+  
+    if(!(i %in% firstcol)){
+      pnew <- pnew + theme(axis.text.y=element_blank())
+    } 
+    if(!(i %in% lastrow)){
+      pnew <- pnew + theme(axis.title.x=element_blank(),
+                           axis.text.x=element_blank(),
+                           plot.margin = unit(c(0,0,-1,0), "cm"))
+    }
+    plist[[i]] <-pnew
   }
-  plist
+  list(plots=plist, xaxis=xaxis, yaxis=yaxis, legend=legend)
 }
 set.seed(10438)
 # ran_set <- sort(sample(44, 6))
 all <- 1:44
-plist <- get_plotlist(all)
+plist <- get_plotlist(all, firstcol = 1+(0:8)*5, lastrow = 41:44)
 library(cowplot)
-pdf("../paper/fig/post-pred-KM-all.pdf", height=14, width=9)
-plot_grid(plotlist = plist, ncol=5)
+pdf("../paper/fig/post-pred-KM-all2.pdf", height=14, width=9)
+plot_grid(plotlist = plist$plots, ncol=5, align="hv")
 dev.off()
 #debug
 # p <- get_plotlist(42)
