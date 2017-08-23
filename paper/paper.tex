@@ -167,9 +167,14 @@ L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{f(y_i;\bm{\theta})}{1-F(t_i^L;\bm{\t
 
 \subsection{Example 1}
 \label{subsec:ex1}
-We fit the GLFP model on real hard drive failure data from a cloud-based storage company.  Computer hard drives are known to have a mixture of early and late failures, making the GLFP an appropriate parametric model.  The data contain the number of hours the hard drive was in operation, and whether the drive failed or was right censored.  No information is available about the cause of failure.  We first focus on the drive-model with the most observed failures to demonstrate the GLFP model.  We the GLFP using a Bayesian computational approach, after specifying prior distributions on the model parameters. We selected proper prior distributions to improve identification of the model parameters, which ensures a proper posterior distribution. We reparameterize the component Weibull distributions using the $50^{th}$ percentile for the infant mortality failure mode ($t_{0.5,1}) and the $20^{th}$ percentile for the wearout failure mode ($t_{0.2,2}).
-$$t_{0.5,1} \sim \op{N}(8,4), \quad t_{0.2,2} \sim \op{N}(10,4)$$
-$$\mbox{logit}^{-1}\pi_1 \sim \op{Normal}(-3,2),\quad \sigma_1 \sim \op{Lognormal}(0, 2.5), \quad \sigma_2 \sim \op{Lognormal}(0, 2.5) $$
+We fit the GLFP model on real hard drive failure data from a cloud-based storage company.  Computer hard drives are known to have a mixture of early and late failures, making the GLFP an appropriate parametric model.  The data contain the number of hours the hard drive was in operation, and whether the drive failed or was right censored.  No information is available about the cause of failure.  To illustate the GLFP model, we will present an analysis of the drive-model with the most observed failures. We use a Bayesian approach, selecting proper prior distributions to improve identification of the model parameters, which also ensures a proper posterior distribution. We reparameterize the component Weibull distributions using the $50^{th}$ percentile for the infant mortality failure mode ($t_{0.5,1}$) and the $20^{th}$ percentile for the wearout failure mode ($t_{0.2,2}$). Although non-standard, for purposes of exposition, we will use diagonal braces ($\langle.,.\rangle$) to refer to $95$ percent central probability intervals, rather than the standard model parameters when specifying prior distributions.
+
+%$$t_{0.5,1} \sim \op{Lognormal}(8,4), \quad t_{0.2,2} \sim \op{Lognormal}(10,4)$$
+$$t_{0.5,1} \sim \op{Lognormal} \langle 1.7,7.6\times 10^6 \rangle,\quad
+t_{0.2,2} \sim \op{Lognormal}\langle 8.6, 5.6\times 10^7 \rangle$$
+$$\mbox{logit}^{-1}\pi \sim \op{Logitnormal}\langle 1.0\times 10^{-3}, 7.1\times 10^{-1} \rangle,\quad
+\sigma_1 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2 \rangle, \quad
+\sigma_2 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2  \rangle $$
 
 
 The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$.  Given the interpretation of $\pi$ as the proportion of defective units, which we would expect to be small, a range primarily covering the left side of 0.50 is reasonable and weakly informative.  The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability.  Again, this allows for a wide range of hazards, larger than we would expect to see in the data.  The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ the range is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative.  They do, however, help separate the early and late failure modes--the earlier infant mortality mode having a lower mean time to failure than the wearout mode.  This is helpful for estimation since, as discussed in Chan \& Meeker, ML had difficulty identifying the two sets of GLFP parameters without making strong assumptions about the data.  \\
@@ -332,7 +337,7 @@ We can also compare the model fits for each drive-model individually.  Using the
 
 
 To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  We computed the elpd for all 4 models using the R package loo \cite{loo}.  When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically.  We calculated the difference in expected predictive accuracy for Model 4 vs 3, Model 3 vs 2, and Model 2 vs 1, as well as the standard error of the difference (Table 1).  As the model complexity increased, the expected predictive accuracy improved.  Of all the models, Model 4 had the best predictive accuracy and was significantly better than the other 3 models.
-
+\begin{figure}
 \begin{table}[H]
 \centering
 \begin{tabular}{rrrrrrr}
@@ -348,7 +353,7 @@ Model 1 & -17483.6  \\
 \caption{Expected Log Pointwise Predictive Density (ELPD) for each model specification.  Each model is compared to the more parsimonious model below.  The estimated difference of expected leave-one-out prediction errors between the two models, as well as the standard error of the difference, is also presented.}
 \label{table:1}
 \end{table}
-
+\end{figure}
 \subsection{Results}
 \subsubsection{Model Assessment}
 To assess the goodness of fit for our final model (Model 4), we use a graphical posterior predictive check, wherein replicate data sets are generated from the posterior predictive distribution and compared with the observed data. This is a general approach recommended by \citet{gelman1996postpred} for models where no classical goodness-of-fit test is available. Because of the rich information gleaned from plotting the data, this method can be very effective at identifying limitations of the model.
