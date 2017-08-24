@@ -113,22 +113,22 @@ lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
            starttime=endtime,
            endtime=xlimits[2])
   
-  data_f <- filter(data, censored==FALSE) %>%
-    mutate(starttime=endtime,
-           endtime=xlimits[2],
-           status="failed")
+  # data_f <- filter(data, censored==FALSE) %>%
+  #   mutate(starttime=endtime,
+  #          endtime=xlimits[2],
+  #          status="failed")
   
   data_o <- mutate(data,
                    starttime=pmax(starttime, xlimits[1]),
                    status="observed")
   
-  data_new <- rbind(data_c,data_f,data_o)
+  data_new <- rbind(data_c,data_o)
   data_new$status <- factor(data_new$status)
   
   p <- ggplot(data_new, aes(x=ID, xend=ID, y=starttime, yend=endtime, color=status, linetype=status, alpha=status)) +
     geom_segment()+
     coord_flip(expand=F) +
-    theme_dark(base_size=font_size) +
+    theme_bw(base_size=font_size) +
     theme(axis.title.y= element_blank(),
           axis.ticks.y= element_blank(),
           axis.text.y = element_blank(),
@@ -147,14 +147,14 @@ lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
                                   labels=xlabels,
                                   trans=trans)
   } else{
-    p <-   p + scale_y_continuous(name="time(years)",limits = xlimits,
-                                  breaks=xlabels,
+    p <-   p + scale_y_continuous(name="Thousands of hours",limits = xlimits,
+                                  breaks=xlabels*1000,
                                   labels=xlabels,
                                   trans=trans)
   }
-  p <- p + scale_color_manual(values = c("censored"="white", "failed"="black", "observed"="white"))+
-    scale_linetype_manual(values = c("censored"="dashed", "failed"="solid", "observed"="solid"))+
-    scale_alpha_manual(values = c("censored"="1", "failed"=".5", "observed"="1"))
+  p <- p + scale_color_manual(values = c("censored"="black", "observed"="black"))+
+    scale_linetype_manual(values = c("censored"="dashed", "observed"="solid"))+
+    scale_alpha_manual(values = c("censored"="1", "observed"="1"))
   
   if(is.null(n_to_show)) return(p+ggtitle(paste(lab)))
   p + ggtitle(paste(lab, "(sample size = ", n_to_show, ", N = ", N, ")"))

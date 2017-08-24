@@ -25,6 +25,7 @@ sampfull <- extract(sfull)
 source("../plotting_fns/KM_plot2.R")
 source("../predictive/sample_from_predictive.R")
 
+set.seed(82417)
 
 make_replicate_data <- function(orig, mcmc_samp, dm, samp_id){
   n <- nrow(orig)
@@ -58,47 +59,51 @@ make_replicate_data <- function(orig, mcmc_samp, dm, samp_id){
   replicates
 }
 
-get_plotlist <- function(dms, firstcol, lastrow){
+reps <- 19
+
+y_reps <- lapply(1:44, function(dm){
+  dat_dm <- filter(dat, model==overview$model[which(overview$stan_id==dm)])
+  samp_id <- sample(length(sampfull$mu1), reps)
+  replicates <- make_replicate_data(orig = dat_dm, mcmc_samp = sampfull, dm=dm, samp_id = samp_id)
+  replicates
+})
+
+saveRDS(y_reps,"../plots/y_rep.rds")
+
+get_plotlist <- function(y_reps, dat){
   plist <- list()
   xaxis <- NULL
   yaxis <- NULL
   legend <- NULL
-  n <- length(dms)
+  n <- length(y_reps)
   for(i in 1:n){
-    dm <- dms[i]
-    dat_dm <- filter(dat, model==overview$model[which(overview$stan_id==dm)])
-  
-  
-  
-    reps <- 19
-    samp_id <- sample(length(sampfull$mu1), reps)
-    replicates <- make_replicate_data(orig = dat_dm, mcmc_samp = sampfull, dm=dm, samp_id = samp_id)
-  
-  
-    xlimits <- c(100,80000)
+    xlimits <- c(100,100000)
     ylimits <- c(.001, .9)
-    xbrks <- c(.01, 0.1, 0.5, 1, 2, 5) * 24*365
+    xbrks <- 0:10 * 10000
     ybrks <- c(.001,.01,.1,.25,.5,.75,.9)
-    bp <- baseKMplot.multiple(replicates, xlimits=xlimits, ylimits=ylimits,
-                              color="black",linetype = "dashed", logscale = TRUE,
-                              label="replicates", alpha=.4)
-  
+    bp <- baseKMplot.multiple(y_reps[[i]], xlimits=xlimits, ylimits=ylimits,
+                              color="black",linetype = "dashed", logscale = FALSE,
+                              label=expression(KM(y[rep])), alpha=.4)
+    dat_dm <- filter(dat, model==overview$model[which(overview$stan_id==i)])
     km_obs <- KM.survfit(dat_dm)
-    bp <- addKmToBaseplot(bp, km_obs, color="red",linetype = "solid", label = "observed")
-    pnew <- plotFinally(bp, xbrks=xbrks, ybrks=ybrks, years=TRUE) +
-      theme_bw(base_size=14) + theme(legend.position = "none",
-                                     axis.title.y=element_blank(),
+    bp <- addKmToBaseplot(bp, km_obs, color="red",linetype = "solid",
+                          label = expression(KM(y[obs])))
+    pnew <- plotFinally(bp, xbrks=xbrks, ybrks=ybrks, years=FALSE) +
+      theme_bw(base_size=14) + theme(axis.title.y=element_blank(),
                                      plot.margin = unit(c(0,0,0,0), "cm")) + 
-      ggtitle(as.character(dm))
+      ggtitle(as.character(i))
   
-    if(!(i %in% firstcol)){
-      pnew <- pnew + theme(axis.text.y=element_blank())
-    } 
-    if(!(i %in% lastrow)){
-      pnew <- pnew + theme(axis.title.x=element_blank(),
-                           axis.text.x=element_blank(),
-                           plot.margin = unit(c(0,0,-1,0), "cm"))
-    }
+    if(i==1) legend <- cowplot::get_legend(pnew)
+    
+    pnew <- pnew + theme(legend.position = "none")
+    # if(!(i %in% firstcol)){
+    #   pnew <- pnew + theme(axis.text.y=element_blank())
+    # } 
+    # if(!(i %in% lastrow)){
+    #   pnew <- pnew + theme(axis.title.x=element_blank(),
+    #                        axis.text.x=element_blank(),
+    #                        plot.margin = unit(c(0,0,-1,0), "cm"))
+    # }
     plist[[i]] <-pnew
   }
   list(plots=plist, xaxis=xaxis, yaxis=yaxis, legend=legend)
@@ -106,11 +111,35 @@ get_plotlist <- function(dms, firstcol, lastrow){
 set.seed(10438)
 # ran_set <- sort(sample(44, 6))
 all <- 1:44
+
+plist <- get_plotlist(y_reps, dat)
+
 plist <- get_plotlist(all, firstcol = 1+(0:8)*5, lastrow = 41:44)
 library(cowplot)
 pdf("../paper/fig/post-pred-KM-all2.pdf", height=14, width=9)
 plot_grid(plotlist = plist$plots, ncol=5, align="hv")
 dev.off()
+
+legnd <- get_legend(plist$plots[[1]] + theme(legend.position="right"))
+
+no.x.title <- lapply(plist$plots, function(p) p + theme(axis.title = element_blank()))
+for(j in 1:6){
+  if(j<6){
+    plot_grid(plot_grid(plotlist=plist$plots[1:8 + (j-1)*8], ncol=2, align="h"), plist$legend,
+              nrow=1, rel_widths = c(1,.2))
+  } else{
+    plot_grid(plot_grid(plotlist=plist$plots[1:4 + (j-1)*8], ncol=2, align="h"), plist$legend,
+                     nrow=1, rel_widths = c(1,.2))
+  }
+  ggsave(paste("../paper/fig/ppcheck",j,".pdf"), width = 8.5, height=11)
+}
+
+set.seed(12122017)
+smplID <- sort(sample(44, 4))
+plot_grid(plot_grid(plotlist=plist$plots[c(smplID)], ncol=2, align="hv"), plist$legend,
+          nrow=1, rel_widths = c(4,.5))
+
+ggsave("../paper/fig/ppcheck-sample.pdf", width=5, height=6)
 #debug
 # p <- get_plotlist(42)
 # 

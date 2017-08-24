@@ -33,7 +33,6 @@ my_pweibull <- function(x, location, scale, ...){
   pweibull(x, 1/scale, exp(location), ...)
 }
 
-
 ## Compute Kaplan-Meier estimate for possibly left-trunctated,
 # right-censored univariate lifetime data (s3 class "myKM")
 KM.survfit <- function(life.data, greenwood = FALSE, alpha = .05){
@@ -294,13 +293,13 @@ plotFinally <- function(plotList, xbrks, ybrks, years=FALSE, greenwood=FALSE, al
     p <- p + scale_x_continuous(name="Time (Years)", trans="log",
                                             breaks = xbrks, labels=signif(xbrks/365/24, 0), limits = plotList$xlimits)
   } else if(plotList$logscale & !years) {
-    p <- p + scale_x_continuous(name="Time (Hours)", trans="log",
+    p <- p + scale_x_continuous(name="Thousands of hours", trans="log", labels = xbrks/1000,
                                             breaks = xbrks, limits = plotList$xlimits)
   } else if(years){
     p <- p + scale_x_continuous(name="Time (Years)", breaks = xbrks,
                                             labels=signif(xbrks/365/24, 0), limits = plotList$xlimits)
   } else{
-    p <- p + scale_x_continuous(name="Time (Hours)", breaks = xbrks
+    p <- p + scale_x_continuous(name="Thousands of hours", breaks = xbrks, labels=xbrks/1000
                                             , limits = plotList$xlimits)
   }
   

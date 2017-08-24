@@ -25,20 +25,21 @@ source("../plotting_fns/KM_plot2.R")
 source("../predictive/sample_from_predictive.R")
 source("../plotting_fns/lifetime_plot.R")
 
-xlabels=c(.01,.05,.2,1,2,5)
-ylabels=c(.001,.01,.1,.5,.8)
+xlabels=c(.1,.5,2.5,10,50)
+ylabels=c(.001,.005, .01,.05,.1)
 xlimits=c(100, 50000)
-ylimits=c(.001,.8)
+ylimits=c(.001,.2)
 font_size=12
 
 dat4 <- filter(dat, model==overview$model[which(overview$stan_id==4)])
 dat4 <- arrange(dat4, endtime)
-dat4_tr <- dat4[which(dat4$starttime>.25*24*365),]
+dat4_tr <- dat4[which(dat4$starttime>2500),]
 
 set.seed(80717)
 
-lt_plot <- lifetime_plot3(dat4, n_to_show=200, in_years=TRUE, lab="Drive-model 4",
-                          trans="log", xlimits = xlimits, xlabels=xlabels, font_size = font_size) +
+lt_plot <- lifetime_plot3(data = dat4, n_to_show=60, in_years=FALSE, lab="Drive-model 4",
+                          trans="log", xlimits = xlimits, xlabels=xlabels,
+                          font_size = font_size) +
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank())
   
@@ -46,10 +47,19 @@ lt_plot <- lifetime_plot3(dat4, n_to_show=200, in_years=TRUE, lab="Drive-model 4
 km4 <- KM.survfit(dat4)
 km4 <- tr.adj(km4, tr_adj[4])
 km4_tr <- KM.survfit(dat4_tr)
-km4_tr <- tr.adj(km4_tr, tr_adj2$median[tr_adj2$modelid==4])
+#calculate adjustment: estimate of proportion failing at first starttime
+first_start <- min(dat4_tr$starttime)
+draws <- with(sampfull, sapply(1:24000, function(iter){
+  1 - (1 - exp(log_pi[iter,4]) * 
+         my_pweibull(first_start, mu1[iter], sigma1[iter])) * 
+    (1 - my_pweibull(first_start, mu2[iter,4], sigma2[iter,4]))}))
+
+summary(draws)
+
+km4_tr <- tr.adj(km4_tr, median(draws))
 
 bp <- baseKMplot(fit=km4, xlimits=xlimits, ylimits=ylimits, color="black",
-                 linetype = "solid", alpha = 1, logscale = TRUE, label="nonparametric")
+                 linetype = "solid", alpha = 1, logscale = TRUE, label="nonparametric\nestimate")
 
 samp4 <- with(sampfull, list(mu1=mu1, sigma1=sigma1, log_pi=log_pi[,4], mu2=mu2[,4], sigma2=sigma2[,4]))
 band4 <- bandFromPSamp(samples=samp4, range=xlimits, length.out = 50, N=300, logscale = TRUE)
@@ -57,9 +67,9 @@ bpp <- addBandToBaseplot(baseplot=bp, bandObj=band4, color="black",
                          linetype="dashed", label="posterior median\n(90% interval)", alpha = .3)
 
 bppp <- addKmToBaseplot(baseplot = bpp, fitObj = km4_tr, color="black",
-                        linetype="dotted", label="NP (truncated)")
+                        linetype="dotted", label="nonparam. est\n of truncated data")
 
-combined <- plotFinally(plotList=bppp, xbrks=xlabels*24*365, ybrks=ylabels, years=TRUE) +
+combined <- plotFinally(plotList=bppp, xbrks=xlabels*1000, ybrks=ylabels, years=FALSE) +
   guides(fill=FALSE)
 
 
@@ -74,11 +84,10 @@ lt_plot <- lt_plot + theme(legend.position = "none")
 combined <- combined + theme(legend.position='none')
 
 # Now plots are aligned vertically with the legend to the right
-pdf("../paper/fig/dm4-exception.pdf", width=6, height=6)
 ggdraw(plot_grid(plot_grid(lt_plot, combined, ncol=1, align='v'),
                  plot_grid(legendLT, legendcomb, ncol=1),
                  rel_widths=c(1, 0.2)))
-dev.off()
+ggsave("../paper/fig/dm4-exception.pdf", width=6, height=6)
 
 # ###################
 # # removed, saved for later use
