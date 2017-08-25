@@ -197,7 +197,7 @@ To estimate the GLFP we use a Bayesian approach, selecting proper prior distribu
 $$t_{0.5,1} \sim \op{Lognormal} \langle 1.7,7.6\times 10^6 \rangle,\quad
 t_{0.2,2} \sim \op{Lognormal}\langle 8.6, 5.6\times 10^7 \rangle$$
 $$\mbox{logit}^{-1}\pi \sim \op{Logitnormal}\langle 1.0\times 10^{-3}, 7.1\times 10^{-1} \rangle,\quad
-\sigma_1, \sigma_2 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2 \rangle 
+\sigma_1, \sigma_2 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2 \rangle $$
 %\quad \sigma_2 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2  \rangle $$
 
 
@@ -425,7 +425,9 @@ As another example, to further appreciate how information is being borrowed acro
 \begin{figure}
 \centering
 \includegraphics{dm4-exception}
-\caption{Top: Graphical representation of lifetime for random sample of 200 drives of drive-model 4 from the Backblaze data set. Solid white lines indicate the observed window of life. Right-censored observations changed to a dashed line and failures mark the transition to a solid black line. Bottom: Solid step function is truncation-adjusted nonparametric estimate of the proportion failing. The dotted line is an estimate obtained after truncating the data to those starting after .25 years, with the corresponding truncation adjustment. The dashed line with gray band is pointwise posterior median, and 90\% credible interval, of proportion failing.}
+\caption{Top: Event plot for uniform random sample of 60 units of drive-model 4. Left endpoints are left-truncation times, dashed lines extending to the right indicate censoring intervals, $[t_4,i, \infty)|c_{4,i}=1$, and right endpoints without joined dashed lines are observed failure times, i.e. $t_{4,i}|c_{4,i}=0$.
+
+Bottom: The adjusted Kaplan-Meier estimate (solid step function) substantially higher than the pointwise posterior median (dashed line; shaded region showing 90\% credible interval) due to several early failures while few were at risk.  Using the same Kaplan-Meier estimator, but only the data truncated after 2500 hours (dotted line) shows close agreement with the posterior median.}
 
 \label{fig:ex-mod-4}
 \end{figure}
@@ -486,8 +488,8 @@ We can also use the posterior draws to compute quantiles of interest, which in r
 \begin{figure}[H]
   \centering
   \includegraphics[width=.8\textwidth]{dm-eval}
-  \caption{Left: Posterior predictive relative value-at-loss for new
-    unit, by drive-model. Right: TTF (top) and VAF based on 40\% annual depreciation (bottom), for best 11 drive-models.}
+  \caption{Left: Summary of posterior predictive distributions for $e^{-.4 t_{g,new}}$ the depreciated value at failure (VAF) for a new unit for each drive-model.
+  Right: A comparison of the predictive distribution of TTF (top) and VAF (bottom) based on 40\% for best 11 drive-models, shows that rankings produced by the two measures are not equivalent.}
   \label{fig5}
 \end{figure}
 
@@ -691,8 +693,8 @@ model{
 \end{figure}
 \clearpage
 % \bibliographystyle{plainnat}
-% %\bibliographystyle{apalike}
-\bibliographystyle{plain}
+\bibliographystyle{apalike}
+% \bibliographystyle{plain}
 \bibliography{sample}
 
 \end{document}
