@@ -337,28 +337,35 @@ We can also compare the four Model fits for each drive-model individually.  For 
 \end{figure}
 
 
-From the point of view of an operator, the goal of an analysis such as this is may be to rate manufacturers and/or to inform future purchases based on predicted product performance. In this case, we should choose the Model that will provide the most accurate prediction for future units of previously observed drive-models. One appropriate criterion for model selection, then, is log predictive density (lpd),
+From the point of view of an operator, the goal of an analysis such as this is may be to rate manufacturers and/or to inform future purchases based on predicted product performance. In this case, we should choose the Model that will provide the most accurate prediction for future units of previously observed drive-models. One appropriate criterion for model selection, then, is log pointwise predictive density (lpd),
 
 \begin{equation}
-\mbox{lpd} = \log[p(t_{g, new}|t, t^L, c)] = \log \int p(t_{g, new}|\theta) p(\theta|t,t^L,c) d\theta
+\mbox{lpd} = \sum_{g=1}^G \sum_{i=1}^{n_g} \log[p(t_{new,g,i}|t, t^L, c)] = \sum_{g=1}^G \sum_{i=1}^{n_g} \log \left[ \int p(t_{new,g, i}|\theta) p(\theta|t,t^L,c) d\theta \right].
 \end{equation}
 
-Using this criterion, we should choose the Model with the highest expected lpd:
+Using this criterion, we should choose the Model with the highest expected lpd (elpd) for a new data set $\{t_{new,g,i}:g=1,\ldots,G; i=1,\ldots,n_g\}$. Suppressing the conditioning on $t^L$ and $c$,
 \begin{equation}
-\op{E}_h \mbox{lpd} = \int p(t_{g,new}|t,t^L,c) h(t_{g,new}) d t_{g,new}.
+elpd = \op{E}_h \mbox{lpd} = \sum_{g=1}^G \sum_{i=1}^{n_g} \int \log [p(t_{new, g, i}|t)] h(t_{new,g,i}) d t_{new,g,i},
+\label{elpd}
 \end{equation}
-Where $h$ is the true distribution of $t_{new}$. Since $h$ is unknown, leave-one-out cross-validation can be used to estimate it:
+where $h$ is a density for the true distribution of $t_{new,g,i}$. Although $h$ is unknown, leave-one-out cross-validation provides a robust estimator:
 \begin{equation}
-\widehat{\op{E}_h \mbox{lpd}} = \frac{1}{G}\frac{1}{n_g}\sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{g,i}^L,c_{g,i},-t_{-(g,i)})].
+\widehat{elpd} = \sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{-(g,i)})].
+\label{loo-est}
 \end{equation}
-Using recently developed software provided in the \texttt{loo} package in \texttt{R},
-To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  We computed the elpd for all 4 models using the R package loo \cite{loo}.  When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically.  We calculated the difference in expected predictive accuracy for Model 4 vs 3, Model 3 vs 2, and Model 2 vs 1, as well as the standard error of the difference (Table 1).  As the model complexity increased, the expected predictive accuracy improved.  Of all the models, Model 4 had the best predictive accuracy and was significantly better than the other 3 models.
+A recently published \texttt{R} package, \texttt{loo}\cite{loo}, computes an approximation of (\ref{loo-est}) provided that the observations $t_i$ are conditionally independent. It employs an importance sampling method that uses $S$ saved MCMC draws to compute smoothed importance weights, $w_{i,s}$, approximating $\log [p(t_{g,i}|t_{-(g,i)})]$ with $\frac{\sum_{i=1}^S w_{i,s} p(t_{g,i})}{\sum_{s=1}^S w_{i,s}}$. In addition to providing an estimate of (\ref{elpd}), their method also produces a standard error based on an asymptotic result. For details, refer to \citet{vehtari}.
+%When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically. 
+% To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  
+% The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  
+Results showing estimated elpd and associated standard errors for all 4 models are shown in Table \ref{table:1}.
+ We calculated the difference in expected predictive accuracy for Model 4 vs 3, Model 3 vs 2, and Model 2 vs 1, as well as the standard error of the difference (Table 1).  
+For the Models we considered, each successive increase in model complexity increases elpd.  Of all the models, Model 4 has significantly better elpd compared to the the other 3 Models.
 \begin{figure}
 \begin{table}[H]
 \centering
 \begin{tabular}{rrrrrrr}
   \hline
- & ELPD \ & Difference in ELPD \ & SE of the Difference \\ 
+ & $\widehat{elpd}$ \ & Difference in $\widehat{elpd}$ \ & SE of the Difference \\ 
   \hline
 Model 4 & -13309.5 & 40.7 & 11.3 \\ 
 Model 3 & -13350.2 & 458.8 & 31.0  \\ 
@@ -366,7 +373,7 @@ Model 2 & -13809.0 & 3674.6 & 96.2 \\
 Model 1 & -17483.6  \\ 
    \hline
 \end{tabular}
-\caption{Expected Log Pointwise Predictive Density (ELPD) for each model specification.  Each model is compared to the more parsimonious model below.  The estimated difference of expected leave-one-out prediction errors between the two models, as well as the standard error of the difference, is also presented.}
+\caption{Expected Log Pointwise Predictive Density (elpd) for each model specification.  Each model is compared to the more parsimonious model below.  The estimated difference of expected leave-one-out prediction errors between the two models, as well as the standard error of the difference, is also presented.}
 \label{table:1}
 \end{table}
 \end{figure}
@@ -401,7 +408,7 @@ We can compare the 19 simulated data sets $y_{rep,g, i}$ to the observed data $y
 
 To attempt to diagnose the cause of the discrepancies between the observed data for drive-model 4 and its posterior predictive distribution, we plot an event plot for a random sample of units for this drive-model, along with the Kaplan-Meier estimate, and the posterior estimate of time to failure (see figure \ref{fig:ex-mod-4}). From these plots, it appears that the large discrepancy between the posterior and the nonparametric estimate is driven by a small number of failures that occur in the several thousand hours, at a time where very few units were observed to be at risk. In further support of this hypothesis, if we ignore records with observation periods that include the first quarter, the modified nonparametric estimate falls within the posterior 90\% pointwise credible band. While it might be tempting to treat those early failures as anomalous, they also point to a weakness in our model. By virtue of having all drive-models share in common the Weibull parameters for the infant mortality failure mode, an early rash of failures indicating a subpopulation with, say, an increasing hazard function,  would be problematic. While the proportion at risk of early failure can vary via $\pi_g$, the plausible values of the common parameters, $\mu_1$ and $\sigma_1$, do not ``line up" in a way so to influence the posterior as they might have had they been allowed to vary. In other words, the problem seems to go away much quicker than would be expected under Model 4.
 
-As another example, to further appreciate how information is being borrowed across groups, consider drive-model 43. The data for this drive-model are heavily truncated; the observed units had run for quite some time before data were made available. In figure \ref{fig:ex-mod-43} we see that the lack of data for this drive-model at early ages results in a diffuse posterior centered around the what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_{\pi}, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. Then, in the period where records exist for this drive model, at around 10,000 hours, the posterior deviates from the global model, acheiving a compromise between it and the nonparametric estimate.
+As another example, to further appreciate how information is being borrowed across groups, consider drive-model 43 (Figure \ref{fig:ex-mod-43}). The data for this drive-model are heavily truncated; the observed units had run for quite some time before data were made available. In figure \ref{fig:ex-mod-43} we see that the lack of data for this drive-model at early ages results in a diffuse posterior centered around the what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_{\pi}, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. Then, in the period where records exist for this drive model, at around 10,000 hours, the posterior deviates from the global model, acheiving a compromise between it and the nonparametric estimate.
 
 
 
