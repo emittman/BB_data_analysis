@@ -316,10 +316,12 @@ Each model was fit using the {\tt
 
 \subsection{Model Selection}
 \label{sec:Model Comparisons}
-As we have discussed, while we prefer to allow all of the GLFP model parameters to be drive-model specific, there are practical issues with fitting the full model. For example, due to heavy left-truncation, there may be insufficient information for particular drive models to estimate all of the parameters. Furthermore, we prefer not to introduce unnecessary complexity into our analyses. Figure \ref{fig:fig2} provides a visual comparison for Models 1 through 4 by plotting the pointwise posterior median of time to failure. The large left panel shows the Kaplan-Meier nonparametric estimate of the same. the Kaplan-Meier estimates right side of Figure \ref{fig:fig2} shows that the set of estimated failure curves for all four models that we fit. The smaller plots correspond to Models 1 through 4 reading from left to right, top to bottom. Note that while all the paths for the posterior estimates necessarily pass through the origin, the nonparametric curves do not, but only because, for the Kaplan-Meier estimator, left-truncation disallows any kind of interpolation.
+As we have discussed, while we prefer to allow all of the GLFP model parameters to be drive-model specific, there are practical issues with fitting the full model. For example, due to heavy left-truncation, there may be insufficient information for particular drive models to estimate all of the parameters. 
+
+Figure \ref{fig:fig2} provides a visual comparison for Models 1 through 4 by plotting the pointwise posterior median of time to failure. The large left panel shows the Kaplan-Meier nonparametric estimate of the same. the Kaplan-Meier estimates right side of Figure \ref{fig:fig2} shows that the set of estimated failure curves for all four models that we fit. The smaller plots correspond to Models 1 through 4 reading from left to right, top to bottom. Note that while all the paths for the posterior estimates necessarily pass through the origin, the nonparametric curves do not, but only because, for the Kaplan-Meier estimator, inference is entirely conditional on survival up to left-most left-trunctation time; to make the plot comparable, we use an adjustment based on a parametric model (Model 4).
 
 %Should we be brief discussing the plot?
-These plots seem to suggest that Model 1 is far too naive, Model 2 is still too restrictive and Models 3 and 4 are fairly similar.
+These plots suggest that Model 1 is insufficient to explain the observed data. Model 2 certainly captures more of the heterogeneity observed in the Kaplan-Meier estimates; we observe that the assumption of a common $\sigma_2(=\sigma_{2,g})$ results in a very similar progressions in the rate of failure, which may be too restrictive. Model 3, which removes this restriction on $\sigma_{2,g}$ suggests that there is evidence to support variation in this parameter among drive-models. While Model 3 and 4 do display differences, their impact is relatively subtle.
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{heterogeneity-compare}
@@ -327,15 +329,29 @@ These plots seem to suggest that Model 1 is far too naive, Model 2 is still too 
 \label{fig:fig2}
 \end{figure}
 
-We can also compare the model fits for each drive-model individually.  Using the set of parameters that maximize the posterior log probability, we examine the GLFP cdf for each of the 4 model specifications.  The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure \ref{fig:mod_comp_leg}.  The black step functions again corresponds to the adjusted non-parametric estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All of the GLFP models appear to overestimate the proportion of failed hard drives for drive-model 2, but Model 4 agrees best with the nonparametric estimate.  For drive-model 14, Models 1-3 underestimate the proportion of drives failing, and for drive-model 40, they slightly overestimate the data.  Conversely, Model 4 follows the observed failures quite closely--accurately capturing failures at the lower and upper ends of the distribution.  The difference in accuracy between Models 3 and 4 and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the fits from Model 3 and 4 line almost exactly on top of each other for drive-model 40.
+We can also compare the four Model fits for each drive-model individually.  For these comparisons, we use the set of parameters which maximize the marginal posterior log probability. Unlike maximum likelihood, by including the hyperparameters in the probability model, there is a data-dependent penalization that results in shrinkage toward a common overall model. The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure \ref{fig:mod_comp_leg}.  The black step functions again correspond to the adjusted Kaplan-Meier estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All of the GLFP models appear to produce lower estimates, relative to Kaplan-Meier, of the proportion of failed hard drives for drive-model 2, with Model 4 being in closest agreement.  For drive-model 14, Models 1-3 produce lower estimates of the proportion of drives failing, and for drive-model 40, they produce higher estimates.  On the other hand, Model 4 follows the nonparametric estimate quite closely across stages of lifetime.  The differences between Models 3 and 4 and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the estimates from Model 3 and 4 are nearly identical for drive-model 40.
 \begin{figure}[H]
     \centering
    \includegraphics[width=\textwidth]{mod_compare_legend}
 		\caption{Estimated GLFP for 4 drive-models plotted on Weibull paper.  The solid step function is the truncated adjusted Kaplan-Meier points.  \label{fig:mod_comp_leg}} 
 \end{figure}
 
-The question of which Model is best requires the choice of some criteria. From the point of view of an operator, the goal of an analysis like this is likely to rate manufacturers and/or to inform future purchaes based on predicted product performance. In this case, it seems that the best model would provide the most accurate prediction of lifetime for future units. One such metric is log posterior predictive density (lpd), $\log[p(t_new|t)]$. Thus we might choose a model as the one most likely to produce a high lpd, one maximizing $\op{E}_h \log[p(t_new|t)]$, where the expectation is with respect to the true distribution of $t$. Although $h$ is unknown, it can be estimated using leave-one-out cross-validation:
-$$\frac{1}{G}\frac{1}{n_g}\sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{g,i}^L,c_{g,i},y_{-(g,i)})].$$ Using recently developed software provided in the \texttt{loo} package in \texttt{R},
+
+From the point of view of an operator, the goal of an analysis such as this is may be to rate manufacturers and/or to inform future purchases based on predicted product performance. In this case, we should choose the Model that will provide the most accurate prediction for future units of previously observed drive-models. One appropriate criterion for model selection, then, is log predictive density (lpd),
+
+\begin{equation}
+\mbox{lpd} = \log[p(t_{g, new}|t, t^L, c)] = \log \int p(t_{g, new}|\theta) p(\theta|t,t^L,c) d\theta
+\end{equation}
+
+Using this criterion, we should choose the Model with the highest expected lpd:
+\begin{equation}
+\op{E}_h \mbox{lpd} = \int p(t_{g,new}|t,t^L,c) h(t_{g,new}) d t_{g,new}.
+\end{equation}
+Where $h$ is the true distribution of $t_{new}$. Since $h$ is unknown, leave-one-out cross-validation can be used to estimate it:
+\begin{equation}
+\widehat{\op{E}_h \mbox{lpd}} = \frac{1}{G}\frac{1}{n_g}\sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{g,i}^L,c_{g,i},-t_{-(g,i)})].
+\end{equation}
+Using recently developed software provided in the \texttt{loo} package in \texttt{R},
 To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  We computed the elpd for all 4 models using the R package loo \cite{loo}.  When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically.  We calculated the difference in expected predictive accuracy for Model 4 vs 3, Model 3 vs 2, and Model 2 vs 1, as well as the standard error of the difference (Table 1).  As the model complexity increased, the expected predictive accuracy improved.  Of all the models, Model 4 had the best predictive accuracy and was significantly better than the other 3 models.
 \begin{figure}
 \begin{table}[H]
