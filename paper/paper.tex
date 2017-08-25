@@ -100,9 +100,9 @@ The structure of the paper is as follows. In Section~\ref{Motivating example}, w
 
 \section{Background}
 \label{sec:Background}
-In engineering applications, a product can often fail from one out of a set of possible malfunctioning components.  For example, a computer system can break if the mother board, disc drive or power supply stop working.  Circuit boards (CB) can fail due to a manufacturing defect or later as a result of wearout.  The general name for such products is a series system where the lifetime of the product is the minimum failure time across different components or risks \cite{nelson}.  A common assumption in series systems is the time to failure for each risk is statistically independent.  Thus, the overall reliability of a unit is modeled using the product rule across all risks.  Parameter estimation is straightforward if the cause of failure is known for each observation.  However, in many situations the cause of failure is unknown to the analyst. This is referred to in the literature as "masking".\\
+In engineering applications, a product can often fail from one out of a set of possible malfunctioning components.  For example, a computer system can break if the mother board, disc drive or power supply stop working.  Circuit boards (CB) can fail due to a manufacturing defect or later as a result of wearout.  The general name for such products is a series system where the lifetime of the product is the minimum failure time across different components or risks \cite{nelson}.  A common assumption in series systems is the time to failure for each risk is statistically independent.  Thus, the overall reliability of a unit is modeled using the product rule across all risks.  Parameter estimation is straightforward if the cause of failure is known for each observation.  However, in many situations the cause of failure is unknown to the analyst. This is referred to in the literature as ``masking''.\\
 
-Previous papers have employed various data assumptions and methodologies to model masked lifetime failure data.  When modeling computer system failures Reiser et al. assumed each observed failure came from a known subset of failure modes, and estimation was performed using a Bayesian approach \cite{reiser}.  Chan and Meeker labeled the cause of circuit board failures as infant mortality, unknown, or wearout based on the time of observed failures.  This helped identify parameters when using maximum likelihood (ML) estimation.  Extending Chan and Meeker's analysis, Basu et.al performed a Bayesian analysis with informative priors to better identify early versus late failure modes without making any data assumptions \cite{basu}.  Berger and Sun introduced the Poly-Weibull distribution where cause of failure is the minimum of a several Weibull distributions \cite{berger}.  More recently, Ranjan et al. considered a competing risk model for infant mortality and wearout as a mixture of Weibull and exponential failure distributions \cite{ranjan}.  Treating the unknown failure modes as incomplete data, an expectation maximization (EM) algorithm providing ML estimates was used, in addition to Bayesian estimation.
+Previous papers have employed various data assumptions and methodologies to model masked lifetime failure data.  When modeling computer system failures Reiser et al. assumed each observed failure came from a known subset of failure modes, and estimation was performed using a Bayesian approach \cite{reiser}.  Chan and Meeker labeled the cause of circuit board failures as infant mortality, unknown, or wearout based on the time of observed failures.  This helped identify parameters when using maximum likelihood (ML) estimation.  Extending Chan and Meeker's analysis, Basu et al. performed a Bayesian analysis with informative priors to better identify early versus late failure modes without making any assumptions about the cause of failure \cite{basu}.  Berger and Sun introduced the Poly-Weibull distribution where cause of failure is the minimum of a several Weibull distributions \cite{berger}.  More recently, Ranjan et al. considered a competing risk model for infant mortality and wearout as a mixture of Weibull and exponential failure distributions \cite{ranjan}.  Treating the unknown failure modes as incomplete data, an expectation maximization (EM) algorithm providing ML estimates was used, in addition to Bayesian estimation.
 
 
 \section{Generalized Limited Failure Population model}
@@ -165,7 +165,21 @@ We now give the general form for the likelihood function, taking into account le
 L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{f(y_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{1-c_i} \left[ \frac{1-F(y_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{c_i}
 \end{equation*}
 
-\subsection{Example 1}
+\section{Motivating Example}
+\subsection{Backblaze hard drive data}
+\label{sec:Data}
+Backblaze is a company that offers cloud backup storage to protect against data loss.  Since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive-models.  The hard drives continuously spin in controlled storage pods.  Drives are run until failure.  When a hard drive fails it is permanently removed and replaced.  In addition, the number of storage pods is increasing as Backblaze adds drives to its storage capacity.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}. In addition, Backblaze publishes summary statistics of the different hard drive-models currently operating.  No other analysis or modeling of the failure data is provided.  Backblaze does, however, encourage others to further analyze its data. 
+
+As of the first quarter of 2016, Backblaze was collecting and reporting data on 63 different drive-models.  Some drive-models have been running since 2013 or before, while others were added at a later date.  Data have been reported on 75,297 different hard drives that are or where in operation.  The number of drives varies by drive-model; some drive-models have only have a service record for a single drive whereas the maximum number of daily service records for a single drive model is 35,860.  Figure \ref{fig1} shows a scatterplot of the total observed running time in hours versus the total number of failures for drive-models with at least 3 failures.  For model identification, a minimum of three failures was the criterion for hard drive brands to be included in our analyses.  
+
+\begin{figure}[H]
+  %\includegraphics[width=.9\textwidth]{data-sum.pdf}
+  \includegraphics[width=.9\textwidth]{dm-summ-scatter.pdf}
+  \caption{Scatterplot of total observed running time (hundred thousands of hours) versus total number of observed failures.  Each number labels a unique drive brand model.   Axes are on the log scale.}
+  \label{fig1}
+\end{figure}
+
+\subsection{Single GLFP Model}
 \label{subsec:ex1}
 We fit the GLFP model on real hard drive failure data from a cloud-based storage company.  Computer hard drives are known to have a mixture of early and late failures, making the GLFP an appropriate parametric model.  The data contain the number of hours the hard drive was in operation, and whether the drive failed or was right censored.  No information is available about the cause of failure.  To illustate the GLFP model, we will present an analysis of the drive-model with the most observed failures. We use a Bayesian approach, selecting proper prior distributions to improve identification of the model parameters, which also ensures a proper posterior distribution. We reparameterize the component Weibull distributions using the $50^{th}$ percentile for the infant mortality failure mode ($t_{0.5,1}$) and the $20^{th}$ percentile for the wearout failure mode ($t_{0.2,2}$). Although non-standard, for purposes of exposition, we will use diagonal braces ($\langle.,.\rangle$) to refer to $95$ percent central probability intervals, rather than the standard model parameters when specifying prior distributions.
 
@@ -199,7 +213,7 @@ $\pi$ & 0.03 & 0.05 & 0.10 \\
 \label{table:1}
 \end{table}
 
-Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with simultaneous confidence bands provides a visual check for distributional goodness of fit.  We applied this method using the Kaplan-Meier non-parametric estimate of the empirical cdf \cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version (see Appendix for a more detailed description).   
+Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with simultaneous confidence bands provides a visual check for distributional goodness of fit.  We applied this method using the Kaplan-Meier non-parametric estimate of the empirical cdf \cite{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version (see Appendix for a detailed description).   
 
 In Figure 1 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull paper.  The solid stepwise curve corresponds to the observed failures.  Censored drives are not plotted.  Standard error bands are calculated using Greenwood's method \cite{green}.  Also plotted is the median of the posterior draws for the GLFP model along with 90\% pointwise credible interval bands.  The non-parametric and parametric model align up quite closely.  Moreover, evidence of at least two failure modes is seen in the acceleration of the hazard rate between 8000 and 20,000 hours.  Therefore, a single Weibull model is clearly not flexible enough to characterize this lifetime distribution. The discrepancy in the right tail of the distribution appears to be real. We don't provide a solution to this problem here. Certainly, if there are clearly more that two well-separated failure modes, the GLFP will not fit the data well. However, we consider it satisfactory if we can provide a good approximation to the observed lifetime distribution over the bulk of the product life. In practical terms, the right tail is of less importance for electronic goods, due to obsolescence.
 
@@ -244,23 +258,9 @@ As discussed in section \ref{sec:Weibull parameterization}, we reparameterize th
 In principle, we prefer this full model because we tend to believe that every population has a distribution with a distinct set of parameters. In practice, however, we may consider restrictions to reduce the number of parameters if the data do not support their inclusion. For example, we may consider a model with a common $\sigma_{1}$, letting $\sigma_{1g}=\sigma_1$ for all $g=1,\ldots,G$. A practical strategy is to begin with a simple model and gradually add complexity, reevaluating model adequacy at each iteration. In section \ref{sec:Model Comparisons}, we illustrate this process, fitting a series of models with increasing complexity and evaluating their performance using a measure of leave-one-out predictive error.
 
 
-\section{Real data analysis}
+\section{Analysis of the Backblaze hard drive data}
 \label{sec:Data analysis}
-\subsection{Backblaze hard drive data}
-\label{sec:Data}
-Backblaze is a company that offers cloud backup storage to protect against data loss.  Since 2013 it has been collecting data on hard drives operating at its facility.  The purpose is to provide consumers and businesses with reliability information on different hard drive-models.  The hard drives continuously spin in controlled storage pods.  Drives are run until failure.  When a hard drive fails it is permanently removed and replaced.  In addition, the number of storage pods is increasing as Backblaze adds to its storage capacity.  Every quarter Backblaze makes its data publicly available through their website \cite{backblaze}. In addition, Backblaze publishes summary statistics of the different hard drive-models currently operating.  No other analysis or modeling of the failure data is provided.  Backblaze does, however, encourage others to further analyze its data. 
-
-As of the first quarter of 2016, Backblaze was collecting and reporting data on 63 different drive-models.  Some drive-models have been running since 2013 or before, while others were added at a later date.  Data have been reported on 75,297 different hard drives that are or where in operation.  The distribution of drives by drive-model varies: some drive-models have only have a service record for a single drive whereas the maximum number of daily service records for a single drive model is 35,860.  Figure \ref{fig1} shows a scatterplot of the total observed running time in hours versus the total number of failures for drive-models with at least 3 failures.  For model identification, a minimum of three failures was the criterion for hard drive brands to be included in our analyses.  
-
-\begin{figure}[H]
-  %\includegraphics[width=.9\textwidth]{data-sum.pdf}
-  \includegraphics[width=.9\textwidth]{dm-summ-scatter.pdf}
-  \caption{Scatterplot of total observed running time (hours) versus total number of observed failures.  Each number labels a unique drive brand model.}
-  \label{fig1}
-\end{figure}
-
 \subsection{Modeling}
-\subsubsection{Candidate Models}
 We considered four models, all based on \ref{eq:hier-model}, which are identified by which model parameters are held constant across drive-models. These are (from most to least restrictive):
 
 \begin{enumerate}
@@ -485,9 +485,7 @@ We first start with a non-parametric estimate of the empirical cdf for each driv
 $\widehat{F_d(t)}_{KM}$, is conditional on survival up to
 $t_{d,\text{min}}^L$, the shortest reported running time of all units
 of drive-model $d$ for which records are available. To produce
-unconditional estimates, we adapt the adjustment method outlined by
-Turnbull, and given in more detail by Meeker and Escobar
-\cite{turnbull,meeker}.  For each drive-model we select
+unconditional estimates, we adapt the adjustment method outlined by by Meeker and Escobar  in Chapter 11 of Reliability Analysis \cite{meeker}.  For each drive-model we select
 $t_{d,\text{min}}^L$, the smallest left truncated time in the sample.
 By sampling from the full posterior distribution, since
 $\Pr(T>t_{d,\text{min}}^L|\theta_d)$ (the probability a hard drive has
