@@ -137,9 +137,9 @@ for(j in 1:6){
 set.seed(12122017)
 smplID <- sort(sample(44, 4))
 plot_grid(plot_grid(plotlist=plist$plots[c(smplID)], ncol=2, align="hv"), plist$legend,
-          nrow=1, rel_widths = c(4,.5))
+          nrow=1, rel_widths = c(1,.2))
 
-ggsave("../paper/fig/ppcheck-sample.pdf", width=5, height=6)
+ggsave("../paper/fig/ppcheck-sample.pdf", width=11, height=8)
 #debug
 # p <- get_plotlist(42)
 # 

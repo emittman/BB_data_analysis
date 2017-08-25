@@ -316,11 +316,10 @@ Each model was fit using the {\tt
 
 \subsection{Model Selection}
 \label{sec:Model Comparisons}
-The right side of Figure \ref{fig:fig2} shows that the set of estimated failure curves for all four models that we fit. The upper left panel shows the estimated failure curve fit to all data ignoring drive-model as a factor (Model 1). The upper left plot, which represents Model 2, demonstrates that there is appreciable differentiation between drive-models; note that, because the scale parameter, $\tau_{t_{p2}}$ is learned hierarchically from the data, we can ascertain that there is evidence in the data that this variability is real.
+As we have discussed, while we prefer to allow all of the GLFP model parameters to be drive-model specific, there are practical issues with fitting the full model. For example, due to heavy left-truncation, there may be insufficient information for particular drive models to estimate all of the parameters. Furthermore, we prefer not to introduce unnecessary complexity into our analyses. Figure \ref{fig:fig2} provides a visual comparison for Models 1 through 4 by plotting the pointwise posterior median of time to failure. The large left panel shows the Kaplan-Meier nonparametric estimate of the same. the Kaplan-Meier estimates right side of Figure \ref{fig:fig2} shows that the set of estimated failure curves for all four models that we fit. The smaller plots correspond to Models 1 through 4 reading from left to right, top to bottom. Note that while all the paths for the posterior estimates necessarily pass through the origin, the nonparametric curves do not, but only because, for the Kaplan-Meier estimator, left-truncation disallows any kind of interpolation.
 
-The lower left panel, representing Model 3, suggests differing shape parameters in the wearout failure mode which means that the ranking of drive-models with respect to fraction failing differs over time.
-
-Finally, the lower right panel, corresponding to Model 4, shows that, by allowing $\pi_d$ to vary by drive-model, there is greater variability in the early rate of failure and, for some drive-models, the forecasted fraction failing is adjusted downward. 
+%Should we be brief discussing the plot?
+These plots seem to suggest that Model 1 is far too naive, Model 2 is still too restrictive and Models 3 and 4 are fairly similar.
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{heterogeneity-compare}
@@ -328,14 +327,15 @@ Finally, the lower right panel, corresponding to Model 4, shows that, by allowin
 \label{fig:fig2}
 \end{figure}
 
-We can also compare the model fits for each drive-model individually.  Using the set of parameters that maximize the posterior log probability, we examine the GLFP cdf for each of the 4 model specifications.  The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure \ref{fig:mod_comp_leg}.  The black step functions again corresponds to the adjusted non-parametric estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All of the GLFP models appear to overestimate the proportion of failed hard drives for drive-model 2, but Model 4 agrees best with the nonparametric estimate.  For drive-model 14, Models 1-3 underestimate the proportion of drives failing, and for drive-model 40, they slightly overestimate the data.  Conversely, Model 4 follows the observed failures quite closely--accurately capturing failures at the lower and upper ends of the distribution.  The difference in accuracy between Models 3 and 4 are and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the fits from Model 3 and 4 line almost exactly on top of each other for drive-model 40.
+We can also compare the model fits for each drive-model individually.  Using the set of parameters that maximize the posterior log probability, we examine the GLFP cdf for each of the 4 model specifications.  The GLFP fit for drive-models 2, 9, 14, and 40 are presented in Figure \ref{fig:mod_comp_leg}.  The black step functions again corresponds to the adjusted non-parametric estimates.  As model complexity increases, the GLFP curves become more flexible and are better able to fit the observed failure data.  All of the GLFP models appear to overestimate the proportion of failed hard drives for drive-model 2, but Model 4 agrees best with the nonparametric estimate.  For drive-model 14, Models 1-3 underestimate the proportion of drives failing, and for drive-model 40, they slightly overestimate the data.  Conversely, Model 4 follows the observed failures quite closely--accurately capturing failures at the lower and upper ends of the distribution.  The difference in accuracy between Models 3 and 4 and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the fits from Model 3 and 4 line almost exactly on top of each other for drive-model 40.
 \begin{figure}[H]
     \centering
    \includegraphics[width=\textwidth]{mod_compare_legend}
 		\caption{Estimated GLFP for 4 drive-models plotted on Weibull paper.  The solid step function is the truncated adjusted Kaplan-Meier points.  \label{fig:mod_comp_leg}} 
 \end{figure}
 
-
+The question of which Model is best requires the choice of some criteria. From the point of view of an operator, the goal of an analysis like this is likely to rate manufacturers and/or to inform future purchaes based on predicted product performance. In this case, it seems that the best model would provide the most accurate prediction of lifetime for future units. One such metric is log posterior predictive density (lpd), $\log[p(t_new|t)]$. Thus we might choose a model as the one most likely to produce a high lpd, one maximizing $\op{E}_h \log[p(t_new|t)]$, where the expectation is with respect to the true distribution of $t$. Although $h$ is unknown, it can be estimated using leave-one-out cross-validation:
+$$\frac{1}{G}\frac{1}{n_g}\sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{g,i}^L,c_{g,i},y_{-(g,i)})].$$ Using recently developed software provided in the \texttt{loo} package in \texttt{R},
 To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  We computed the elpd for all 4 models using the R package loo \cite{loo}.  When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically.  We calculated the difference in expected predictive accuracy for Model 4 vs 3, Model 3 vs 2, and Model 2 vs 1, as well as the standard error of the difference (Table 1).  As the model complexity increased, the expected predictive accuracy improved.  Of all the models, Model 4 had the best predictive accuracy and was significantly better than the other 3 models.
 \begin{figure}
 \begin{table}[H]
@@ -356,27 +356,36 @@ Model 1 & -17483.6  \\
 \end{figure}
 \subsection{Results}
 \subsubsection{Model Assessment}
-To assess the goodness of fit for our final model (Model 4), we use a graphical posterior predictive check, wherein replicate data sets are generated from the posterior predictive distribution and compared with the observed data. This is a general approach recommended by \citet{gelman1996postpred} for models where no classical goodness-of-fit test is available. Because of the rich information gleaned from plotting the data, this method can be very effective at identifying limitations of the model.
+Having chosen Model 4 as the best of the candidate models we considered, we would like to assess whether our model provides an adequate fit to the observed data. One way to do this is to draw replicate data sets from the posterior predictive distribution. This is a general approach recommended by \citet{gelman1996postpred} for models where no classical goodness-of-fit test is available. In the hierarchical setting, there can be different formulations of the predictive distribution. In the present context, one could predict the lifetime of a new unit of a previously observed drive-model or a new drive-model. We choose to focus on the populations for which we have data collected.
+There are many possible approaches to the posterior predictive check. For this problem, we chose to consider the posterior predictive distribution of the Kaplan-Meier estimate for each drive-model $g$.
 
-Due to censoring, it is not entirely clear how to generate the replicate data sets because we have not modeled the censoring mechanism. Since we plan to compare nonparametric lifetime estimates, we chose to replicate as best as possible the pattern of censoring that was observed -- to generate the data conditional on the observed pattern of censoring. The problem in doing so is that the censoring mechanism itself is not fully observed. Our solution was to assume, for units whose failures were observed (and whose censoring time was not), that had they been right-censored, the censoring time would have been the latest censoring or failure time in the data for that drive model. We chose to generate 19 replicates for each drive model. This gives a 1/20 chance under the hypothesis of no difference that the most extreme data set would be the observed one and is not too many so as to produce an overly cluttered plot. Our method for generating replicate data sets, $y_{rep,g}^{(s)}$, $s = 1 \dots 19$, for each drive-model $g=1,\ldots,44$, is as follows:
+% Graphical comparisons can be highly informative in revealing limitations of the model. as in our cas a graphical posterior predictive check, wherein replicate data sets are generated from the posterior predictive distribution and compared with the observed data. Because of the rich information gleaned from plotting the data, this method can be very effective at identifying limitations of the model.
+
+
+Because the variability in the Kaplan-Meier is primarily a function of the number of at-risk units, we want to replicate the pattern of censoring that was observed. That is, for unit $i$ of drive-model $g$,
+$$p(t_{rep,g}) = \int \prod_{i=1}^{n_g}f(t_{new}|t_{g,i}^L,c_{g,i},\theta)\,p(\theta|t)d\theta.$$
+Because we are working with posterior draws, $\theta^{(s)}$, we can draw from this distribution by choosing $\theta^{(s)}$ at random, then conditionally draw $t_{rep,g}$ from $f(t_{new}|t_{g,i}^L,c_{g,i},\theta^{(s)}.$
+
+An obstacle remains, in that the censoring mechanism itself is not fully observed. Our admittedly ad hoc approach is to assume that failed units would have been the censored had they survived until the latest censoring or failure time for that drive model. We chose to generate 19 replicates for each drive model. This gives a 1/20 chance under the hypothesis of no difference that the Kaplan-Meier estimate based on the observed data would be ``most extreme" relative all the replicated  from the those one and is not too many so as to produce an overly cluttered plot. Our method for generating replicate data sets, $y_{rep,g}^{(s)}$, $s = 1 \dots 19$, for each drive-model $g=1,\ldots,44$, is as follows:
 \begin{enumerate}
-\item Simulate $\tilde{y}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)})$.  Where each set of parameters, $\left( \pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)} \right) $, is a random draw from the full posterior distribution.
-\item Repeat step 1 until $\tilde{y}_{rep,g,i} > t_{g,i}^L$.
-\item If $c_{g,i}=0$, let $c_{rep,g,i}^{(s)}=\max \{y_{g,i}: i \ge 1\}$, otherwise let $c_{rep,g,i}^{(s)}=y_{g,i}$.\\
-If $\tilde{y}_{rep,g,i}^{(s)}>m_{g,i}$, set $y_{rep,g,i}^{(s)}=c_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=1$, otherwise set $y_{rep,g,i}^{(s)}=\tilde{y}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
+\item Simulate $\tilde{t}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)})$.  Where each set of parameters, $\left( \pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)} \right) $, is a random draw from the full posterior distribution.
+\item Repeat step 1 until $\tilde{t}_{rep,g,i} > t_{g,i}^L$.
+\item If $c_{g,i}=0$, let $c_{rep,g,i}^{(s)}=\max \{t_{g,i}: i \ge 1\}$, otherwise let $c_{rep,g,i}^{(s)}=t_{g,i}$.\\
+If $\tilde{t}_{rep,g,i}^{(s)}>m_{g,i}$, set $t_{rep,g,i}^{(s)}=c_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=1$, otherwise set $t_{rep,g,i}^{(s)}=\tilde{t}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
 \end{enumerate}
 
-We can compare the 19 simulated data sets $y_{rep,g, i}$ to the observed data $y_{g,i}$ by using them to reestimate the Kaplan-Meier nonparametric estimator. The resulting plots are displayed in figure \ref{fig:post-pred-KM}. For most drive-models, the estimates from the observed data appear to behave similarly to those from the replicated data. As discussed in \ref{subsec:ex1}, drive-model 14 has a discrepancy in the right tail, which we addressed there. Drive-models 4 and 34 appear to be exceptions as well. We will focus our attention on drive-model 4, but our diagnosis of 34 is similar, so the following comments extend to that drive-model as well.
-
 \begin{figure}[H]
-\includegraphics[width=\textwidth,height=.9\textheight]{post-pred-KM-all2}
+\includegraphics[width=\textwidth]{ppcheck-sample}
 \caption{Nonparametric estimates of proportion failing for each drive-model. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
 \label{fig:post-pred-KM}
 \end{figure}
 
-To better understand the reason for the discrepancy between the observed data for drive-model 4 and its posterior predictive distribution, we plot the raw data along with the truncation-adjusted nonparametric estimate of time to failure and the posterior estimate (see figure \ref{fig:ex-mod-4}). From these plots, it is clear that the large discrepancy between the posterior and the nonparametric estimate is driven by a small number of failures that occur in the first quarter year. Indeed, if we ignore records with observation periods that include the first quarter, the modified nonparametric estimate falls within the posterior 90\% pointwise credible band. Our trouble with fitting this drive-model is that while there is evidence of infant mortality in the relatively few units that were observed in the first quarter, the problem seems to go away much quicker than would be expected if there were a large number of units susceptible to the early failure mode as estimated by the global parameters, $\mu_1$ and $\sigma_1$. In any case, this example demonstrates that, conditional on the model, the weight of evidence in all the data overpowers the signal from the small sample for this drive-model, which suggests high rates infant mortality in the first quarter year.
+We can compare the 19 simulated data sets $y_{rep,g, i}$ to the observed data $y_{g,i}$ by using them to re-estimate the Kaplan-Meier nonparametric estimator. The resulting plots are displayed in figure \ref{fig:post-pred-KM}. For most drive-models, the estimates based on the observed data look similar to those based on the replicated data. Only a representative sample of plots are shown here for brevity. There are a few drive-models, however where this is not the case. As we addressed previously, in Subsection \ref{subsec:ex1}, drive-model 14 has a discrepancy between the GFLP and the Kaplan-Meier fits in the right tail. Due to the large number of failures for this drive-model, the posterior for the hierarchical model is very similar to the stand-alone model, so all the same comments made earlier still apply. In addition, drive-models 4, 11 and 34 appear to be exceptions as well. We will focus our attention on drive-model 4, but our diagnosis of 34 is similar, so the following comments extend to that drive-model as well.
 
-Generally we consider this behavior a feature of hierarchical modeling. For another example of this, consider drive-model 43. The data for this drive-model are heavily truncated; the observed units had run for quite some time before data were made available. In figure \ref{fig:ex-mod-43} we see that the lack of data for this drive-model at early ages results in a diffuse posterior centered around the what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_{\pi}, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. Then, in the period where records exist for this drive model, at around $1\frac{1}{2}$ years, the posterior deviates from the global model, acheiving a compromise between it and the nonparametric estimate.
+
+To attempt to diagnose the cause of the discrepancies between the observed data for drive-model 4 and its posterior predictive distribution, we plot an event plot for a random sample of units for this drive-model, along with the Kaplan-Meier estimate, and the posterior estimate of time to failure (see figure \ref{fig:ex-mod-4}). From these plots, it appears that the large discrepancy between the posterior and the nonparametric estimate is driven by a small number of failures that occur in the several thousand hours, at a time where very few units were observed to be at risk. In further support of this hypothesis, if we ignore records with observation periods that include the first quarter, the modified nonparametric estimate falls within the posterior 90\% pointwise credible band. While it might be tempting to treat those early failures as anomalous, they also point to a weakness in our model. By virtue of having all drive-models share in common the Weibull parameters for the infant mortality failure mode, an early rash of failures indicating a subpopulation with, say, an increasing hazard function,  would be problematic. While the proportion at risk of early failure can vary via $\pi_g$, the plausible values of the common parameters, $\mu_1$ and $\sigma_1$, do not ``line up" in a way so to influence the posterior as they might have had they been allowed to vary. In other words, the problem seems to go away much quicker than would be expected under Model 4.
+
+As another example, to further appreciate how information is being borrowed across groups, consider drive-model 43. The data for this drive-model are heavily truncated; the observed units had run for quite some time before data were made available. In figure \ref{fig:ex-mod-43} we see that the lack of data for this drive-model at early ages results in a diffuse posterior centered around the what we call the ``global estimate," corresponding to $\op{GFLP}(\eta_{\pi}, \mu_1,\sigma_1, \eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2), \eta_{\sigma_2})$. Then, in the period where records exist for this drive model, at around 10,000 hours, the posterior deviates from the global model, acheiving a compromise between it and the nonparametric estimate.
 
 
 
@@ -630,11 +639,28 @@ model{
 }
 
 \pagebreak
-
-\bibliographystyle{plainnat}
-%\bibliographystyle{apalike}
-=======
+\section{Posterior predictive graphical checks}
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{ppcheck-1.pdf}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{ppcheck-2}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{ppcheck-3.pdf}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{ppcheck-4.pdf}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{ppcheck-5.pdf}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{ppcheck-6.pdf}
+\end{figure}
+\clearpage
 % \bibliographystyle{plainnat}
+% %\bibliographystyle{apalike}
 \bibliographystyle{plain}
 \bibliography{sample}
 
