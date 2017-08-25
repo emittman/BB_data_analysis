@@ -21,14 +21,17 @@ my_summary <- ddply(dat, .(model), function(x){
   data.frame(tt=tt, fs=fs)
 })
 
+my_summary$tt100k <- my_summary$tt/100000
+
 #in yrs
-xbrks=c(10, 100, 1000, 10000)
+#xbrks = c(10, 100, 1000, 10000)
+xbrks2 = c(1, 10, 100, 1000)
 
 
 setwd("paper/fig/")
 pdf("dm-summ-scatter.pdf", width=7, height=5)
-ggplot(my_summary, aes(x=tt, y=fs)) + geom_text(aes(label=model), size=4) +
-  scale_x_continuous(name="Total time observed (years)", trans="log", breaks=xbrks*24*365, labels=xbrks)+
-  scale_y_continuous(name="Observed failures", trans="log", breaks = c(1, 10, 100, 1000))+
-  theme_bw(base_size=14)#+geom_smooth(method = "lm", se = F, linetype="dashed")
+ggplot(my_summary, aes(x=tt100k, y=fs)) + geom_text(aes(label=model), size=4) + 
+  scale_x_continuous(name="Total time observed (hundred thousands of hours)", trans="log", breaks = xbrks2, labels = xbrks2) +
+  scale_y_continuous(name="Observed failures", trans="log", breaks = c(1, 10, 100, 1000)) +
+  theme_bw(base_size=14) #+geom_smooth(method = "lm", se = F, linetype="dashed")
 dev.off()

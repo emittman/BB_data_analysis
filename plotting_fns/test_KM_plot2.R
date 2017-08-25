@@ -3,9 +3,9 @@ library(rstan)
 library(plyr)
 library(dplyr)
 
-source("plotting_fns/KM_plot2.R")
+source("/plotting_fns/KM_plot2.R")
 
-s <- readRDS("workflow2/samples_nopool_data_dm8.rds") #number 8 after applying filter (f>=5, ef>=1, lf>=1)
+s <- readRDS("../../workflow2/samples_nopool_data_dm14.rds") #number 8 after applying filter (f>=5, ef>=1, lf>=1)
 samp <- extract(s)
 
 dat14 <- readRDS("BB_data/clean_unit_summaries.rds") %>%
@@ -25,12 +25,11 @@ band14 <- bandFromPSamp(samp, xlimits, length.out = 50, N = 1000, logscale = TRU
 p14base <- addBandToBaseplot(p14base, band14, color="red", linetype=3, alpha=.2, label="Bayes 90%")
 
 plotFinally(p14base, xbrks = c(.1, .5, 1, 2, 4)*365*24,
-            ybrks = c(.01, .02, .05, .1, .2, .5), years=TRUE) +
+            ybrks = c(.01, .02, .05, .1, .2, .5), years=FALSE) +
   theme_bw()
 
-plotFinally(p14base, xbrks = c(.1, .5, 1, 2, 4)*365*24,
-            ybrks = c(.01, .02, .05, .1, .2, .5), years=TRUE, greenwood = TRUE) +
-  theme_bw()
+KMDrive14 <- plotFinally(p14base, xbrks = c(1000, 5000, 10000, 15000, 20000, 25000),
+            ybrks = c(.01, .02, .05, .1, .2, .5), years = FALSE, greenwood = TRUE) + theme_bw()
 
 ##################################################
 sfull <- readRDS("workflow/samples_lor_only3fails.rds")

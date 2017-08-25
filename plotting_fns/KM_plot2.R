@@ -141,7 +141,7 @@ baseKMplot.multiple <- function(fit_list, xlimits=NULL, ylimits=NULL, color="bla
 }
 
 #Make base KMplot
-baseKMplot <- function(fit, xlimits=NULL, ylimits=NULL, color="black", linetype=1, logscale=NULL, prob=TRUE, label="nonparametric", alpha=1){
+baseKMplot <- function(fit, xlimits=NULL, ylimits=NULL, color="black", linetype=1, logscale = FALSE, prob=TRUE, label="nonparametric", alpha=1){
   require(ggplot2)
   if(!("myKM" %in% class(fit))) stop("fit must be output from KM.survfit")
   if(!is.null(xlimits)){
