@@ -160,9 +160,9 @@ When an observation is left-truncated, it would not have been observed if it had
 
 
 \subsubsection{Likelihood}
-We now give the general form for the likelihood function, taking into account left truncation and right censoring.  Let $t_{i}$ denote the end of the observed lifetime of unit $i$, in hours.  Let $t_i^L$ be the left truncation time; that is, the first time reported for the unit.  Additionally, let $c_i$ be an indicator for censoring; $c_i=1$ if the failure time is right-censored, $c_1=0$ if the unit failed (at time $Y_i$). The likelihood for the GLFP is a function of $\bm{\theta} = (\mu_1, \sigma_1, \mu_2, \sigma_2, \pi)$.  Assuming the lifetimes of all units are independent, the likelihood for the data, $Y_1,\ldots,Y_N$ is given by
+We now give the general form for the likelihood function, taking into account left truncation and right censoring.  Let $t_{i}$ denote the end of the observed lifetime of unit $i$, in hours.  Let $t_i^L$ be the left truncation time; that is, the first time reported for the unit.  Additionally, let $c_i$ be an indicator for censoring; $c_i=1$ if the failure time is right-censored, $c_1=0$ if the unit failed (at time $t_i$). The likelihood for the GLFP is a function of $\bm{\theta} = (\mu_1, \sigma_1, \mu_2, \sigma_2, \pi)$.  Assuming the lifetimes of all units are independent, the likelihood for the data, $t_1,\ldots,t_n$ is given by
 \begin{equation*}
-L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{f(y_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{1-c_i} \left[ \frac{1-F(y_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{c_i}
+L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{f(t_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{1-c_i} \left[ \frac{1-F(t_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{c_i}
 \end{equation*}
 
 \section{Motivating Example}
@@ -179,13 +179,13 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
   \label{fig1}
 \end{figure}
 
-\subsection{Single GLFP Model}
+\subsection{Single Drive-Model Analysis}
 \label{subsec:ex1}
-To illustrate the GLFP model, we will present an analysis of the drive-model with the most observed failures (1,713), drive-model 14.  The non-parametric Kaplan-Meier estimate plotted below does not appear linear, suggesting different rates of failure in the data. In addition, computer hard drives are known to have a mixture of early and late failures \cite{chan}.  Thus, as a first step, the GLFP model seems like an appropriate parametric model. 
+To illustrate the GLFP model, we will present an analysis of the drive-model with the most observed failures, drive-model 14.  The Kaplan-Meier estimate plotted below suggests at least two failure modes.  The curve has a slow ramp up in failures till about 10,000 hours, increases from about 10,000 to 20,000 hours, and then starts to gradually flatten out.  In addition, computer hard drives are known to have a mixture of early and late failures \cite{chan}.  Therefore, there is both an empirical and theoretical justification to apply the GLFP model.
 
 \begin{figure}[H]
 \centering
-  \includegraphics[width=.8\textwidth]{KM14.pdf}
+  \includegraphics[width=.8\textwidth]{mod14km.pdf}
   \caption{Kaplan Meier estimate for drive model 14.  Bands correspond to Greenwood standard errors.}
   \label{fig1}
 \end{figure}
@@ -200,8 +200,7 @@ $$\mbox{logit}^{-1}\pi \sim \op{Logitnormal}\langle 1.0\times 10^{-3}, 7.1\times
 \sigma_1, \sigma_2 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2 \rangle $$
 %\quad \sigma_2 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2  \rangle $$
 
-
-The prior on $\pi$ implies with $90\%$ probability $\pi$ is in the interval $(.002, .572)$.  Given the interpretation of $\pi$ as the proportion of defective units, which we would expect to be small, a range primarily covering the left side of 0.50 is reasonable and weakly informative.  The prior on $\sigma_1$ and $\sigma_2$ put the majority of mass on the interval $(0.02, 61.1)$ with $90\%$ probability.  Again, this allows for a wide range of hazards, larger than we would expect to see in the data.  The $t_{0.5,1}$ distribution has a prior $90\%$ interval of $(1.4,14.6)$. For $t_{0.2,2}$ the range is $(3.4,16.6)$. Since these last two parameters are on the scale of log-hours, admitting values from hours to decades, we consider them to be relatively uninformative. \\
+These priors put probability mass on a wide range of values for all model parameters, much larger than we would expect for a typical Weibull distribution.  Thus, we consider the priors to be relatively uninformative. 
 
 
 Table 1 gives the posterior median and 95\% credible intervals for the 5 GLFP parameters for drive model 14.  The parameter $p$ is an estimate of the proportion of drives susceptible to to infant mortality.  As expected, this fraction is small with a median value of 0.05.  The parameter estimates for the two Weibull distributions also match intuition.  The wearout failure mode puts posterior probability on a values of $\sigma_1$ greater than 1, which corresponds to a decreasing hazard.  Conversely, the credible interval for $\sigma_2$, the wearout mode, is strictly below 1, an increasing hazard.  The two means times to failure (on the log scale) are also well identified with the infant mortality failure mode having an earlier mean time to failure than the wearout mode. 
@@ -238,26 +237,29 @@ In Figure 3 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull 
 \section{Hierarchical GLFP model}
 \label{sec:Hierarchical GLFP model}
 
-To borrow strength across different populations, we can model the population specific parameters hierarchically, allowing the data to inform the hyperparameters.
-%For the second option, we model the scales, $\sigma_j$, quantiles, $t_{p_j,d,j}$, and proportions, $\pi_d$, of the component distributions as follows:
-
-Let
+In order to describe the entire population, consisting of different but similar sub-populations, and because of the limited amount of data from many of the sub-populations, we model the sub-population specific parameters hierarchically, borrowing strength across the sub-populations.  Let
 \begin{equation}
-y_{g,i} \ind \op{GLFP}\left( \pi_g, \mu_{1g}, \sigma_{1g}, \mu_{2g}, \sigma_{2g} \right),
+y_{ig} \ind \op{GLFP}\left( \pi_g, \mu_{1g}, \sigma_{1g}, \mu_{2g}, \sigma_{2g} \right),
 \end{equation}
-where $g=1,\ldots,G$ indexes populations. Next we model these parameters themselves as random variables. Let
+where $g=1,\ldots,G$ indexes the sub-populations.  The likelihood for the hierarchical GLFP is a function of $\bm{\theta_g} = (\mu_{1g}, \sigma_{1g}, \mu_{2g}, \sigma_{2g}, \pi_{g})$.  Assuming the lifetimes of all units are independent within and across groups, the likelihood for the data, $i=1,\dots,n_g$,  is given by
 \begin{equation*}
-\sigma_{1g} \ind \op{LN} \left( \eta_{\sigma_1}, \tau^2_{\sigma_1} \right)
+L(\bm{\Theta})= \prod_{g=1}^{G} \prod_{i=1}^{n_{g}} \left[\frac{f(t_{ig};\bm{\theta_g})}{1-F(t_{ig}^L;\bm{\theta_g})}\right]^{1-c_{ig}} \left[ \frac{1-F(t_{ig};\bm{\theta_g})}{1-F(t_{ig}^L;\bm{\theta_g})} \right]^{c_{ig}}
+\end{equation*}
+
+
+Next, we model these parameters themselves as random variables, varying across the different sub-populations.  Let
+\begin{equation*}
+\sigma_{1g} \ind \op{Lognormal} \left( \eta_{\sigma_1}, \tau^2_{\sigma_1} \right)
 \end{equation*}
 \begin{equation*}
-\sigma_{2g} \ind \op{LN} \left( \eta_{\sigma_2}, \tau^2_{\sigma_2}\right)\op{T}\left(0, 1\right)
+\sigma_{2g} \ind \op{Lognormal} \left( \eta_{\sigma_2}, \tau^2_{\sigma_2}\right)\op{T}\left(0, 1\right)
 \end{equation*}
 \begin{equation}
 \label{eq:hier-model}
-\log t_{p_{1}g} \equiv \mu_{1g} + \sigma_{1g}\,\Phi^{-1}(p_1)  \ind \op{N} \left(\eta_{t_{p_1}}, \tau^2_{t_{p_1}}\right)
+t_{p_{1}g} \equiv \mu_{1g} + \sigma_{1g}\,\Phi^{-1}(p_1)  \ind \op{Lognormal} \left(\eta_{t_{p_1}}, \tau^2_{t_{p_1}}\right)
 \end{equation}
 \begin{equation*}
-\log t_{p_{2}g} \equiv \mu_{2g} + \sigma_{2g}\,\Phi^{-1}(p_2)  \ind \op{N} \left(\eta_{t_{p_2}}, \tau^2_{t_{p_2}}\right)
+t_{p_{2}g} \equiv \mu_{2g} + \sigma_{2g}\,\Phi^{-1}(p_2)  \ind \op{Lognormal} \left(\eta_{t_{p_2}}, \tau^2_{t_{p_2}}\right)
 \end{equation*}
 \begin{equation*}
 \op{logit} \pi_g \ind \op{N}(\eta_\pi, \tau_\pi).
@@ -690,8 +692,8 @@ model{
 \includegraphics[width=\textwidth]{ppcheck-6.pdf}
 \end{figure}
 \clearpage
-% \bibliographystyle{plainnat}
-\bibliographystyle{apalike}
+%\bibliographystyle{plainnat}
+\bibliographystyle{asa}
 % \bibliographystyle{plain}
 \bibliography{sample}
 
