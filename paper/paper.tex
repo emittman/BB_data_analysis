@@ -225,13 +225,13 @@ $\pi$ & 0.03 & 0.05 & 0.10 \\
 
 Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with simultaneous confidence bands provides a visual check for distributional goodness of fit.  We applied this method using the Kaplan-Meier non-parametric estimate of the empirical cdf \citep{kaplan}.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version (see Appendix for a detailed description).   
 
-In Figure 3 we plot the Kaplan-Meier adjusted cdf for drive model 14 on Weibull paper.  The solid stepwise curve corresponds to the observed failures.  Censored drives are not plotted.  Standard error bands are again calculated using Greenwood's method \citep{green}.  Also plotted is the median of the posterior draws for the GLFP model along with 90\% pointwise credible interval bands.  The non-parametric and parametric model align up quite closely.  Moreover, evidence of at least two failure modes is seen in the acceleration of the hazard rate between 8000 and 20,000 hours.  Therefore, a single Weibull model is clearly not flexible enough to characterize this lifetime distribution. The discrepancy in the right tail of the distribution appears to be real. We don't provide a solution to this problem here. Certainly, if there are clearly more that two well-separated failure modes, the GLFP will not fit the data well. However, we consider it satisfactory if we can provide a good approximation to the observed lifetime distribution over the bulk of the product life. In practical terms, the right tail is of less importance for electronic goods, due to obsolescence.
+In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP model onto the adjusted Kaplan-Meier estimate with axes on the Weibull probability scale.  Pointwise uncertainty bands associated with each estimator are included. While the Weibull model is inadequate for these data, the GLFP model fits quite well, as it is able to capture the acceleration of the hazard rate between 8000 and 20,000 hours. The discrepancy in the right tail of the distribution suggests that the GLFP may overestimate the proportion failing in the right tail of the distribution. While this discrepancy may appear troubling, we suggest that the right tail is of less importance for electronic goods due to obsolescence.
 
 \begin{figure}[H]
 \centering
   \includegraphics[width=.8\textwidth]{km14-prob-plus}
   \caption{Estimated GLFP for drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws; pointwise 90\% credible band is in red.  Solid line is a non-parametric estimate with pointwise 90\% uncertainty band in blue.}
-  \label{fig1}
+  \label{ex1-overlay}
 \end{figure}
 
 
