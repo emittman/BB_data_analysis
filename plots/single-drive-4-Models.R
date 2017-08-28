@@ -35,7 +35,7 @@ single_drive.all.4.Models <- function(dm, prob.log.scales){
   local_dat <- filter(dat, model==overview$model[which(overview$stan_id==dm)])
   
   km <- KM.survfit(local_dat, greenwood = FALSE)
-  
+  km <- tr.adj(km, tr_adj = tr_adj[dm])  
   if(!prob.log.scales){
     xlimits <- range(km$t) + c(-1000,1000)
     xlimits[1] <- max(xlimits[1], 0)
@@ -48,8 +48,7 @@ single_drive.all.4.Models <- function(dm, prob.log.scales){
     xlimits <- exp(range(log(km$t))+c(-.1,.1))
     ylimits <- psev(qsev(range(km$Ft)) + c(-1, 1))
     ylimits[1] <- min(ylimits,.001)
-    xbreaks <- signif(1000*10^seq.int(from=floor(log10(xlimits[1]/1000)),
-                                to=ceiling(log10(xlimits[2])/1000), by=.5), 1)
+    xbreaks <- c(100, 500, 1000, 2000, 5000,10000, 20000, 40000, 80000, 160000)
     ybreaks <- signif(psev(seq.int(from=floor(qsev(ylimits[1])),
                                    ceiling(qsev(ylimits[2])), by=.5)),1)
   }
@@ -117,11 +116,11 @@ save(plots.prob, file="plots-prob.RData")
 library(cowplot)
 lgnd <- get_legend(plots.prob[[1]])
 lgnd_off <- theme(legend.position="none")
-plot_grid(plot_grid(plots.prob[[2]] + ggtitle("2") + lgnd_off,
+to.save=plot_grid(plot_grid(plots.prob[[2]] + ggtitle("2") + lgnd_off,
                     plots.prob[[9]] + ggtitle("9") + lgnd_off,
                     plots.prob[[14]] + ggtitle("14") + lgnd_off,
                     plots.prob[[40]] + ggtitle("40") + lgnd_off,ncol=2),
-          lgnd, rel_widths = c(10,1), nrow=1)
-
-plots.prob <- lapply(1:44, function(dm) single_drive.all.4.Models(dm, FALSE))
-save(plots.nat, "ggplots-nat.RData")
+          lgnd, rel_widths = c(10,2), nrow=1)
+ggsave("../paper/fig/single-drive-4-Models-ex.pdf", width=12, height=10)
+# plots.prob <- lapply(1:44, function(dm) single_drive.all.4.Models(dm, FALSE))
+# save(plots.nat, "ggplots-nat.RData")
