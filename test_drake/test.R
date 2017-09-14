@@ -46,12 +46,15 @@ run_mcmc_generic <- function(dataset, chains = 4, iter = 10, warmup = iter/2, p 
   # return(stan_data)
 }
 
-datasets <- plan(data = prepare_data(min.fails = 0))
+dataset <- plan(data = prepare_data(min.fails = 3))
 
+make(dataset)
 
-methods <- plan(null_model = run_mcmc_generic(..datasets.., stanmodel="../stan_models/glfp_lo_null_model.stan"),
+methods <- plan(null_model = run_mcmc_generic(data, iter=3000, chains=16, stanmodel="../stan_models/glfp_lo_null_model.stan"),
                 strings_in_dots = "filenames")
 
-analyses <- analyses(methods,datasets)
+make(methods)
 
-make(analyses, jobs=4)
+#analyses <- analyses(methods,datasets)
+
+#make(analyses)

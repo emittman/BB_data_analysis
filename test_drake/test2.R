@@ -50,14 +50,14 @@ datasets <- plan(data = prepare_data(min.fails = 3))
 
 make(datasets)
 
-methods <- plan(Model_1 = run_mcmc_generic(..dataset.., iter=30, chains=16, stanmodel="../stan_models/glfp_lo_null_model.stan"),
-	   	Model_2 = run_mcmc_generic(..dataset.., iter=30, chains=16, stanmodel="../stan_models/glfp_tp2_vary.stan"),
-		Model_3 = run_mcmc_generic(..dataset.., iter=30, chains=16, stanmodel="../stan_models/glfp_sig2_tp2_vary.stan"),
-		Model_4 = run_mcmc_generic(..dataset.., iter=30, chains=16, stanmodel="../stan_models/glfp_lo_reduced_relaxed.stan"),
+methods <- plan(Model_1 = run_mcmc_generic(..dataset.., iter=3000, chains=16, stanmodel="../stan_models/glfp_lo_null_model.stan"),
+	   	Model_2 = run_mcmc_generic(..dataset.., iter=3000, chains=16, stanmodel="../stan_models/glfp_tp2_vary.stan"),
+		Model_3 = run_mcmc_generic(..dataset.., iter=3000, chains=16, stanmodel="../stan_models/glfp_sig2_tp2_vary.stan"),
+		Model_4 = run_mcmc_generic(..dataset.., iter=3000, chains=16, stanmodel="../stan_models/glfp_lo_reduced_relaxed.stan"),
                 strings_in_dots = "filenames")
 
 #make(methods)
 
 analyses <- analyses(methods,datasets)
 print(analyses)
-make(analyses, jobs=4)
+make(analyses, jobs=2)

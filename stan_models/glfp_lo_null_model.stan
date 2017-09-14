@@ -34,7 +34,7 @@ parameters{
   real log_tp1;
   real log_tp2;
   real<lower=0> sigma1;
-  real<lower=0> sigma2;
+  real<lower=0,upper=1> sigma2;
   real logit_pi;
 }
 

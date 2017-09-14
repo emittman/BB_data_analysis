@@ -99,10 +99,11 @@ model{
     target += tmp[1] - tmp[2];
   }
   //priors
-  log_tp1     ~ normal(7, 1);
+  log_tp1     ~ normal(7, 2);
   log_tp2_raw ~ normal(0, 1);
   eta_tp2     ~ normal(9, 2);
   tau_tp2     ~ cauchy(0, 1);
   sigma1      ~ lognormal(0, 1);
   sigma2      ~ lognormal(0, 1);
+  logit_pi   ~ normal(-3, 2);
 }

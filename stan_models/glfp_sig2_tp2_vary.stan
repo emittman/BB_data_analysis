@@ -112,4 +112,5 @@ model{
   sigma2      ~ lognormal(eta_s2, tau_s2);
   eta_s2      ~ normal(0, 2);
   tau_s2      ~ cauchy(0, 1);
+  logit_pi   ~ normal(-3, 2);
 }
