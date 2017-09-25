@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage{amsmath}
-\usepackage{graphicx,psfrag,epsf,float, bm}
+\usepackage{graphicx,psfrag,epsf,float, bm, subcaption}
 \graphicspath{C:/Users/Colin/Documents/GitHub/BB_data_analysis/paper/fig/}
 \usepackage{enumerate}
 \usepackage{natbib}
@@ -101,7 +101,7 @@ The structure of the paper is as follows. Section~\ref{sec:Background} introduce
 
 \section{Background}
 \label{sec:Background}
-In engineering applications, a product can often fail from one out of a set of possible malfunctioning components.  For example, a computer system can break if the mother board, disc drive or power supply stop working.  Circuit boards (CB) can fail due to a manufacturing defect or later as a result of wearout of certain components.  The general name for such products is a series system where the lifetime of the product is the minimum failure time across different components or risks \citep[Chapter 5]{nelson}.  A common assumption in series systems is the time to failure for each risk is statistically independent.  Thus, the overall reliability of a unit is modeled using the product rule across all risks.  Parameter estimation is straightforward if the cause of failure is known for each observation.  However, in many situations the cause of failure is unknown to the analyst. This is referred to in the literature as ``masking''.\\
+In engineering applications, a product can often fail from one out of a set of possible malfunctioning components.  For example, a computer system can break if the mother board, disc drive or power supply stop working.  Circuit boards (CB) can fail due to a manufacturing defect or later as a result of wearout of certain components.  The general name for such products is a series system where the lifetime of the product is the minimum failure time across different components or risks \citep[Chapter 5]{nelson}.  A common assumption in series systems is the time to failure for each risk is statistically independent.  Thus, the overall reliability of a unit is modeled using the product rule across all risks.  Parameter estimation is straightforward if the cause of failure is known for each observation.  However, in many situations the cause of failure is unknown to the analyst. This is referred to in the literature as masking.\\
 
 Previous papers have employed various data assumptions and methodologies to model masked lifetime failure data.  When modeling computer system failures \citet{reiser} assumed each observed failure came from a known subset of failure modes, and estimation was performed using a Bayesian approach.  \cite{chan} labeled the cause of circuit board failures as infant mortality, unknown, or wearout based on the time of observed failures.  This helped identify parameters when using maximum likelihood (ML) estimation.  Extending Chan and Meeker's analysis, \citet{basu} performed a Bayesian analysis with informative priors to better identify early versus late failure modes without making any assumptions about the cause of failure.  \cite{berger} introduced the Poly-Weibull distribution where cause of failure is the minimum of a several Weibull distributions.  More recently, \cite{ranjan} considered a competing risk model for infant mortality and wearout as a mixture of Weibull and exponential failure distributions.  Treating the unknown failure modes as incomplete data, an expectation maximization (EM) algorithm providing ML estimates was used, in addition to Bayesian estimation.
 
@@ -226,7 +226,7 @@ $\pi$ & 0.03 & 0.05 & 0.10 \\
 
 Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with simultaneous confidence bands provides a visual check for distributional goodness of fit.  We applied this method using the Kaplan-Meier non-parametric estimate of the empirical cdf.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version due to \cite[Chapter 11]{meeker} (see Appendix for a detailed description).   
 
-In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP model onto the adjusted Kaplan-Meier estimate with axes on the Weibull probability scale.  Pointwise uncertainty bands associated with each estimator are included. While the Weibull model is inadequate for these data, the GLFP model fits quite well, as it is able to capture the acceleration of the hazard rate between 8000 and 20,000 hours. The discrepancy around 30,000 suggests that the GLFP may overestimate the proportion failing in the far right tail of the distribution.  While this discrepancy may appear troubling, we suggest that the right tail is of less importance for electronic goods due to obsolescence.
+In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP model onto the adjusted Kaplan-Meier estimate with axes on the Weibull probability scale.  Pointwise uncertainty bands associated with each estimator are included. While the Weibull model is inadequate for these data, the GLFP model fits quite well, as it is able to capture the acceleration of the hazard rate between 8000 and 20,000 hours. %The discrepancy around 30,000 suggests that the GLFP may overestimate the proportion failing in the far right tail of the distribution.  While this discrepancy may appear troubling, we suggest that the right tail is of less importance for electronic goods due to obsolescence.
 
 \begin{figure}[H]
 \centering
@@ -284,7 +284,7 @@ We considered four models, all based on (\ref{eq:hier-model}), which are identif
 \item $\mu_{1g} = \mu_1,\quad \sigma_{1g}=\sigma_1$
 \end{enumerate}
 
-The set of model specifications were chosen based data, interpretation of the model, as well as estimation considerations.  Product specific parameters for the the wearout failure mode $(\mu_{2g},\sigma_{2g})$, and the proportion defective $(\pi_g)$, are considered as a means to account for heterogeneity across brands in the right tails of the failure distribution.  Going from a common model for all product brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the 2nd failure mode to vary by Drive-model.
+The set of model specifications were chosen based data, interpretation of the model, as well as estimation considerations.  Product specific parameters for the the wearout failure mode $(\mu_{2g},\sigma_{2g})$, and the proportion defective $(\pi_g)$, are considered as a means to account for heterogeneity across brands in the right tails of the failure distribution.  Going from a common model for all product brands and gradually increasing the complexity of the model, we end up at Model 4.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the wearout failure mode to vary by Drive-model.
 
 For all of the models we consider, the parameters for the infant mortality failure mode are held in common across Drive-models.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality provides a meaningful interpretation and comparison of $\pi_g$ and $\pi_{g'}$ ($g \neq g'$). 
 
@@ -343,7 +343,7 @@ These plots suggest that Model 1 is insufficient to explain the observed data. M
 \label{fig:fig2}
 \end{figure}
 
-We can also compare the four Model fits for each Drive-model individually.  For these comparisons, we use the set of parameters which maximize the marginal posterior log probability. Unlike maximum likelihood, by including the hyperparameters in the probability model, there is a data-dependent penalization that results in shrinkage toward a common overall model.
+We can also compare the four Model fits for each Drive-model individually.  For these comparisons, we use the posterior median of the MCMC draws. %Unlike maximum likelihood, by including the hyperparameters in the probability model, there is a data-dependent penalization that results in shrinkage toward a common overall model.
 
 \begin{figure}[H]
 {\centering
@@ -482,14 +482,33 @@ $$\op{E}(L(t_{d,new})|t))\approx \frac{1}{S} \sum_{s=1}^{S} L(t_{d,new}^{(s)}).$
 
 Posterior credible intervals for $L(t_{d,new})$ are shown in the left panel of Figure \ref{fig5}. A zoomed version of the top 8 Drive-models, as ranked by $\op{E}(L(t_{d,new})|y)$ are shown in the bottom right panel. The panel above shows credible intervals for MTTF. We can see that ranking by MTTF would lead to a different result -- a new Drive-model 8 unit expected to have the last the longest, but possibility of it failing early is higher than for the Drive-models ranked highest by our depreciation-aware metric. The top four Drive-models (4, 5, 2, 3) seem comparable, with a new Drive-model 4 unit expected to depreciate the most. However, given the discrepancy of the model fit for Drive-model 4, noted in the previous subsection, in the absence of more early life data, we might harbor some lingering concern about possible quality-control issues with this Drive-model.
 
-We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a measure of central tendency.  The left panel of Figure 5 shows $t_{0.10}$ (i.e., the amount of time it takes for 10\% of hard drives to fail), for all Drive-models. The best six Drive-models ranked by MTTF are also the Drive-models with the largest $t_{0.10}$.  Drive-models 5, 2, 4, and 3 seem to really stand out as the most reliable as there is a larger gap separating them from the rest of the group.  Another interesting feature to compare is $\pi$, the proportion defective.  The right panel of Figure 5 shows the posterior credible intervals of $\pi$ for each Drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the left hand side.  While for many of the Drive-models the ordinal ranking is the same as on the left, there are some Drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10}$ or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.   
- 
+We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a measure of central tendency.  The left panel of Figure 5 shows $t_{0.10}$ (i.e., the amount of time it takes for 10\% of hard drives to fail), for all Drive-models. The best six Drive-models ranked by MTTF are also the Drive-models with the largest $t_{0.10}$.  Drive-models 5, 2, 4, and 3 seem to really stand out as the most reliable as there is a larger gap separating them from the rest of the group.  Another interesting feature to compare is $\pi$, the proportion defective.  The right panel of Figure 5 shows the posterior credible intervals of $\pi$ for each Drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the left hand side.  While for many of the Drive-models the ordinal ranking is the same as on the left, there are some Drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10}$ or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.  
+
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{b10andpi}
-  \caption{Left: 50\% credible intervals for  $t_{0.10}$ (time in years till 10\% of the drives fail). Right: 50\% credible intervals for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of $t_{0.10}$.}
-  \label{fig4}
+\centering
+   \begin{subfigure}[b]{0.80\textwidth}
+   \includegraphics[width=1\linewidth]{b10new.pdf}
+   \caption{50\% CI for $t_{0.10}$}
+   \label{fig:Ng1} 
+\end{subfigure}
+
+\begin{subfigure}[b]{0.80\textwidth}
+   \includegraphics[width=1\linewidth]{pinew.pdf}
+   \caption{50\% CI for $\pi$}
+   \label{fig:Ng2}
+\end{subfigure}
+
+\caption{(a) 50\% CI (in years) for $t_{0.10}$ (b) 50\% CI for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of $t_{0.10}$.}
 \end{figure}
+
+ 
+ 
+%\begin{figure}[H]
+  %\centering
+  %\includegraphics[width=\textwidth]{b10andpi}
+  %\caption{Left: 50\% credible intervals for  $t_{0.10}$ (time in years till 10\% of the drives fail). Right: 50\% credible intervals for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of $t_{0.10}$.}
+  %\label{fig4}
+%\end{figure}
 
 \begin{figure}[H]
   \centering
@@ -544,11 +563,11 @@ While this adjustment is negligible for the majority of drive-models, five drive
 
 \begin{description}
 
-\item[Stan Code] R Stan code for Model 4 (stan file)
+\item[Stan Code] Stan code for Model 4 (pdf file)
 
 \item[Graphs of Model Comparison Fits for all Drive-models] Posterior median of proportion failing as a function of time under Models 1-4 for all Drive-models. (pdf file)
 
-\item[Posterior Predictive Graphical Checks for all Drive-Models] Nonparametric estimates of proportion failing for original and replicated data sets for all Drive-models. (pdf file)
+\item[Posterior Predictive Graphical Checks for all Drive-models] Nonparametric estimates of proportion failing for original and replicated data sets for all Drive-models. (pdf file)
 
 \end{description}
 
