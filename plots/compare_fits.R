@@ -158,10 +158,10 @@ b10$model <- factor(b10$model,levels=b10$model[order(b10$med)])  #Sort By Lower 
 #Make Catepillar Plot for B10; Perhaps Sort by Sample Size?
 b10.plot <- ggplot(b10, aes(x=model, y=med, ymin=lb, ymax=ub)) +
   geom_pointrange() +  
-  coord_cartesian(ylim = c(0, 8)) + 
-  xlab('Drive Model') + theme_bw() + 
+  coord_cartesian(xlim = c(0, 8)) + 
+  xlab('Drive Model') + theme_bw(base_size = 14) + 
   ylab("Years")   +
-  scale_x_discrete(breaks=seq(1,44,1))
+  scale_x_discrete(breaks=seq(1,44,1)) + coord_flip(ylim = c(0,8))
 b10.plot
 
 
@@ -197,10 +197,10 @@ pi.dat$model <- factor(pi.dat$model,levels=pi.dat$model[order(pi.dat$bmed)])  #S
 #Make Catepillar Plot for B10; Perhaps Sort by Sample Size?
 pi.plot <- ggplot(pi.dat, aes(x=as.factor(model), y=med, ymin=lower, ymax=upper)) +
   geom_pointrange() +  
-  xlab('Drive Model') + theme_bw() + 
+  xlab('Drive Model') + theme_bw(base_size = 14) + 
   ylab(expression(pi))   +
-  scale_x_discrete(breaks=seq(1,44,1))+
-  scale_y_continuous(trans="logit", breaks=c(.01, .02, .05, .1, .2, .4, .6, .8, .9))
+  scale_x_discrete(breaks=seq(1,44,1)) +
+  scale_y_continuous(trans="logit", breaks=c(.01, .02, .05, .1, .2, .4, .6, .8, .9)) + coord_flip()
 pi.plot
 
 #Make Cow Plot
