@@ -70,14 +70,14 @@ y_reps <- lapply(1:44, function(dm){
 
 saveRDS(y_reps,"../plots/y_rep.rds")
 
-get_plotlist <- function(y_reps, dat){
+get_plotlist <- function(y_reps, dat, xlimits=c(100,100000)){
   plist <- list()
   xaxis <- NULL
   yaxis <- NULL
   legend <- NULL
   n <- length(y_reps)
   for(i in 1:n){
-    xlimits <- c(100,100000)
+    xlimits <- xlimits
     ylimits <- c(.001, .9)
     xbrks <- 0:10 * 10000
     ybrks <- c(.001,.01,.1,.25,.5,.75,.9)
@@ -89,9 +89,10 @@ get_plotlist <- function(y_reps, dat){
     bp <- addKmToBaseplot(bp, km_obs, color="red",linetype = "solid",
                           label = expression(KM(y[obs])))
     pnew <- plotFinally(bp, xbrks=xbrks, ybrks=ybrks, years=FALSE) +
-      theme_bw(base_size=14) + theme(axis.title.y=element_blank(),
-                                     plot.margin = unit(c(0,0,0,0), "cm")) + 
-      ggtitle(as.character(i))
+      theme_bw(base_size=14) + #theme(#axis.title.y=element_blank(),
+                                     #plot.margin = unit(c(0,0,0,0), "cm")
+        #) + 
+      ggtitle(as.character(i)) + ylab("Proportion failing")
   
     if(i==1) legend <- cowplot::get_legend(pnew)
     
@@ -112,9 +113,9 @@ set.seed(10438)
 # ran_set <- sort(sample(44, 6))
 all <- 1:44
 
-plist <- get_plotlist(y_reps, dat)
+plist <- get_plotlist(y_reps, dat, xlimits=c(100,100000))
 
-plist <- get_plotlist(all, firstcol = 1+(0:8)*5, lastrow = 41:44)
+# plist <- get_plotlist(all, firstcol = 1+(0:8)*5, lastrow = 41:44)
 library(cowplot)
 pdf("../paper/fig/post-pred-KM-all2.pdf", height=14, width=9)
 plot_grid(plotlist = plist$plots, ncol=5, align="hv")
@@ -123,20 +124,30 @@ dev.off()
 legnd <- get_legend(plist$plots[[1]] + theme(legend.position="right"))
 
 no.x.title <- lapply(plist$plots, function(p) p + theme(axis.title = element_blank()))
-for(j in 1:6){
-  if(j<6){
-    plot_grid(plot_grid(plotlist=plist$plots[1:8 + (j-1)*8], ncol=2, align="h"), plist$legend,
-              nrow=1, rel_widths = c(1,.2))
-  } else{
-    plot_grid(plot_grid(plotlist=plist$plots[1:4 + (j-1)*8], ncol=2, align="h"), plist$legend,
-                     nrow=1, rel_widths = c(1,.2))
-  }
-  ggsave(paste("../paper/fig/ppcheck",j,".pdf"), width = 8.5, height=11)
+
+load("../plots/plots-prob.RData")
+prob.lgnd <- get_legend(plots.prob[[1]])
+for(i in 1:44){
+  plots.prob[[i]] <- plots.prob[[i]] + theme(legend.position = "none") + ggtitle("")
+}
+for(j in 1:11){
+  # if(j<6){
+    plot_grid(plot_grid(plotlist=plist$plots[1:4 + (j-1)*4], ncol=1, align="h"),
+              plot_grid(plotlist=plots.prob[1:4 + (j-1)*4], ncol=1, align="h"),
+              plot_grid(plist$legend, prob.lgnd, ncol=1),
+              nrow=1, rel_widths = c(1,1,.3))
+  # } else{
+    # plot_grid(plot_grid(plotlist=plist$plots[1:4 + (j-1)*8], ncol=2, align="h"), plist$legend,
+                     # nrow=1, rel_widths = c(1,.2))
+  # }
+  ggsave(paste("../paper/fig/ppcheck-v2-",j,".pdf",sep=""), width = 8.5, height=11)
 }
 
-set.seed(12122017)
-smplID <- sort(sample(44, 4))
-plot_grid(plot_grid(plotlist=plist$plots[c(smplID)], ncol=2, align="hv"), plist$legend,
+# set.seed(12122017)
+# smplID <- sort(sample(44, 4))
+smplID <- c(2,9,14,40)
+smp_plist <- get_plotlist(y_reps, dat = dat, xlimits = c(100,30000))
+plot_grid(plot_grid(plotlist = smp_plist$plots[smplID], ncol=2, align="hv"), plist$legend,
           nrow=1, rel_widths = c(1,.2))
 
 ggsave("../paper/fig/ppcheck-sample.pdf", width=11, height=8)

@@ -176,7 +176,7 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
   %\includegraphics[width=.9\textwidth]{data-sum.pdf}
   \includegraphics[width=.9\textwidth]{dm-summ-scatter.pdf}
   \caption{Scatterplot of total observed running time (hundred thousands of hours) versus total number of observed failures.  Each number labels a unique drive brand model.   Axes are on the log scale.}
-  \label{fig1}
+  \label{drive-scatter}
 \end{figure}
 
 \subsection{Analysis of a Single Drive-Model}
@@ -247,7 +247,7 @@ where $g=1,\ldots,G$ indexes the sub-populations.  The likelihood for the hierar
 \begin{equation*}
 L(\bm{\Theta})= \prod_{g=1}^{G} \prod_{i=1}^{n_{g}} \left[\frac{f(t_{ig};\bm{\theta_g})}{1-F(t_{ig}^L;\bm{\theta_g})}\right]^{1-c_{ig}} \left[ \frac{1-F(t_{ig};\bm{\theta_g})}{1-F(t_{ig}^L;\bm{\theta_g})} \right]^{c_{ig}}
 \end{equation*}
-where $t_{ig}$ is the end of the observed lifetime of unit $i$ in group $g$; $t_{ig}^L}$ is the left truncation time for unit $i$ in group $g$; and $c_{ig}$ is an indicator if unit $i$ in group $g$ is right censored.  All times are again in hours.
+where $t_{ig}$ is the end of the observed lifetime of unit $i$ in group $g$; $t_{ig}^L$ is the left truncation time for unit $i$ in group $g$; and $c_{ig}$ is an indicator if unit $i$ in group $g$ is right censored.  All times are again in hours.
 
 Next, we model these parameters themselves as random variables, varying across the different sub-populations.  Let
 \begin{equation*}
@@ -376,7 +376,7 @@ The \texttt{R} package, \texttt{loo} \citep{loo}, computes an approximation of (
 %When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically. 
 % To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  
 % The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  
-Results showing estimated elpd and associated standard errors for all 4 models are shown in Table \ref{table:1}.
+Results showing estimated elpd and associated standard errors for all 4 models are shown in Table \ref{table:2}.
  We calculated the difference in expected predictive accuracy for Model 4 versus 3, Model 3 versus 2, and Model 2 versus 1, as well as the standard error of the difference (Table 1).  
 For the models we considered, each successive increase in model complexity increases elpd.  Of all the models, Model 4 has significantly better elpd compared to the the other 3 models.
 \begin{figure}
@@ -393,7 +393,7 @@ Model 1 & -17483.6  \\
    \hline
 \end{tabular}
 \caption{Expected Log Pointwise Predictive Density (elpd) for each model specification.  Each model is compared to the more parsimonious model below.  The estimated difference of expected leave-one-out prediction errors between the two models, as well as the standard error of the difference, is also presented.}
-\label{table:1}
+\label{table:2}
 \end{table}
 \end{figure}
 \subsection{Results}
@@ -571,166 +571,7 @@ While this adjustment is negligible for the majority of drive-models, five drive
 
 \end{description}
 
-% \begin{center}
-% {\large\bf SUPPLEMENTARY MATERIAL}
-% \end{center}
-% 
-% \begin{description}
-% 
-% \item Put R Stan code here
-% 
-% \end{description}
-%
-%\section{Stan code for Model 4}
-%\label{sec:stan-code}
-%{\scriptsize
-%\begin{verbatim}
-%functions {
-  %real sev_logpdf(real y, real mu, real sigma){
-    %real z;
-    %z = (y - mu) / sigma;
-    %return -log(sigma) + z - exp(z);
-  %}
-  %
-  %real sev_logccdf(real y, real mu, real sigma){
-    %return -exp((y - mu) / sigma);
-  %}
-  %
-  %real sev_logcdf(real y, real mu, real sigma){
-    %return log1m_exp(-exp((y - mu) / sigma));
-  %}
-%}
-%
-%data {
-  %int M;
-  %int N_obs;
-  %int N_cens;
-  %real endtime_obs[N_obs];
-  %real endtime_cens[N_cens];
-  %real starttime_obs[N_obs];
-  %real starttime_cens[N_cens];
-  %int<lower=1, upper=M> dm_obs[N_obs];
-  %int<lower=1, upper=M> dm_cens[N_cens];
-  %vector<lower=0, upper=1>[2] p; # quantiles to model
-%}
-%transformed data{
-  %vector[2] z_corr;
-  %for(i in 1:2)
-    %z_corr[i] = log(-1.0 * log1m(p[i])); # used to get location(mu) from quantile(t_p)
-%}
-%parameters{
-  %real log_tp1;
-  %real<lower=0> sigma1;
-  %real eta_tp2;
-  %real eta_s2;
-  %real eta_pi;
-  %real<lower=0> tau_tp2;
-  %real<lower=0> tau_s2;
-  %real<lower=0> tau_pi;
-  %vector[M] log_tp2_raw;
-  %real<lower=0, upper=1> sigma2[M];
-  %vector[M] logit_pi_raw;
-%}
-%
-%transformed parameters{
-  %real mu1;
-  %vector[M] mu2;
-  %vector[M] log_pi;
-  %mu1 = log_tp1 - sigma1 * z_corr[1];
-  %for(m in 1:M){
-    %mu2[m] = (eta_tp2 + tau_tp2 * log_tp2_raw[m]) - (sigma2[m] * z_corr[2]);
-  %}
-  %for(m in 1:M)
-    %log_pi[m] = log_inv_logit(eta_pi + tau_pi * logit_pi_raw[m]);
-%}
-%
-%model{
-  %real tmp[2];
-  %int m;
-  %real logpi;
-  %real mu_1;
-  %real mu_2;
-  %real sig_1;
-  %real sig_2;
-  %
-  %for(i in 1:N_obs){
-    %m = dm_obs[i];
-    %logpi = log_pi[m];
-    %mu_2 = mu2[m];
-    %sig_2 = sigma2[m];
-    %// numerator:   log( p * f1 * (1 - F2) + f2 * (1 - p * F1) )
-    %//            = log( exp(log(p) + log(f1) + log(1 - F2)) + exp(log(f2) + log(1 - exp(log(p) + log(F1)))) )
-    %tmp[1] = log_sum_exp(logpi + sev_logpdf(endtime_obs[i], mu1, sigma1) +
-               %sev_logccdf(endtime_obs[i], mu_2, sig_2),
-               %sev_logpdf( endtime_obs[i], mu_2, sig_2) + 
-               %log1m_exp(logpi + sev_logcdf(endtime_obs[i], mu1, sigma1)
-               %)
-             %);
-    %// denominator:  log((1 - p * F1) * (1 - F2))
-    %//            =  log(1 - p * F1) + log(1 - F2)
-    %tmp[2] = log1m_exp(logpi + sev_logcdf(starttime_obs[i], mu1, sigma1)) + 
-             %sev_logccdf(starttime_obs[i], mu_2, sig_2);
-             %
-    %target += tmp[1] - tmp[2];
-  %}
-  %
-  %for(i in 1:N_cens){
-    %m = dm_cens[i];
-    %logpi = log_pi[m];
-    %mu_2 = mu2[m];
-    %sig_2 = sigma2[m];
-  %
-    %// numerator:   log((1 - p * F1) * (1 - F2))
-    %//            =  log(1 - p * F1) + log(1 - F2)
-    %tmp[1] = log1m_exp(logpi + sev_logcdf(endtime_cens[i], mu1, sigma1)) + 
-             %sev_logccdf(endtime_cens[i], mu_2, sig_2);
-    %// denominator:  log((1 - p * F1) * (1 - F2))
-    %//            =  log(1 - p * F1) + log(1 - F2)
-    %tmp[2] = log1m_exp(logpi + sev_logcdf(starttime_cens[i], mu1, sigma1)) + 
-             %sev_logccdf(starttime_cens[i], mu_2, sig_2);
-             %
-    %target += tmp[1] - tmp[2];
-  %}
-  %
-  %log_tp1        ~ normal(7, 2);
-  %log_tp2_raw    ~ normal(0, 1);
-  %sigma1         ~ lognormal(0, 1);
-  %sigma2         ~ lognormal(eta_s2, tau_s2);
-  %logit_pi_raw   ~ normal(0, 1);
-  %eta_tp2        ~ normal(9, 2);
-  %eta_s2         ~ normal(0, 2);
-  %eta_pi         ~ normal(-3, 1);
-  %tau_tp2        ~ cauchy(0,1);
-  %tau_s2         ~ cauchy(0,1);
-  %tau_pi         ~ cauchy(0,1);
-%}
-%
-%\end{verbatim}
-%}
-%
-%\pagebreak
-%\section{Posterior predictive graphical checks}
-%\begin{figure}[H]
-%\includegraphics[width=\textwidth]{ppcheck-1.pdf}
-%\end{figure}
-%\begin{figure}[H]
-%\includegraphics[width=\textwidth]{ppcheck-2}
-%\end{figure}
-%\begin{figure}[H]
-%\includegraphics[width=\textwidth]{ppcheck-3.pdf}
-%\end{figure}
-%\begin{figure}[H]
-%\includegraphics[width=\textwidth]{ppcheck-4.pdf}
-%\end{figure}
-%\begin{figure}[H]
-%\includegraphics[width=\textwidth]{ppcheck-5.pdf}
-%\end{figure}
-%\begin{figure}[H]
-%\includegraphics[width=\textwidth]{ppcheck-6.pdf}
-%\end{figure}
-%\clearpage
-%\bibliographystyle{plainnat}
-% \bibliographystyle{plain}
+
 \bibliography{./sample}
 
 \end{document}
