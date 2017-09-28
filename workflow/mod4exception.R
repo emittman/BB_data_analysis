@@ -33,13 +33,13 @@ font_size=12
 
 dat4 <- filter(dat, model==overview$model[which(overview$stan_id==4)])
 dat4 <- arrange(dat4, endtime)
-dat4_tr <- dat4[which(dat4$starttime>2500),]
+dat4_tr <- dat4[which(dat4$starttime>800),]
 
 set.seed(80717)
 
-lt_plot <- lifetime_plot3(data = dat4, n_to_show=60, in_years=FALSE, lab="Drive-model 4",
+lt_plot <- lifetime_plot4(data = dat4, n_to_show=60, in_years=FALSE, lab="Drive-model 4",
                           trans="log", xlimits = xlimits, xlabels=xlabels,
-                          font_size = font_size) +
+                          font_size = font_size) #+
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank())
   
@@ -59,19 +59,18 @@ summary(draws)
 km4_tr <- tr.adj(km4_tr, median(draws))
 
 bp <- baseKMplot(fit=km4, xlimits=xlimits, ylimits=ylimits, color="black",
-                 linetype = "solid", alpha = 1, logscale = TRUE, label="nonparametric\nestimate")
+                 linetype = 4242, alpha = 1, logscale = TRUE, label="nonparametric\nestimate (all drives)")
 
 samp4 <- with(sampfull, list(mu1=mu1, sigma1=sigma1, log_pi=log_pi[,4], mu2=mu2[,4], sigma2=sigma2[,4]))
 band4 <- bandFromPSamp(samples=samp4, range=xlimits, length.out = 50, N=300, logscale = TRUE)
 bpp <- addBandToBaseplot(baseplot=bp, bandObj=band4, color="black",
-                         linetype="dashed", label="posterior median\n(90% interval)", alpha = .3)
+                         linetype=11, label="\nposterior median\n(90% interval)", alpha = .3)
 
-bppp <- addKmToBaseplot(baseplot = bpp, fitObj = km4_tr, color="black",
-                        linetype="dotted", label="nonparam. est\n of truncated data")
+bppp <- addKmToBaseplot(baseplot = bpp, fitObj = km4_tr, color="black",size=1,
+                        linetype="solid", label="\nnonparametric \nestimate excluding\noldest 75 drives")
 
 combined <- plotFinally(plotList=bppp, xbrks=xlabels*1000, ybrks=ylabels, years=FALSE) +
-  guides(fill=FALSE)
-
+  guides(fill=FALSE) + ggtitle("Drive-model 4, lifetime estimates") +theme_bw(base_size=12)
 
 library(cowplot)
 
@@ -87,7 +86,7 @@ combined <- combined + theme(legend.position='none')
 ggdraw(plot_grid(plot_grid(lt_plot, combined, ncol=1, align='v'),
                  plot_grid(legendLT, legendcomb, ncol=1),
                  rel_widths=c(1, 0.2)))
-ggsave("../paper/fig/dm4-exception.pdf", width=6, height=6)
+ggsave("../paper/fig/dm4-exception.png", width=8, height=11)
 
 # ###################
 # # removed, saved for later use

@@ -159,3 +159,58 @@ lifetime_plot3 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans=
   if(is.null(n_to_show)) return(p+ggtitle(paste(lab)))
   p + ggtitle(paste(lab, "(sample size = ", n_to_show, ", N = ", N, ")"))
 }
+lifetime_plot4 <- function(data, n_to_show=NULL, in_years=TRUE, lab = "", trans="identity",
+                           xlabels=c(.01,.05,.25,1,2,5), xlimits=c(100, 50000), font_size=10){
+  if(in_years){
+    xlabels <- signif(xlabels * 24*365, 0)
+  } 
+  if(!is.null(n_to_show)){
+    N = nrow(data) #referenced in plot main title
+    data <- sample_n(data, size=n_to_show)
+  }
+  n <- nrow(data)
+  data <- data %>% arrange(starttime) %>%
+    mutate(ID=1:n,
+           status = ifelse(censored, "censored", "failure"))
+
+  p <- ggplot(data, aes(x=ID, xend=ID, y=xlimits[1], yend=endtime)) +
+    geom_segment()+
+    geom_point(aes(y=endtime, pch=status), size=2.5)+
+    geom_point(aes(y=starttime, pch="trunc"), size=2)+
+    coord_flip(expand=F) +
+    theme_bw(base_size=font_size) +
+    theme(axis.title.y= element_blank(),
+          axis.ticks.y= element_blank(),
+          axis.text.y = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank()) +
+    scale_x_continuous(limits=c(0, n+1))+
+    scale_shape_manual(name="",
+                       values = c("censored"='\u27A4',
+                                  "failure"='\u2B58',
+                                  "trunc"='\u007C'),
+                       labels = c("censored",
+                                  "failure",
+                                  "truncation time"))
+  
+  transform <- switch(trans,
+                      "log" = scales::log_trans,
+                      "identity" = scales::identity_trans)
+  
+  if(in_years){
+    p <-   p + scale_y_continuous(name="time(years)", limits=xlimits,
+                                  breaks=xlabels*365*24,
+                                  labels=xlabels,
+                                  trans=trans)
+  } else{
+    p <-   p + scale_y_continuous(name="Thousands of hours",limits = xlimits,
+                                 breaks=xlabels*1000,
+                                 labels=xlabels,
+                                 trans=trans)
+  }
+
+  
+  if(is.null(n_to_show)) return(p+ggtitle(paste(lab)))
+  p + ggtitle(paste(lab, ", random sample of ",n, " drives (out of ",N,")",sep=""))
+}
