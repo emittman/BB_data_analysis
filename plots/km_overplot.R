@@ -96,7 +96,7 @@ p_mod3 <- ggplot(all_mod3, aes(x=t,y=est, group=model)) +
   geom_line(size=1, alpha=.5) +
   scale_x_continuous(name="", breaks = x.breaks, labels=x.breaks/1000)+
   scale_y_continuous(name="", breaks=y.breaks, limits=ylimits)+
-  theme_bw(base_size = 14) + ggtitle("Model 2")+
+  theme_bw(base_size = 14) + ggtitle("Model 3")+
   theme(axis.title = element_blank())
 
 mod4_s <- readRDS("../workflow/samples_lor_only3fails.rds")

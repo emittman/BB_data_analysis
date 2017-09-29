@@ -67,7 +67,7 @@ bpp <- addBandToBaseplot(baseplot=bp, bandObj=band4, color="black",
                          linetype=11, label="\nposterior median\n(90% interval)", alpha = .3)
 
 bppp <- addKmToBaseplot(baseplot = bpp, fitObj = km4_tr, color="black",size=1,
-                        linetype="solid", label="\nnonparametric \nestimate excluding\noldest 75 drives")
+                        linetype="solid", label="\nnonparametric \nestimate excluding\nnewest 75 drives")
 
 combined <- plotFinally(plotList=bppp, xbrks=xlabels*1000, ybrks=ylabels, years=FALSE) +
   guides(fill=FALSE) + ggtitle("Drive-model 4, lifetime estimates") +theme_bw(base_size=12)
