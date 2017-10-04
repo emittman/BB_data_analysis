@@ -61,20 +61,24 @@
   }
   
 
-@ARTICLE{vehtari,
-   author = {{Vehtari}, A. and {Gelman}, A. and {Gabry}, J.},
-  title = {{P}ractical {B}ayesian model evaluation using leave-one-out
-    cross-validation and {W}{A}{I}{C}},
-  journal = {ArXiv e-prints},
-archivePrefix = "arXiv",
-   eprint = {1507.04544},
- primaryClass = "stat.CO",
- keywords = {Statistics - Computation, Statistics - Methodology},
-     year = 2015,
-    month = jul,
-   adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150704544V},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+@Article{vehtari,
+author="Vehtari, Aki
+and Gelman, Andrew
+and Gabry, Jonah",
+title="Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC",
+journal="Statistics and Computing",
+year="2017",
+month="Sep",
+day="01",
+volume="27",
+number="5",
+pages="1413--1432",
+abstract="Leave-one-out cross-validation (LOO) and the widely applicable information criterion (WAIC) are methods for estimating pointwise out-of-sample prediction accuracy from a fitted Bayesian model using the log-likelihood evaluated at the posterior simulations of the parameter values. LOO and WAIC have various advantages over simpler estimates of predictive error such as AIC and DIC but are less used in practice because they involve additional computational steps. Here we lay out fast and stable computations for LOO and WAIC that can be performed using existing simulation draws. We introduce an efficient computation of LOO using Pareto-smoothed importance sampling (PSIS), a new procedure for regularizing importance weights. Although WAIC is asymptotically equal to LOO, we demonstrate that PSIS-LOO is more robust in the finite case with weak priors or influential observations. As a byproduct of our calculations, we also obtain approximate standard errors for estimated predictive errors and for comparison of predictive errors between two models. We implement the computations in an R package called loo and demonstrate using models fit with the Bayesian inference package Stan.",
+issn="1573-1375",
+doi="10.1007/s11222-016-9696-4",
+url="https://doi.org/10.1007/s11222-016-9696-4"
 }
+
 
 
 %model assessment
