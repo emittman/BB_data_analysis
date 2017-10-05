@@ -29,7 +29,7 @@ xlabels=c(.1,.5,2.5,10,50)
 ylabels=c(.001,.005, .01,.05,.1)
 xlimits=c(100, 50000)
 ylimits=c(.001,.2)
-font_size=12
+font_size=14
 
 dat4 <- filter(dat, model==overview$model[which(overview$stan_id==4)])
 dat4 <- arrange(dat4, endtime)
@@ -39,9 +39,10 @@ set.seed(80717)
 
 lt_plot <- lifetime_plot4(data = dat4, n_to_show=60, in_years=FALSE, lab="Drive-model 4",
                           trans="log", xlimits = xlimits, xlabels=xlabels,
-                          font_size = font_size) #+
-  theme(axis.text.x = element_blank(),
-        axis.title.x = element_blank())
+                          font_size = font_size)
+  # theme(axis.text.x = element_blank(),
+        # axis.title.x = element_blank()
+        # )
   
 
 km4 <- KM.survfit(dat4)
@@ -59,7 +60,7 @@ summary(draws)
 km4_tr <- tr.adj(km4_tr, median(draws))
 
 bp <- baseKMplot(fit=km4, xlimits=xlimits, ylimits=ylimits, color="black",
-                 linetype = 4242, alpha = 1, logscale = TRUE, label="nonparametric\nestimate (all drives)")
+                 linetype = 4242, alpha = 1, logscale = TRUE, label="adjusted KM\nestimate (all drives)")
 
 samp4 <- with(sampfull, list(mu1=mu1, sigma1=sigma1, log_pi=log_pi[,4], mu2=mu2[,4], sigma2=sigma2[,4]))
 band4 <- bandFromPSamp(samples=samp4, range=xlimits, length.out = 50, N=300, logscale = TRUE)
@@ -67,16 +68,16 @@ bpp <- addBandToBaseplot(baseplot=bp, bandObj=band4, color="black",
                          linetype=11, label="\nposterior median\n(90% interval)", alpha = .3)
 
 bppp <- addKmToBaseplot(baseplot = bpp, fitObj = km4_tr, color="black",size=1,
-                        linetype="solid", label="\nnonparametric \nestimate excluding\nnewest 75 drives")
+                        linetype="solid", label="\nadjusted KM\nestimate excluding\nnewest 75 drives")
 
 combined <- plotFinally(plotList=bppp, xbrks=xlabels*1000, ybrks=ylabels, years=FALSE) +
-  guides(fill=FALSE) + ggtitle("Drive-model 4, lifetime estimates") +theme_bw(base_size=12)
+  guides(fill=FALSE) + ggtitle("Drive-model 4, lifetime estimates") +theme_bw(base_size=14)
 
 library(cowplot)
 
 # now extract the legends
-legendLT <- get_legend(lt_plot + theme(legend.text = element_text(size=7)))
-legendcomb <- get_legend(combined+ theme(legend.text = element_text(size=7)))
+legendLT <- get_legend(lt_plot + theme(legend.text = element_text(size=12)))
+legendcomb <- get_legend(combined+ theme(legend.text = element_text(size=12)))
 
 # and replot suppressing the legend
 lt_plot <- lt_plot + theme(legend.position = "none")
@@ -85,8 +86,8 @@ combined <- combined + theme(legend.position='none')
 # Now plots are aligned vertically with the legend to the right
 ggdraw(plot_grid(plot_grid(lt_plot, combined, ncol=1, align='v'),
                  plot_grid(legendLT, legendcomb, ncol=1),
-                 rel_widths=c(1, 0.2)))
-ggsave("../paper/fig/dm4-exception.png", width=8, height=11)
+                 rel_widths=c(1.3, 0.3)))
+ggsave("../paper/fig/dm4-exception.png", width=9, height=11)
 
 # ###################
 # # removed, saved for later use

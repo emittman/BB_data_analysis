@@ -233,7 +233,7 @@ $\pi$ & 0.03 & 0.05 & 0.10 \\
 \label{table:1}
 \end{table}
 
-Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with simultaneous confidence bands provides a visual check for distributional goodness of fit.  We applied this method using the Kaplan-Meier non-parametric estimate of the empirical cdf.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version due to\citet[Chapter 11, ]{meeker} (see Appendix for a detailed description).   
+Probability plotting is a simple method to assess the adequacy of (log)location-scale families of probability models to the data.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with pointwise confidence bands provides a visual check for distributional goodness of fit.  We applied this method using the Kaplan-Meier nonparametric estimate of the empirical cdf.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version due to\citet[Chapter 11, ]{meeker} (see Appendix for a detailed description).   
 
 In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP model onto the adjusted Kaplan-Meier estimate with axes on the Weibull probability scale.  Pointwise uncertainty bands associated with each estimator are included. While the Weibull model is inadequate for these data, the GLFP model fits quite well, as it is able to capture the acceleration of the hazard rate between 8000 and 20,000 hours. %The discrepancy around 30,000 suggests that the GLFP may overestimate the proportion failing in the far right tail of the distribution.  While this discrepancy may appear troubling, we suggest that the right tail is of less importance for electronic goods due to obsolescence.
 
@@ -267,10 +267,10 @@ Next, we model these parameters themselves as random variables, varying across t
 \end{equation*}
 \begin{equation}
 \label{eq:hier-model}
-t_{p_{1}g} \equiv \mu_{1g} + \sigma_{1g}\,\Phi^{-1}(p_1)  \ind \op{Log-normal} \left(\eta_{t_{p_1}}, \tau^2_{t_{p_1}}\right)
+t_{p_{1}g} \equiv \exp\left(\mu_{1g} + \sigma_{1g}\,\Phi^{-1}(p_1)\right)  \ind \op{Log-normal} \left(\eta_{t_{p_1}}, \tau^2_{t_{p_1}}\right)
 \end{equation}
 \begin{equation*}
-t_{p_{2}g} \equiv \mu_{2g} + \sigma_{2g}\,\Phi^{-1}(p_2)  \ind \op{Log-normal} \left(\eta_{t_{p_2}}, \tau^2_{t_{p_2}}\right)
+t_{p_{2}g} \equiv \exp\left(\mu_{2g} + \sigma_{2g}\,\Phi^{-1}(p_2)\right)  \ind \op{Log-normal} \left(\eta_{t_{p_2}}, \tau^2_{t_{p_2}}\right)
 \end{equation*}
 \begin{equation*}
 \pi_g \ind \op{Logit-normal}(\eta_\pi, \tau^2_\pi).
@@ -341,7 +341,7 @@ Each model was fit using the {\tt
 \label{sec:Model Comparisons}
 As we have discussed, while we prefer to allow all of the GLFP model parameters to be drive-model specific, there are practical issues with fitting the full model. For example, due to heavy left-truncation, there may be insufficient information for particular drive-models to estimate all of the parameters. 
 
-Figure \ref{fig:fig2} provides a visual comparison for Models 1 through 4 by plotting the pointwise posterior median of time to failure. The large left panel shows the Kaplan-Meier nonparametric estimate of the same. The Kaplan-Meier estimates on the right side of Figure \ref{fig:fig2} shows that the set of estimated failure curves for all four models that we fit. The smaller plots correspond to Models 1 through 4.  Note that while all the paths for the posterior estimates necessarily pass through the origin, the nonparametric curves do not, but only because, for the Kaplan-Meier estimator, inference is entirely conditional on survival up to left-most left-trunctation time; to make the plot comparable, we use an adjustment based on a parametric model (Model 4).
+Figure \ref{fig:fig2} provides a visual comparison for Models 1 through 4 by plotting the pointwise posterior median of time to failure. The large left panel shows the Kaplan-Meier estimate of the same. The Kaplan-Meier estimates on the right side of Figure \ref{fig:fig2} shows that the set of estimated failure curves for all four models that we fit. The smaller plots correspond to Models 1 through 4.  Note that while all the paths for the posterior estimates necessarily pass through the origin, the Kaplan-Meier estimates do not, because, for the Kaplan-Meier estimator, inference is entirely conditional on survival up to left-most left-trunctation time. To make the plot comparable, we use an adjustment based on a parametric model (Model 4).
 
 %Should we be brief discussing the plot?
 These plots suggest that Model 1 is insufficient to explain the observed data. Model 2 certainly captures more of the heterogeneity observed in the Kaplan-Meier estimates; we observe that the assumption of a common $\sigma_2(=\sigma_{2,g})$ results in a very similar progressions in the rate of failure, which may be too restrictive. Model 3, which removes this restriction on $\sigma_{2,g}$ suggests that there is evidence to support variation in this parameter among drive-models. While Model 3 and 4 do display differences, they are relatively subtle.
@@ -354,6 +354,7 @@ These plots suggest that Model 1 is insufficient to explain the observed data. M
 
 We can also compare posterior estimates of time to failure under Models 1-4 for each drive-model individually.  For these comparisons, we calculate, pointwise, the posterior median of proportion failing over a grid. That is, for every model, and for a fixed set, $\tilde{t}=\{\tilde{t}_1,\ldots,\tilde{t}_M\}$, we compute 
 \begin{equation}
+\label{pointwise-medians}
 \op{median}\left\{\op{GLFP}\left(\tilde{t}_m|\pi_{g}^{(s)},\mu_{1g}^{(s)},\sigma_{1g}^{(s)},\mu_{2g}^{(s)},\sigma_{2g}^{(s)}\right);s=1,\ldots,S \right\},
 \end{equation}
 where $\theta^{(s)}$ is the $s^{th}$ posterior sample from $p(\theta|y)$.
@@ -370,7 +371,7 @@ The GLFP fit for a representative selection of drive-models (Drive-models 2, 9, 
 
 Drive-model 9 shows a high proportion of  of early failures relative to Model 1. Model 2 addresses this by estimating an earlier time to wearout, but still results in a poor fit to the data. Models 3 and 4 conform more closely to the Kaplan-Meier. The disagreement between Models 3 and 4 for Drive-model 9, is interesting: Model 4 allows the proportion of defective units to vary by Drive-model, but Model 3 appears to fit just as well in this case, by increasing the scale parameter for the wearout failure mode.
 
-For Drive-model 14, Models 1-3 produce lower estimates of the proportion of drives failing, and for Drive-model 40, they produce higher estimates.  On the other hand, Model 4 follows the nonparametric estimate quite closely across stages of lifetime.  The differences between Models 3 and 4 and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the estimates from Model 3 and 4 are nearly identical for Drive-model 40.
+For Drive-model 14, Models 1-3 produce lower estimates of the proportion of drives failing, and for Drive-model 40, they produce higher estimates.  On the other hand, Model 4 follows the Kaplan-Meier quite closely across stages of lifetime.  The differences between Models 3 and 4 and Models 1 and 2 are visually quite apparent.  Differentiating between Model 3 and 4 is less clear; for instance, the estimates from Model 3 and 4 are nearly identical for Drive-model 40.
 
 
 
@@ -428,7 +429,7 @@ Because we are working with posterior draws, $\theta^{(s)}$, we can draw from th
 
 An obstacle remains, in that the censoring mechanism itself is not fully observed. Our admittedly simple approach is to assume that failed units would have been the censored had they survived until the latest censoring or failure time for that drive model. We generated 19 replicates for each drive model. This gives a 1/20 chance under the hypothesis of no difference that the Kaplan-Meier estimate based on the observed data would be ``most extreme" relative all the replicated  from the those one and is not too many so as to produce an overly cluttered plot. Our method for generating replicate data sets, $y_{rep,g}^{(s)}$, $s = 1 \dots 19$, for each drive-model $g=1,\ldots,44$, is as follows:
 \begin{enumerate}
-\item Simulate $\tilde{t}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)})$ where each set of parameters, $\left( \pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)} \right)$, is a random draw from the full posterior distribution.
+\item Simulate $\tilde{t}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)})$ where each set of parameters, \\$\left( \pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)} \right)$, is a random draw from the full posterior distribution.
 \item Repeat step 1 until $\tilde{t}_{rep,g,i} > t_{g,i}^L$.
 \item If $c_{g,i}=0$, let $c_{rep,g,i}^{(s)}=\max \{t_{g,i}: i \ge 1\}$, otherwise let $c_{rep,g,i}^{(s)}=t_{g,i}$.\\
 If $\tilde{t}_{rep,g,i}^{(s)}>m_{g,i}$, set $t_{rep,g,i}^{(s)}=c_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=1$, otherwise set $t_{rep,g,i}^{(s)}=\tilde{t}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
@@ -436,14 +437,14 @@ If $\tilde{t}_{rep,g,i}^{(s)}>m_{g,i}$, set $t_{rep,g,i}^{(s)}=c_{rep,g,i}^{(s)}
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{ppcheck-sample}
-\caption{Nonparametric estimates of the proportion failing for a representative subset of drive-models. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
+\caption{Adjusted Kaplan-Meier estimates of the proportion failing for a representative subset of drive-models. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
 \label{fig:post-pred-KM}
 \end{figure}
 
-We can compare the 19 simulated data sets $y_{rep,g, i}$ to the observed data $y_{g,i}$ by using them to re-estimate the Kaplan-Meier nonparametric estimator. The resulting plots are displayed in Figure \ref{fig:post-pred-KM}. Only a representative sample of plots is shown here for brevity (see the Supplementary Material for the complete set of drive-models).  For most drive-models, the estimates based on the observed data look similar to those based on the replicated data.  There are a few drive-models, however where this is not the case. Drive-model 14 shows a discrepancy between the GFLP fit and the Kaplan-Meier fit in the right tail. In particular, the GLFP predictions appear conservative, overpredicting the proportion failing after about 2.5 years. Due to the large number of failures for this Drive-model, the posterior for the hierarchical model is similar to the stand-alone model. Other drive-models showing a lack of fit are 4 and 34. We first address Drive-model 4; our diagnosis of 34 is analogous, so the following comments extend to that Drive-model as well.
+We can compare the 19 simulated data sets $y_{rep,g, i}$ to the observed data $y_{g,i}$ by using them to re-estimate the Kaplan-Meier estimator. The resulting plots are displayed in Figure \ref{fig:post-pred-KM}. Only a representative sample of plots is shown here for brevity (see the Supplementary Material for the complete set of drive-models).  For most drive-models, the estimates based on the observed data look similar to those based on the replicated data.  There are a few drive-models, however where this is not the case. Drive-model 14 shows a discrepancy between the GFLP fit and the Kaplan-Meier fit in the right tail. In particular, the GLFP predictions appear conservative, overpredicting the proportion failing after about 2.5 years. Due to the large number of failures for this Drive-model, the posterior for the hierarchical model is similar to the stand-alone model. Other drive-models showing a lack of fit are 4 and 34. We first address Drive-model 4; our diagnosis of 34 is analogous, so the following comments extend to that Drive-model as well.
 
 
-To diagnose the cause of the discrepancies between the observed data for Drive-model 4 and its posterior predictive distribution, we consider the event plot for a random sample of units for this Drive-model while looking at estimates of lifetime (Figure \ref{fig:ex-mod-4}). From these plots, we can see that the discrepancy between the posterior and the nonparametric estimate is driven by failure among a relatively small subset of units, namely those with left-truncation times smaller than 2500 hours. Further investigation reveals that, if we exclude the newest 75 drives, those with truncation times less than 800 hours, the nonparametric estimate falls within the posterior 90\% pointwise credible band. This situation suggests that, despite belonging to the same Drive-model, there may be something different about the newer drives leading to worse reliability. 
+To diagnose the cause of the discrepancies between the observed data for Drive-model 4 and its posterior predictive distribution, we consider the event plot for a random sample of units for this Drive-model while looking at estimates of lifetime (Figure \ref{fig:ex-mod-4}). From these plots, we can see that the discrepancy between the posterior and Kaplan-Meier estimates is driven by failures among a relatively small subset of units, namely those with left-truncation times smaller than 2500 hours. Further investigation reveals that, if we exclude the newest 75 drives, those with truncation times less than 800 hours, the Kaplan-Meier estimate falls within the posterior 90\% pointwise credible band. This situation suggests that, despite belonging to the same Drive-model, there may be something different about the newer drives leading to worse reliability. 
 
 \begin{figure}
 \centering
@@ -453,7 +454,7 @@ To diagnose the cause of the discrepancies between the observed data for Drive-m
 \label{fig:ex-mod-4}
 \end{figure}
 
-Figure 8 shows a similar pair of plots for Drive-model 43 illustrate (Figure \ref{fig:ex-mod-43}). The data for this Drive-model are heavily truncated; the observed units had run for quite some time before data were made available with the earliest left-truncation time at 12,189 hours. In Figure \ref{fig:ex-mod-43} we see that the lack of data for this Drive-model during early life results in a diffuse posterior centered around the what we call the ``global mean." The global mean is corresponds to $\op{GFLP}$ parameters taking the value of the hierarchical means, i.e., $\pi=\eta_{\pi}, \, \mu_2=\eta_{t_2} - \eta_{\sigma_2}\Phi^{-1}(.2)$ and $\sigma_2= \eta_{\sigma_2})$. This continues until about 10,000 hours at which time the posterior diverges from the global model, arriving at a compromise between it and the nonparametric estimate.
+Figure 8 shows a similar pair of plots for Drive-model 43 illustrate (Figure \ref{fig:ex-mod-43}). The data for this Drive-model are heavily truncated; the observed units had run for quite some time before data were made available with the earliest left-truncation time at 12,189 hours. In the bottom half of Figure \ref{fig:ex-mod-43} we contrast the posterior median for Drive-model 43 to what we call the `global average.' We get this by setting the $\op{GLFP}$ parameters equal to the median of their hierarchical distribution, i.e., $\pi=\op{logit}^{-1}(\eta_{\pi}),\, \mu_1=\mu_1,\, \sigma_1=\sigma_1,\, \mu_2=\eta_{t_2} - m_{\sigma_2}\Phi^{-1}(.2)$ and $\sigma_2= m_{\sigma_2}$, where $m_{\sigma_2}=\Phi_{Log-Normal}^{-1}[0.5 \cdot \Phi_{Log-Normal}(1|\eta_{\sigma_2},\tau_{\sigma_2})|\eta_{\sigma_2}, \tau_{\sigma_2}]$ is the population median of the $\sigma_{2g}$. The curve was estimated using pointwise medians as in Equation \ref{pointwise-medians}. We can see that the lack of data for this Drive-model during early life results in a diffuse posterior centered around the global average until about 10,000 hours when they diverge. Although the posterior is close to the adjusted Kaplan-Meier, it shows shrinkage toward the global average.
 
 
 
@@ -559,7 +560,7 @@ While not presented here, another potential application is forecasting the numbe
 \clearpage
 
 \appendix
-\section{Truncation adjusted nonparametric estimate of lifetime}
+\section{Truncation adjusted Kaplan-Meier estimate of lifetime}
 \label{sec:trunc-adj}
 We first start with a non-parametric estimate of the empirical cdf for each drive-model using the Kaplan-Meier estimator.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $d$, denoted by
 $\widehat{F_d(t)}_{KM}$, is conditional on survival up to
