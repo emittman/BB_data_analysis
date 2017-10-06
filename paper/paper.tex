@@ -431,8 +431,12 @@ An obstacle remains, in that the censoring mechanism itself is not fully observe
 \begin{enumerate}
 \item Simulate $\tilde{t}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)})$ where each set of parameters, \\$\left( \pi_{g}^{(s)},\mu_1^{(s)},\sigma_1^{(s)},\mu_{2g}^{(s)}, \sigma_{2g}^{(s)} \right)$, is a random draw from the full posterior distribution.
 \item Repeat step 1 until $\tilde{t}_{rep,g,i} > t_{g,i}^L$.
-\item If $c_{g,i}=0$, let $c_{rep,g,i}^{(s)}=\max \{t_{g,i}: i \ge 1\}$, otherwise let $c_{rep,g,i}^{(s)}=t_{g,i}$.\\
-If $\tilde{t}_{rep,g,i}^{(s)}>m_{g,i}$, set $t_{rep,g,i}^{(s)}=c_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=1$, otherwise set $t_{rep,g,i}^{(s)}=\tilde{t}_{rep,g,i}^{(s)},\; c_{rep,g,i}^{(s)}=0$.
+\item Set $d_{g,i}^{(s)}= \begin{cases} \max \{t_{g,i}: i \ge 1\}, & \mbox{ if }c_{g,i}=0\\
+t_{g,i}, & \mbox{ if }c_{g, i}=1. \end{cases}$\\
+Lastly, set $(t_{rep,g,i}^{(s)},c_{rep,g,i}^{(s)}) = \begin{cases}
+  (d_{g,i}^{(s)},1), & \mbox{ if } \tilde{t}_{rep,g,i}^{(s)}>d_{g,i}^{(s)}\\
+  (\tilde{t}_{rep,g,i}^{(s)},0), & \mbox{ if }\tilde{t}_{rep,g,i}^{(s)} \le d_{g,i}^{(s)}.
+\end{cases}$
 \end{enumerate}
 
 \begin{figure}[H]
