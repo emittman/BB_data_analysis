@@ -53,7 +53,7 @@ ggsave("../paper/fig/km14-natural-plus.pdf", width = 7.5, height=6)
 ybreaks<- c(.002,.01,.05,.1,.2,.4,.55)
 xbreaks<- c(500, 1000, 2000, 4000, 8000, 15000, 30000)
 base_p14_p <- baseKMplot(km14, xlimits=xlimits, ylimits=ylimits, color="blue", linetype="solid",
-                         logscale = TRUE, prob=TRUE)
+                         logscale = TRUE, prob=TRUE, label = "adjusted\nKaplan-Meier")
 p14_p <- plotFinally(base_p14_p, xbrks = xbreaks, ybrks = ybreaks, years=FALSE,
                    greenwood = TRUE, alpha = .1)
 p14_p + theme_bw(base_size=14) + theme(legend.position="none")
@@ -61,8 +61,9 @@ ggsave("../paper/fig/km14-prob.pdf", width = 6, height = 6)
 
 band14_nat <- bandFromPSamp(samp14, range=xlimits, length.out = 40, N=1000, logscale = TRUE)
 comb_p14_p <- addBandToBaseplot(baseplot = base_p14_p, bandObj = band14_nat,
-                          color="red", linetype="dashed", alpha=.1, label="GLFP posterior")
+                          color="red", linetype="dashed", alpha=.1, label="\nGLFP posterior")
 p14_pplus <- plotFinally(comb_p14_p, xbrks = xbreaks, ybrks = ybreaks, years=FALSE,
                          greenwood = TRUE, alpha = .1)
-p14_pplus + theme_bw(base_size=14)
+p14_pplus + theme_bw(base_size=14)+
+            theme(legend.text = element_text(size=12))
 ggsave("../paper/fig/km14-prob-plus.pdf", width=7.5, height=6)

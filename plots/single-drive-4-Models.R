@@ -54,10 +54,10 @@ single_drive.all.4.Models <- function(dm, prob.log.scales){
   }
   if(!prob.log.scales){
     base_plot <- baseKMplot(km, xlimits=xlimits, ylimits=ylimits, color="black", linetype="solid",
-                           logscale = FALSE, prob=FALSE, label = "Kaplan-Meier")
+                           logscale = FALSE, prob=FALSE, label = "adjusted Kaplan-Meier")
   } else{
     base_plot <- baseKMplot(km, xlimits=xlimits, ylimits=ylimits, color="black", linetype="solid",
-                            logscale = TRUE, prob=TRUE, label = "Kaplan-Meier")
+                            logscale = TRUE, prob=TRUE, label = "adjusted Kaplan-Meier")
   }
   #Model 1
   samp1 <- with(sampnull, list(mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, log_pi=log_pi))
