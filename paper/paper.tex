@@ -195,8 +195,8 @@ To illustrate the GLFP model, we will present an analysis of the drive-model wit
 
 \begin{figure}[H]
 \centering
-  \includegraphics[width=.8\textwidth]{km14-prob}
-  \caption{Kaplan Meier estimate for Drive-model 14.  Uncertainty band correspond to pointwise standard errors (using Greenwood's formula.)}
+  \includegraphics[width=.6\textwidth]{km14-prob}
+  \caption{Kaplan-Meier estimate for Drive-model 14.  Uncertainty band correspond to pointwise standard errors (using Greenwood's formula.)}
   \label{fig1}
 \end{figure}
 
@@ -240,7 +240,7 @@ In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP 
 \begin{figure}[H]
 \centering
   \includegraphics[width=.8\textwidth]{km14-prob-plus}
-  \caption{Estimated GLFP for Drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws; pointwise 90\% credible band is in red.  Solid line is a non-parametric estimate with pointwise 90\% uncertainty band in blue.}
+  \caption{Estimated GLFP for Drive-model 14 plotted on Weibull paper.  Dashed line corresponds to the median of the posterior draws; pointwise 90\% credible band is in red.  Solid line is adjusted Kaplan-Meier estimate with pointwise 90\% credible band in blue.}
   \label{ex1-overlay}
 \end{figure}
 
@@ -363,7 +363,7 @@ where $\theta^{(s)}$ is the $s^{th}$ posterior sample from $p(\theta|y)$.
 \begin{figure}[H]
 {\centering
 \includegraphics[width=\textwidth]{single-drive-4-Models-ex}}
-\caption{Posterior median of proportion failing as a function of time under Models 1-4 for sample of drive-models, with axes scales as for Weibull probability plotting.  The solid step function is the truncated adjusted Kaplan-Meier points.}
+\caption{Posterior median of proportion failing as a function of time under Models 1-4 for sample of drive-models, with axes scales as for Weibull probability plotting.  The solid step function is the adjusted Kaplan-Meier.}
 \label{fig:mod_comp_leg}
 \end{figure}
 
