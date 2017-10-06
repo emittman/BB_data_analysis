@@ -18,6 +18,13 @@ source("../plotting_fns/KM_plot2.R")
 indFit <- extract(readRDS("../workflow2/samples_nopool_data_dm8.rds"))
 samp14 <- with(indFit, list(mu1=mu1, sigma1=sigma1, mu2=mu2, sigma2=sigma2, log_pi=log_pi))
 
+#Get Summary Quantiles for Paper
+quantile(1/samp14$sigma1, probs=c(.025, .5, .975))
+q1 <- exp(samp14$mu1 + samp14$sigma1*log(-log(1-.5)))
+quantile(q1, probs=c(.025, .5, .975))
+q2 <- exp(samp14$mu2 + samp14$sigma2*log(-log(1-.2)))
+quantile(q2, probs=c(.025, .5, .975))
+
 #Linear scales
 xlimits <- c(200, 30000)
 ylimits <- c(.001, .8)
