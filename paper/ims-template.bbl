@@ -1,0 +1,241 @@
+\begin{thebibliography}{19}
+% BibTex style file: imsart-nameyear.bst, 2013-01-28
+% Default style options (sort=1,type=nameyear).
+% Used options (sort=1,type=nameyear).
+
+\bibitem[\protect\citeauthoryear{Backblaze}{Accessed April 1, 2016}]{backblaze}
+\begin{bmisc}[author]
+\bauthor{\bsnm{Backblaze}}
+(\byear{Accessed April 1, 2016}).
+\btitle{Backblaze hard drive data sets.}
+\bhowpublished{\url{https://www.backblaze.com/b2/hard-drive-test-data.html}}.
+\end{bmisc}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Basu, Sen and Banerjee}{2003}]{basu}
+\begin{barticle}[author]
+\bauthor{\bsnm{Basu},~\bfnm{Sanjib}\binits{S.}},
+  \bauthor{\bsnm{Sen},~\bfnm{Ananda}\binits{A.}} \AND
+  \bauthor{\bsnm{Banerjee},~\bfnm{Mousimi}\binits{M.}}
+(\byear{2003}).
+\btitle{Bayesian Analysis of Competing Risks with Partially Masked Cause of
+  Failure}.
+\bjournal{Journal of the Royal Statistical Society. Series C (Applied
+  Statistics)}
+\bvolume{52}
+\bpages{77-93}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Berger and Sun}{1993}]{berger}
+\begin{barticle}[author]
+\bauthor{\bsnm{Berger},~\bfnm{James~O}\binits{J.~O.}} \AND
+  \bauthor{\bsnm{Sun},~\bfnm{Dongchu}\binits{D.}}
+(\byear{1993}).
+\btitle{Bayesian analysis for the poly-Weibull distribution}.
+\bjournal{Journal of the {A}merican {S}tatistical {A}ssociation}
+\bvolume{88}
+\bpages{1412--1418}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Betancourt and Girolami}{2015}]{betancourt}
+\begin{barticle}[author]
+\bauthor{\bsnm{Betancourt},~\bfnm{Michael}\binits{M.}} \AND
+  \bauthor{\bsnm{Girolami},~\bfnm{Mark}\binits{M.}}
+(\byear{2015}).
+\btitle{Hamiltonian Monte Carlo for hierarchical models}.
+\bjournal{Current trends in Bayesian methodology with applications}
+\bpages{79-101}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Chan and Meeker}{1999}]{chan}
+\begin{barticle}[author]
+\bauthor{\bsnm{Chan},~\bfnm{Victor}\binits{V.}} \AND
+  \bauthor{\bsnm{Meeker},~\bfnm{William~Q}\binits{W.~Q.}}
+(\byear{1999}).
+\btitle{A failure-time model for infant-mortality and wearout failure modes}.
+\bjournal{IEEE Transactions on Reliability}
+\bvolume{48}
+\bpages{377--387}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Gelman, Meng and
+  Stern}{1996}]{gelman1996postpred}
+\begin{barticle}[author]
+\bauthor{\bsnm{Gelman},~\bfnm{Andrew}\binits{A.}},
+  \bauthor{\bsnm{Meng},~\bfnm{Xiao-Li}\binits{X.-L.}} \AND
+  \bauthor{\bsnm{Stern},~\bfnm{Hal}\binits{H.}}
+(\byear{1996}).
+\btitle{Posterior predictive assessment of model fitness via realized
+  discrepancies}.
+\bjournal{Statistica {S}inica}
+\bvolume{6}
+\bpages{733--760}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Gelman et~al.}{2014}]{gelman2014bayesian}
+\begin{bbook}[author]
+\bauthor{\bsnm{Gelman},~\bfnm{Andrew}\binits{A.}},
+  \bauthor{\bsnm{Carlin},~\bfnm{John~B}\binits{J.~B.}},
+  \bauthor{\bsnm{Stern},~\bfnm{Hal~S}\binits{H.~S.}} \AND
+  \bauthor{\bsnm{Rubin},~\bfnm{Donald~B}\binits{D.~B.}}
+(\byear{2014}).
+\btitle{{B}ayesian {D}ata {A}nalysis}
+\bvolume{2}.
+\bpublisher{Chapman \& Hall/CRC Boca Raton, FL, USA}.
+\end{bbook}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Hong, Meeker and McCalley}{2009}]{hmm}
+\begin{barticle}[author]
+\bauthor{\bsnm{Hong},~\bfnm{Yili}\binits{Y.}},
+  \bauthor{\bsnm{Meeker},~\bfnm{William~Q.}\binits{W.~Q.}} \AND
+  \bauthor{\bsnm{McCalley},~\bfnm{James~D.}\binits{J.~D.}}
+(\byear{2009}).
+\btitle{Prediction of Remaining Life of Power Transformers Based on Left
+  Truncated and Right Censored Lifetime Data}.
+\bjournal{The Annals of Applied Statistics}
+\bvolume{3}
+\bpages{857-879}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Ihaka and Gentleman}{1996}]{r}
+\begin{barticle}[author]
+\bauthor{\bsnm{Ihaka},~\bfnm{Ross}\binits{R.}} \AND
+  \bauthor{\bsnm{Gentleman},~\bfnm{Robert}\binits{R.}}
+(\byear{1996}).
+\btitle{{R}: {A} {L}anguage for {D}ata {A}nalysis and {G}raphics}.
+\bjournal{Journal of Computational and Graphical Statistics}
+\bvolume{5}
+\bpages{299--314}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Meeker and Escobar}{1998}]{meeker}
+\begin{bbook}[author]
+\bauthor{\bsnm{Meeker},~\bfnm{W.~Q.}\binits{W.~Q.}} \AND
+  \bauthor{\bsnm{Escobar},~\bfnm{L.~A.}\binits{L.~A.}}
+(\byear{1998}).
+\btitle{Statistical Methods for Reliability Data}.
+\bseries{Wiley Series in Probability and Statistics}.
+\bpublisher{Wiley}.
+\end{bbook}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Meeker, Hahn and Escobar}{2017}]{intervals}
+\begin{bbook}[author]
+\bauthor{\bsnm{Meeker},~\bfnm{W.~Q.}\binits{W.~Q.}},
+  \bauthor{\bsnm{Hahn},~\bfnm{G.~H.}\binits{G.~H.}} \AND
+  \bauthor{\bsnm{Escobar},~\bfnm{L.~A.}\binits{L.~A.}}
+(\byear{2017}).
+\btitle{Statistical Intervals: A Guide for Practioners and Researchers}.
+\bseries{Wiley Series in Probability and Statistics}.
+\bpublisher{Wiley}.
+\end{bbook}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Nelson}{1982}]{nelson}
+\begin{bbook}[author]
+\bauthor{\bsnm{Nelson},~\bfnm{Wayne~B}\binits{W.~B.}}
+(\byear{1982}).
+\btitle{{A}pplied {L}ife {D}ata {A}nalysis}.
+\bpublisher{John Wiley \& Sons}.
+\end{bbook}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Ranjan, Singh and Upadhyay}{2015}]{ranjan}
+\begin{barticle}[author]
+\bauthor{\bsnm{Ranjan},~\bfnm{Rakesh}\binits{R.}},
+  \bauthor{\bsnm{Singh},~\bfnm{Sonam}\binits{S.}} \AND
+  \bauthor{\bsnm{Upadhyay},~\bfnm{Satyanshu~K}\binits{S.~K.}}
+(\byear{2015}).
+\btitle{A {B}ayes analysis of a competing risk model based on gamma and
+  exponential failures}.
+\bjournal{Reliability Engineering \& System Safety}
+\bvolume{144}
+\bpages{35--44}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Reiser et~al.}{1995}]{reiser}
+\begin{barticle}[author]
+\bauthor{\bsnm{Reiser},~\bfnm{B}\binits{B.}},
+  \bauthor{\bsnm{Guttman},~\bfnm{Irwin}\binits{I.}},
+  \bauthor{\bsnm{Lin},~\bfnm{Dennis~KJ}\binits{D.~K.}},
+  \bauthor{\bsnm{Guess},~\bfnm{Frank~M}\binits{F.~M.}} \AND
+  \bauthor{\bsnm{Usher},~\bfnm{John~S}\binits{J.~S.}}
+(\byear{1995}).
+\btitle{Bayesian inference for masked system lifetime data}.
+\bjournal{Applied {S}tatistics}
+\bvolume{44}
+\bpages{79--90}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{{Stan Development Team}}{2016}]{rstan}
+\begin{bmisc}[author]
+\bauthor{\bsnm{{Stan Development Team}}}
+(\byear{2016}).
+\btitle{{RStan}: the {R} interface to {Stan}}.
+\bhowpublished{\url{http://mc-stan.org}}.
+\bnote{{R} package version 2.14.1}.
+\end{bmisc}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{{U}{S} Department~of {T}reasury}{2016}]{f4562}
+\begin{bmisc}[author]
+\bauthor{\bparticle{{U}{S} Department~of}
+  \bsnm{{T}reasury},~\bfnm{{IRS}}\binits{I.}}
+(\byear{2016}).
+\btitle{Instructions for Form 4562}.
+\bhowpublished{\url{https://www.irs.gov/pub/irs-pdf/i4562.pdf}}.
+\end{bmisc}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Vehtari, Gelman and Gabry}{2016}]{loo}
+\begin{bmisc}[author]
+\bauthor{\bsnm{Vehtari},~\bfnm{Aki}\binits{A.}},
+  \bauthor{\bsnm{Gelman},~\bfnm{Andrew}\binits{A.}} \AND
+  \bauthor{\bsnm{Gabry},~\bfnm{Jonah}\binits{J.}}
+(\byear{2016}).
+\btitle{loo: {E}fficient leave-one-out cross-validation and {W}{A}{I}{C} for
+  {B}ayesian models}.
+\bhowpublished{\url{https://CRAN.R-project.org/package=loo}}.
+\bnote{{R} package version 1.1.0}.
+\end{bmisc}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Vehtari, Gelman and Gabry}{2017}]{vehtari}
+\begin{barticle}[author]
+\bauthor{\bsnm{Vehtari},~\bfnm{Aki}\binits{A.}},
+  \bauthor{\bsnm{Gelman},~\bfnm{Andrew}\binits{A.}} \AND
+  \bauthor{\bsnm{Gabry},~\bfnm{Jonah}\binits{J.}}
+(\byear{2017}).
+\btitle{Practical Bayesian model evaluation using leave-one-out
+  cross-validation and WAIC}.
+\bjournal{Statistics and Computing}
+\bvolume{27}
+\bpages{1413--1432}.
+\bdoi{10.1007/s11222-016-9696-4}
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Xu, Hong and Meeker}{2015}]{xu2015assessing}
+\begin{barticle}[author]
+\bauthor{\bsnm{Xu},~\bfnm{Zhibing}\binits{Z.}},
+  \bauthor{\bsnm{Hong},~\bfnm{Yili}\binits{Y.}} \AND
+  \bauthor{\bsnm{Meeker},~\bfnm{William~Q}\binits{W.~Q.}}
+(\byear{2015}).
+\btitle{Assessing risk of a serious failure mode based on limited field data}.
+\bjournal{IEEE Transactions on Reliability}
+\bvolume{64}
+\bpages{51--62}.
+\end{barticle}
+\endbibitem
+
+\end{thebibliography}
