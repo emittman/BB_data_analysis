@@ -534,8 +534,7 @@ date of manufacture.
 \label{fig:ex-mod-4}
 \end{figure}
 
-Figure 8 shows a similar pair of plots for Drive-model 43 illustrate (Figure \ref{fig:ex-mod-43}). The data for this Drive-model are heavily truncated; the observed units had run for quite some time before data were made available with the earliest left-truncation time at 12,189 hours. In the bottom half of Figure \ref{fig:ex-mod-43} we contrast the posterior median for Drive-model 43 to what we call the `global average.' We get this by setting the $\op{GLFP}$ parameters equal to the median of their hierarchical distribution, i.e., $\pi=\op{logit}^{-1}(\eta_{\pi}),\, \mu_1=\mu_1,\, \sigma_1=\sigma_1,\, \mu_2=\eta_{t_2} - m_{\sigma_2}\Phi^{-1}(.2)$ and $\sigma_2= m_{\sigma_2}$, where $m_{\sigma_2}=\Phi_{Log-Normal}^{-1}[0.5 \cdot \Phi_{Log-Normal}(1|\eta_{\sigma_2},\tau_{\sigma_2})|\eta_{\sigma_2}, \tau_{\sigma_2}]$ is the population median of the $\sigma_{2g}$. The curve was estimated using pointwise medians as in Equation \ref{pointwise-medians}. We can see that the lack of data for this Drive-model during early life results in a diffuse posterior centered around the global average until about 10,000 hours when they diverge. Although the posterior is close to the adjusted K-M, it shows shrinkage toward the global average.
-
+Figure 8 shows a similar pair of plots for Drive-model 43 illustrate (Figure \ref{fig:ex-mod-43}). The data for this Drive-model are heavily truncated; the observed units had run for quite some time before data were made available with the earliest left-truncation time at 12,189 hours. In the bottom half of Figure \ref{fig:ex-mod-43} we contrast the posterior median for Drive-model 43 to an average GLFP cdf for the entire population, which we call the `global average'; a description of the global average is given in Appendix \ref{global-avg}. We can see that the lack of data for this Drive-model during early life results in a diffuse posterior centered around the global average until about 10,000 hours when they diverge. Although the posterior is close to the adjusted K-M, it is shrunk toward the global average.
 
 
 \begin{figure}
@@ -658,6 +657,16 @@ $$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\te
 
 While this adjustment is negligible for the majority of drive-models, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
 
+\section{Definition of global average for Model 4}
+\label{global-avg}
+In Section \ref{model-assessment}, to illustrate the concept of shrinkage in our hierarchical model, we refer to a `global average' which represents an average GLFP cdf for the entire population, $\op{GLFP}\left(\bar{\pi},\mu_1,\sigma_1,\bar{\mu}_2,\bar{\sigma}_2\right)$. For the parameters that vary across drive models, we select values corresponding to the medians of the hierarchical distributions (Eq. \ref{eq:hier-model}) conditional on the hyperparameters. In particular, setting
+$$\bar{\pi}=\op{logit}^{-1}(\eta_{\pi}),\;\bar{\mu}_2=\eta_{t_2} - m_{\sigma_2}\Phi^{-1}(.2) \mbox{ and } \bar{\sigma}_2= m_{\sigma_2}.$$
+Let $F(\cdot|a,b),\;F^{-1}(\cdot|a,b)$ denote the cdf and inverse cdf, respectively, for a log-normal distribution with log-location parameter $a$ and log-scale parameter $b$. Then
+$$m_{\sigma_2}=F^{-1}[0.5 \cdot F(1|\eta_{\sigma_2},\tau_{\sigma_2})|\eta_{\sigma_2}, \tau_{\sigma_2}],$$
+which is the median of a log-normal distribution with parameters $\eta_{\sigma_2}$, and $\tau_{\sigma_2}$, truncated to the interval $(0, 1)$.
+
+We estimate the global average pointwise, using draws from the joint posterior distribution, $\left(\eta_\pi^{(s)}, \mu_1^{(s)}, \sigma_1^{(s)}, \eta_{t_2}^{(s)},\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$, $s=1,2,\ldots,S$. The computation is thus similar to that shown in Equation \ref{pointwise-medians}.
+ % We get this by setting the $\op{GLFP}$ parameters equal to the median of their hierarchical distribution, i.e., $\pi=\op{logit}^{-1}(\eta_{\pi}^{(s)}),\, \mu_1=\mu_1^{(s)},\, \sigma_1=\sigma_1^{(s)},\, \mu_2=\eta_{t_2}^{(s)} - m_{\sigma_2}^{(s)} \Phi_{SEV}^{-1}(.2)$ and $\sigma_2= m_{\sigma_2}^{(s)}$, where $m_{\sigma_2}^{(s)}=F^{-1}[0.5 \cdot F(1;\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)});\eta_{\sigma_2}^{(s)}, \tau_{\sigma_2}^{(s)}]$ is the population median of the $\sigma_{2g}$, conditioning on $\left(\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$. The curve was estimated using pointwise medians as in Equation \ref{pointwise-medians}.
 \section{Online Supplementary Material}
 \label{sec:supple}
 \begin{supplement}[id=suppA]
