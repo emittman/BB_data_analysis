@@ -667,23 +667,36 @@ which is the median of a log-normal distribution with parameters $\eta_{\sigma_2
 
 We estimate the global average pointwise, using draws from the joint posterior distribution, $\left(\eta_\pi^{(s)}, \mu_1^{(s)}, \sigma_1^{(s)}, \eta_{t_2}^{(s)},\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$, $s=1,2,\ldots,S$. The computation is thus similar to that shown in Equation \ref{pointwise-medians}.
  % We get this by setting the $\op{GLFP}$ parameters equal to the median of their hierarchical distribution, i.e., $\pi=\op{logit}^{-1}(\eta_{\pi}^{(s)}),\, \mu_1=\mu_1^{(s)},\, \sigma_1=\sigma_1^{(s)},\, \mu_2=\eta_{t_2}^{(s)} - m_{\sigma_2}^{(s)} \Phi_{SEV}^{-1}(.2)$ and $\sigma_2= m_{\sigma_2}^{(s)}$, where $m_{\sigma_2}^{(s)}=F^{-1}[0.5 \cdot F(1;\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)});\eta_{\sigma_2}^{(s)}, \tau_{\sigma_2}^{(s)}]$ is the population median of the $\sigma_{2g}$, conditioning on $\left(\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$. The curve was estimated using pointwise medians as in Equation \ref{pointwise-medians}.
-\section{Online Supplementary Material}
-\label{sec:supple}
-\begin{supplement}[id=suppA]
-  \sname{Supplement A}
-  \stitle{Stan Code and Plots}
-  \slink[doi]{COMPLETED BY THE TYPESETTER}
-  \sdatatype{.pdf}
-  \sdescription{Stan code for Model 4 as well as the complete set of plots for Figures 5 and 6.}
+
+\begin{supplement}
+\sname{Supplement A}
+\stitle{Model code and plots}
+\slink[url]{http://www.e-publications.org/ims/support/dowload/imsart-ims.zip}
+\sdescription{Stan code for Model 4 as well as the complete set of plots for Figures 5 and 6.}
+\end{supplement}
+\begin{supplement}
+\sname{Supplement B}
+\stitle{Backblaze data set}
+\slink[url]{http://www.e-publications.org/ims/support/dowload/imsart-ims.zip}
+\sdescription{Lifetime data set for all 44 drive-models used in our analysis.}
 \end{supplement}
 
-\begin{supplement}[id=suppB]
-  \sname{Supplement B}
-  \stitle{Backblaze Data}
-  \slink[doi]{COMPLETED BY THE TYPESETTER}
-  \sdatatype{.csv}
-  \sdescription{Lifetime data set for all 44 drive-models used in our analysis.}
-\end{supplement}
+
+%\begin{supplement}
+  %\sname{Supplement A}
+  %\stitle{Stan Code and Plots}
+  %%\slink[doi]{COMPLETED BY THE TYPESETTER}
+  %\sdatatype{.pdf}
+  %\sdescription{Stan code for Model 4 as well as the complete set of plots for Figures 5 and 6.}
+%\end{supplement}
+%
+%\begin{supplement}[id=suppB]
+  %\sname{Supplement B}
+  %\stitle{Backblaze Data}
+  %\slink[doi]{COMPLETED BY THE TYPESETTER}
+  %\sdatatype{.csv}
+  %\sdescription{Lifetime data set for all 44 drive-models used in our analysis.}
+%\end{supplement}
 
 
 \bibliography{./sample}
