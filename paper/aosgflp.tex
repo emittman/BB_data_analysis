@@ -208,7 +208,7 @@ work well.
 \label{subsec:GLFP model}
 Let $F_1,F_2$ be Weibull distributions with parameters $(t_{p1},\sigma_1)$ and $(t_{p2}, \sigma_2)$, respectively.
 The Generalized Limited Failure Population model (GLFP) of \citet{chan} is defined as follows: Let $T \sim \op{GLFP}(\pi, t_{p1},\sigma_1,t_{p2},\sigma_2)$. Then
-$$\Pr(T \le t) = F(t) = 1 - (1-\pi\, F_{1}(t))(1 - F_{2}(t)),\, t>0,\, 0 < \pi < 1.$$
+$$\Pr(T \le t) = H(t) = 1 - (1-\pi\, F_{1}(t))(1 - F_{2}(t)),\, t>0,\, 0 < \pi < 1.$$
 
 The GLFP model can be understood as a marginalized mixture model with a binary latent variable, $\delta_i\ind \op{Bernoulli}(\pi)$. $\delta_i$ is an indicator for whether or not an observational unit is defective. Expressed conditional on $\delta_i$,
 \begin{align*}
@@ -221,7 +221,7 @@ The parameter $\pi$ represents the proportion of units susceptible to early fail
 
 Taking the derivative of the (marginal) cdf, the density for the GLFP is
 \begin{equation}
-f(t|\pi, t_{p1},\sigma_1, t_{p2}, \sigma_2) = \pi f_1(t|t_{p1},\sigma_1)\left(1-F_2(t|t_{p2},\sigma_2)\right) + f_2(t|t_{p2},\sigma_2)\left(1-\pi F_2(t|t_{p2},\sigma_2\right).
+h(t|\pi, t_{p1},\sigma_1, t_{p2}, \sigma_2) = \pi f_1(t|t_{p1},\sigma_1)\left(1-F_2(t|t_{p2},\sigma_2)\right) + f_2(t|t_{p2},\sigma_2)\left(1-\pi F_2(t|t_{p2},\sigma_2\right).
 \end{equation}
 
 \subsection{Censoring and truncation}
@@ -234,7 +234,7 @@ When an observation is left-truncated, it would not have been observed if it had
 \subsubsection{Likelihood}
 We now give the general form for the likelihood function, taking into account left truncation and right censoring.  Let $t_{i}$ denote the end of the observed lifetime of unit $i$, in hours.  Let $t_i^L$ be the left truncation time; that is, the first time reported for the unit.  Additionally, let $c_i$ be an indicator for censoring; $c_i=1$ if the failure time is right-censored, $c_1=0$ if the unit failed (at time $t_i$). The likelihood for the GLFP is a function of $\bm{\theta} = (\pi,t_{p1}, \sigma_1, t_{p2}, \sigma_2)$.  Assuming the lifetimes of all units are independent, the likelihood for the data, $t_1,\ldots,t_n$ is given by
 \begin{equation*}
-L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{f(t_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})}\right]^{1-c_i} \left[ \frac{1-F(t_i;\bm{\theta})}{1-F(t_i^L;\bm{\theta})} \right]^{c_i}
+L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{h(t_i;\bm{\theta})}{1-H(t_i^L;\bm{\theta})}\right]^{1-c_i} \left[ \frac{1-H(t_i;\bm{\theta})}{1-H(t_i^L;\bm{\theta})} \right]^{c_i}
 \end{equation*}
 
 \section{Motivating Example}
@@ -318,7 +318,7 @@ y_{ig} \ind \op{GLFP}\left( \pi_g, t_{p_{1}g}, \sigma_{1g}, t_{p_{2}g}, \sigma_{
 \end{equation}
 where $g=1,\ldots,G$ indexes the sub-populations.  The likelihood for the hierarchical GLFP is a function of $\bm{\theta_g} = (\pi_{g}, t_{p_{1}g}, \sigma_{1g}, t_{p_{2}g}, \sigma_{2g})$.  Assuming the lifetimes of all units are independent within and across groups, the likelihood for the data, $i=1,\dots,n_g$,  is given by
 \begin{equation*}
-L(\bm{\Theta})= \prod_{g=1}^{G} \prod_{i=1}^{n_{g}} \left[\frac{f(t_{ig};\bm{\theta_g})}{1-F(t_{ig}^L;\bm{\theta_g})}\right]^{1-c_{ig}} \left[ \frac{1-F(t_{ig};\bm{\theta_g})}{1-F(t_{ig}^L;\bm{\theta_g})} \right]^{c_{ig}}
+L(\bm{\Theta})= \prod_{g=1}^{G} \prod_{i=1}^{n_{g}} \left[\frac{h(t_{ig};\bm{\theta_g})}{1-H(t_{ig}^L;\bm{\theta_g})}\right]^{1-c_{ig}} \left[ \frac{1-H(t_{ig};\bm{\theta_g})}{1-H(t_{ig}^L;\bm{\theta_g})} \right]^{c_{ig}}
 \end{equation*}
 where $t_{ig}$ is the end of the observed lifetime of unit $i$ in group $g$; $t_{ig}^L$ is the left truncation time for unit $i$ in group $g$; and $c_{ig}$ is an indicator if unit $i$ in group $g$ is right censored.  All times are again in hours.
 
@@ -375,9 +375,9 @@ $$ \pi \sim \op{Logit-normal}\langle 7.0\times 10^{-3},\, 2.6 \times 10^{-1} \ra
 $$\sigma_1 \sim \op{Log-normal}\langle 1.4 \times 10^{-1},\, 7.1\rangle,$$ 
 $$t_{p1} \sim \op{Log-normal} \langle 2.2 \times 10^1,\, 5.5 \times 10^{4} \rangle.$$
 
-\paragraph{Model 3.} $t_{p,g}$ and $\sigma_{g2}$ vary by drive-model. Priors for constrained parameters are the same as for Model 2.
+\paragraph{Model 3.} $t_{p,g}$ and $\sigma_{2g}$ vary by drive-model. Priors for constrained parameters are the same as for Model 2.
 
-\paragraph{Model 4.} $\pi_g$, $t_{p,g}$ and $\sigma_{g2}$ vary by drive-model. Priors for constrained parameters are the same as for Model 2.
+\paragraph{Model 4.} $\pi_g$, $t_{p,g}$ and $\sigma_{2g}$ vary by drive-model. Priors for constrained parameters are the same as for Model 2.
 
 
 Where applicable prior distributions on hyperparameters are as listed below. We follow the recommendation of \citet{gelman2014bayesian} to use half-Cauchy prior distributions on hierarchical scale parameters. As for the location hyperparameters, we choose weakly informative prior distributions centered around the corresponding prior mean for the non-hierarchical model.
@@ -557,15 +557,15 @@ sample size, and the uncertainty in future
 observations conditional on the parameters. The {\em posterior
   predictive} distribution incorporates both sources.
 \begin{equation*}
-  p(t_{d,new}|t) = \int p(t_{d,new}|\theta_d) p(\theta_d|t_d) \, d\theta_d
+  p(t_{g,new}|t) = \int p(t_{g,new}|\theta_g) p(\theta_g|t_g) \, d\theta_g
 \end{equation*}
 
-We can sample from this distribution by drawing $t_{d,new}^{(s)}$ from
-$\operatorname{GLFP}(\pi_d^{(s)},
-\mu_1^{(s)},\sigma_1^{(s)},\mu_{2,d}^{(s)},\sigma_{2,d}^{(s)})$, for
+We can sample from this distribution by drawing $t_{g,new}^{(s)}$ from
+$\operatorname{GLFP}(\pi_g^{(s)},
+t_{p1}^{(s)},\sigma_1^{(s)},t_{p_{2}g}^{(s)},\sigma_{2g}^{(s)})$, for
 $s=1,...,S$, using the saved posterior draws for the model
 parameters. The mean time-to-failure (MTTF) for drive-model $d$ can be estimated by
-$$\frac{1}{S} \sum_{s=1}^{S} t_{d,new}^{(s)}.$$
+$$\frac{1}{S} \sum_{s=1}^{S} t_{g,new}^{(s)}.$$
 
 While MTTF is clearly important, due to the
 anticipation of advancements in technology, we can expect that the
@@ -576,9 +576,9 @@ balance method'' the rate of depreciation is 40\% per year.
 
 Let $L(t) = e^{-0.4t}$ represent the value at the time of failure
 relative to a new unit. We can rank the drive-models by 
-$$\op{E}(L(t_{d,new})|t))\approx \frac{1}{S} \sum_{s=1}^{S} L(t_{d,new}^{(s)}).$$
+$$\op{E}(L(t_{g,new})|t))\approx \frac{1}{S} \sum_{s=1}^{S} L(t_{g,new}^{(s)}).$$
 
-Posterior credible intervals for $L(t_{d,new})$ are shown in the left panel of Figure \ref{fig5}. A zoomed version of the top 8 drive-models, as ranked by $\op{E}(L(t_{d,new})|y)$ are shown in the bottom right panel. The panel above shows credible intervals for MTTF. We can see that ranking by MTTF would lead to a different result -- a new Drive-model 8 unit expected to have the last the longest, but possibility of it failing early is higher than for the drive-models ranked highest by our depreciation-aware metric. The top four drive-models (4, 5, 2, 3) seem comparable, with a new Drive-model 4 unit expected to depreciate the most. However, given the discrepancy of the model fit for Drive-model 4, noted in the previous subsection, in the absence of more early life data, we might harbor some lingering concern about possible quality-control issues with this Drive-model.
+Posterior credible intervals for $L(t_{g,new})$ are shown in the left panel of Figure \ref{fig5}. A zoomed version of the top 8 drive-models, as ranked by $\op{E}(L(t_{g,new})|y)$ are shown in the bottom right panel. The panel above shows credible intervals for MTTF. We can see that ranking by MTTF would lead to a different result -- a new Drive-model 8 unit expected to have the last the longest, but possibility of it failing early is higher than for the drive-models ranked highest by our depreciation-aware metric. The top four drive-models (4, 5, 2, 3) seem comparable, with a new Drive-model 4 unit expected to depreciate the most. However, given the discrepancy of the model fit for Drive-model 4, noted in the previous subsection, in the absence of more early life data, we might harbor some lingering concern about possible quality-control issues with this Drive-model.
 
 We can also use the posterior draws to compute quantiles of interest, which in reliability applications is typically more informative than a measure of central tendency.  The top panel of Figure 9 shows $t_{0.10}$ (i.e., the amount of time it takes for 10\% of hard drives to fail), for all drive-models.  In this application 50\% CIs are more meaningful as there is lots of uncertainty in some of the parameters: especially for those with few drives in operation.  The top seven drive-models ranked by MTTF are also the drive-models with the largest $t_{0.10}$.  Another interesting feature to compare is $\pi$, the proportion defective.  The bottom panel of Figure 9 shows the posterior credible intervals of $\pi$ for each drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the plot above.  While for many of the drive-models the ordinal ranking is the same as on the top, there are some drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10}$ or $\pi$.  Depending on a user's application or the hard drive warranty length, using the $\pi$'s as a comparison tool may be a relevant parameter of interest.  
 
@@ -640,19 +640,19 @@ While not presented here, another potential application is forecasting the numbe
 \appendix
 \section{Truncation adjusted Kaplan-Meier estimate of lifetime}
 \label{sec:trunc-adj}
-We first start with a nonparametric estimate of the empirical cdf for each drive-model using the Kaplan-Meier estimator.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $d$, denoted by
-$\widehat{F_d(t)}_{KM}$, is conditional on survival up to
-$t_{d,\text{min}}^L$, the shortest reported running time of all units
-of drive-model $d$ for which records are available. To produce
+We first start with a nonparametric estimate of the empirical cdf for each drive-model using the Kaplan-Meier estimator.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $g$, denoted by
+$\widehat{F_g(t)}_{KM}$, is conditional on survival up to
+$t_{g,\text{min}}^L$, the shortest reported running time of all units
+of drive-model $g$ for which records are available. To produce
 unconditional estimates, we adapt the adjustment method outlined by \citet[Chapter 11]{meeker}.  For each drive-model we select
-$t_{d,\text{min}}^L$, the smallest left truncated time in the sample.
+$t_{g,\text{min}}^L$, the smallest left truncated time in the sample.
 By sampling from the full posterior distribution, since
-$\Pr(T>t_{d,\text{min}}^L|\theta_d)$ (the probability a hard drive has
-survived up to $t_{d,\text{min}}^L$) is a function of the model
+$\Pr(T>t_{g,\text{min}}^L|\theta_g)$ (the probability a hard drive has
+survived up to $t_{g,\text{min}}^L$) is a function of the model
 parameters, we can easily compute its posterior median,
-$\widehat{A}_{\text{med}} = \widehat{\Pr}(T>t_{d,\text{min}}^L|\theta_d)$. We compute the adjusted estimate by
+$\widehat{A}_{\text{med}} = \widehat{\Pr}(T>t_{g,\text{min}}^L|\theta_g)$. We compute the adjusted estimate by
 
-$$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\text{med}}\right)\widehat{F_d(t)}_{KM},\; t>t_{d,\text{min}}^L.$$
+$$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\text{med}}\right)\widehat{F_g(t)}_{KM},\; t>t_{g,\text{min}}^L.$$
 
 While this adjustment is negligible for the majority of drive-models, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
 
