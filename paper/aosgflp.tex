@@ -632,8 +632,8 @@ Consumers of manufactured goods usually lack the data and expertise to perform a
 
 While not presented here, another potential application is forecasting the number of future failures over a fixed period of time for a current population of drives. \citet{hmm} proposed a method, based on the Poisson-binomial distribution. It would be straightforward to adapt their approach to work with our method. For details and examples see \citet[Sect.~6]{hmm} and \citet{xu2015assessing}.
 
-% \section*{Acknowledgment}    
-% The authors express their gratitude to Dr. \hspace{-.5em} Meeker for his comments and suggestions.
+\section*{Acknowledgment}    
+The authors express their gratitude to Nick Clark for his comments and suggestions.
 
 %Hierarchical modeling can be an effective way to regularize a large number of models fits by borrowing information.  %Because all the data contribute some information about the global parameters, it is often sufficient to use weakly %informative priors on the global parameters, making the resulting shrinkage data dependent.  Analysis using HMC is %accessible to practitioners by Stan. HMC has been shown to be very efficient in effective samples per iteration because %its joint updating scheme.  
 \clearpage
@@ -659,13 +659,13 @@ While this adjustment is negligible for the majority of drive-models, five drive
 
 \section{Definition of global average for Model 4}
 \label{global-avg}
-In Section \ref{model-assessment}, to illustrate the concept of shrinkage in our hierarchical model, we refer to a `global average' which represents an average GLFP cdf for the entire population, $\op{GLFP}\left(\bar{\pi},\mu_1,\sigma_1,\bar{\mu}_2,\bar{\sigma}_2\right)$. For the parameters that vary across drive models, we select values corresponding to the medians of the hierarchical distributions (Eq. \ref{eq:hier-model}) conditional on the hyperparameters. In particular, setting
+In Section \ref{model-assessment}, to illustrate the concept of shrinkage in our hierarchical model, we refer to a `global average' which represents an average GLFP cdf for the entire population, $\op{H}\left(\cdot|\bar{\pi},\mu_1,\sigma_1,\bar{\mu}_2,\bar{\sigma}_2\right)$. Since $\mu_1$ and $\sigma_1$ are shared across drive-models, these can already be interpreted as `global'. For the parameters that vary across drive models, we select values corresponding to the medians of the hierarchical distributions (\ref{eq:hier-model}) conditional on the hyperparameters. In particular, setting
 $$\bar{\pi}=\op{logit}^{-1}(\eta_{\pi}),\;\bar{\mu}_2=\eta_{t_2} - m_{\sigma_2}\Phi^{-1}(.2) \mbox{ and } \bar{\sigma}_2= m_{\sigma_2}.$$
 Let $F(\cdot|a,b),\;F^{-1}(\cdot|a,b)$ denote the cdf and inverse cdf, respectively, for a log-normal distribution with log-location parameter $a$ and log-scale parameter $b$. Then
 $$m_{\sigma_2}=F^{-1}[0.5 \cdot F(1|\eta_{\sigma_2},\tau_{\sigma_2})|\eta_{\sigma_2}, \tau_{\sigma_2}],$$
 which is the median of a log-normal distribution with parameters $\eta_{\sigma_2}$, and $\tau_{\sigma_2}$, truncated to the interval $(0, 1)$.
 
-We estimate the global average pointwise, using draws from the joint posterior distribution, $\left(\eta_\pi^{(s)}, \mu_1^{(s)}, \sigma_1^{(s)}, \eta_{t_2}^{(s)},\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$, $s=1,2,\ldots,S$. The computation is thus similar to that shown in Equation \ref{pointwise-medians}.
+We estimate the global average pointwise, using draws from the joint posterior distribution, $H\left(\tilde{t}|\eta_\pi^{(s)}, \mu_1^{(s)}, \sigma_1^{(s)}, \eta_{t_2}^{(s)},\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$, $s=1,2,\ldots,S$. The computation is thus similar to that shown in (\ref{pointwise-medians}).
  % We get this by setting the $\op{GLFP}$ parameters equal to the median of their hierarchical distribution, i.e., $\pi=\op{logit}^{-1}(\eta_{\pi}^{(s)}),\, \mu_1=\mu_1^{(s)},\, \sigma_1=\sigma_1^{(s)},\, \mu_2=\eta_{t_2}^{(s)} - m_{\sigma_2}^{(s)} \Phi_{SEV}^{-1}(.2)$ and $\sigma_2= m_{\sigma_2}^{(s)}$, where $m_{\sigma_2}^{(s)}=F^{-1}[0.5 \cdot F(1;\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)});\eta_{\sigma_2}^{(s)}, \tau_{\sigma_2}^{(s)}]$ is the population median of the $\sigma_{2g}$, conditioning on $\left(\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$. The curve was estimated using pointwise medians as in Equation \ref{pointwise-medians}.
 \section{Online Supplementary Material}
 \label{sec:supple}
