@@ -232,7 +232,7 @@ When an observation is left-truncated, it would not have been observed if it had
 
 
 \subsubsection{Likelihood}
-We now give the general form for the likelihood function, taking into account left truncation and right censoring.  Let $t_{i}$ denote the end of the observed lifetime of unit $i$, in hours.  Let $t_i^L$ be the left truncation time, the age of unit $i$ when data reporting commenced. Additionally, let $c_i$ be an indicator for censoring; $c_i=1$ if the failure time is right-censored, $c_1=0$ if the unit failed (at time $t_i$). The likelihood for the GLFP is a function of the parameter $\bm{\theta} = (\pi,t_{p1}, \sigma_1, t_{p2}, \sigma_2)$.  Assuming the lifetimes of all units are independent, the likelihood for the data, $t_1,\ldots,t_n$ is
+We now give the general form for the likelihood function, taking into account left truncation and right censoring.  Let $t_{i}$ denote the end of the observed lifetime of unit $i$, in hours.  Let $t_i^L$ be the left truncation time, the age of unit $i$ when data reporting commenced. Additionally, let $c_i$ be an indicator for censoring; $c_i=1$ if the failure time is right-censored, $c_1=0$ if the unit failed (at time $t_i$). The likelihood for the GLFP is a function of the parameters $\bm{\theta} = (\pi,t_{p1}, \sigma_1, t_{p2}, \sigma_2)$.  Assuming the lifetimes of all units are independent, the likelihood for the data, $t_1,\ldots,t_n$ is
 \begin{equation*}
 L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{h(t_i;\bm{\theta})}{1-H(t_i^L;\bm{\theta})}\right]^{1-c_i} \left[ \frac{1-H(t_i;\bm{\theta})}{1-H(t_i^L;\bm{\theta})} \right]^{c_i}
 \end{equation*}
@@ -287,11 +287,11 @@ Table \ref{table:1} gives the posterior median and 95\% credible intervals for t
 $\pi$ & 0.033 & 0.054 & 0.099 \\ 
  $\beta_1 = 1/\sigma_1 $ & 0.47 & 1.13 & 1.72 \\ 
   $\beta_2 = 1/\sigma_2$ & 4.47 & 4.70 & 4.95 \\ 
-  $t_{0.5,1}$ & $1.03\times 10^3$  & $2.28 \times 10^3$ & $3.99 \times 10^3$\\ 
-  $t_{0.2,2}$ & $1.80 \times 10^4$ & $1.82 \times 10^4$ & $1.86 \times 10^4$ \\ 
+  $t_{0.5,1}$ & $1.03$  & $2.28$ & $3.99$\\ 
+  $t_{0.2,2}$ & $18.0$ & $18.2$ & $18.6$ \\ 
    \hline
 \end{tabular}
-\caption{Posterior 95\% Credible Intervals for the 5 GLFP parameters for Drive-model 14.}
+\caption{Posterior 95\% Credible Intervals for the 5 GLFP parameters for Drive-model 14.  Quantiles are in thousands of hours.}
 \label{table:1}
 \end{table}
 
@@ -304,7 +304,7 @@ In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP 
 \begin{figure}[H]
 \centering
   \includegraphics[width=.8\textwidth]{km14-prob-plus}
-  \caption{The estimated GLFP for Drive-model 14 plotted on Weibull paper.  The dashed line corresponds to the median of the posterior draws; pointwise 90\% credible bounds are shown in red.  The solid line is an adjusted K-M estimate with pointwise 90\% credible band in blue.}
+  \caption{The estimated GLFP for Drive-model 14 plotted on Weibull paper.  The dashed line corresponds to the median of the posterior draws; pointwise 90\% credible bounds are shown in red.  The solid line is an adjusted K-M estimate with pointwise 90\% credible bounds in blue.}
   \label{ex1-overlay}
 \end{figure}
 
@@ -316,7 +316,7 @@ In order to describe the entire population, consisting of different but similar 
 \begin{equation}
 y_{ig} \ind \op{GLFP}\left( \pi_g, t_{p_{1}g}, \sigma_{1g}, t_{p_{2}g}, \sigma_{2g} \right),
 \end{equation}
-where $g=1,\ldots,G$ indexes the sub-populations.  The likelihood for the hierarchical GLFP is a function of the parameters $\bm{\theta_g} = (\pi_{g}, t_{p_{1}g}, \sigma_{1g}, t_{p_{2}g}, \sigma_{2g})$.  Assuming the lifetimes of all units are independent within and across groups, the likelihood for the data, $i=1,\dots,n_g$,  is given by
+where $g=1,\ldots,G$ indexes the sub-populations.  The likelihood for the hierarchical GLFP is a function of the sets of parameters $\bm{\theta_g} = (\pi_{g}, t_{p_{1}g}, \sigma_{1g}, t_{p_{2}g}, \sigma_{2g})$, one set for each group, $g$.  Assuming the lifetimes of all units are independent within and across groups, the likelihood for the data, $i=1,\dots,n_g$,  is given by
 \begin{equation*}
 L(\bm{\Theta})= \prod_{g=1}^{G} \prod_{i=1}^{n_{g}} \left[\frac{h(t_{ig};\bm{\theta_g})}{1-H(t_{ig}^L;\bm{\theta_g})}\right]^{1-c_{ig}} \left[ \frac{1-H(t_{ig};\bm{\theta_g})}{1-H(t_{ig}^L;\bm{\theta_g})} \right]^{c_{ig}}
 \end{equation*}
@@ -331,10 +331,10 @@ In the hierarchical model, the parameters are modeled as random variables, varyi
 \end{equation*}
 \begin{equation}
 \label{eq:hier-model}
-t_{p_{1}g} \equiv \exp\left(\mu_{1g} + \sigma_{1g}\,\Phi^{-1}(p_1)\right)  \ind \op{Log-normal} \left(\eta_{t_{p_1}}, \tau^2_{t_{p_1}}\right)
+t_{p_{1}g} = \exp\left(\mu_{1g} + \sigma_{1g}\,\Phi^{-1}(p_1)\right)  \ind \op{Log-normal} \left(\eta_{t_{p_1}}, \tau^2_{t_{p_1}}\right)
 \end{equation}
 \begin{equation*}
-t_{p_{2}g} \equiv \exp\left(\mu_{2g} + \sigma_{2g}\,\Phi^{-1}(p_2)\right)  \ind \op{Log-normal} \left(\eta_{t_{p_2}}, \tau^2_{t_{p_2}}\right)
+t_{p_{2}g} = \exp\left(\mu_{2g} + \sigma_{2g}\,\Phi^{-1}(p_2)\right)  \ind \op{Log-normal} \left(\eta_{t_{p_2}}, \tau^2_{t_{p_2}}\right)
 \end{equation*}
 \begin{equation*}
 \pi_g \ind \op{Logit-normal}(\eta_\pi, \tau^2_\pi).
@@ -358,7 +358,7 @@ We considered four models, all based on (\ref{eq:hier-model}), differing by whic
 \item $t_{p_{1}g}= t_{p1},\quad \sigma_{1g}=\sigma_1$
 \end{enumerate}
 
-The set of model specifications was chosen based data, interpretation of the model, as well as estimation considerations.  Drive-model-specific parameters for the the wearout failure mode $(t_{p_{2}g},\sigma_{2g})$, and the proportion defective $(\pi_g)$, are considered as a means to account for heterogeneity across drive-models in the right tails of the failure distribution.  Going from a common model for all product brands and gradually increasing the complexity of the model, we conclude that Model 4 provides the best description of the data.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the wearout failure mode to vary by drive-model.
+The set of model specifications was chosen based data, interpretation of the model, as well as estimation considerations.  Drive-model-specific parameters for the the wearout failure mode $(t_{p_{2}g},\sigma_{2g})$, and the proportion defective $(\pi_g)$, are considered as a means to account for heterogeneity across drive-models in the right tails of the failure distribution.  Going from a common model for all drive-models and gradually increasing the complexity of the model, we conclude that Model 4 provides the best description of the data.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the wearout failure mode to vary by drive-model.
 
 For all of the models we consider, the parameters for the infant mortality failure mode are held in common across drive-models.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality provides a meaningful interpretation and comparison of $\pi_g$ and $\pi_{g'}$ ($g \neq g'$). Also the failure-time distribution of the defective subpopulation (as opposed to the proportion defective) is not of high interest.
 
@@ -413,7 +413,7 @@ These plots suggest that Model 1 is insufficient to explain the observed data. M
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{heterogeneity-compare}
-\caption{Left: Adjusted K-M estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median time to failure curves for Models 1-4, ordered left to right, top to bottom.}
+\caption{Left: Adjusted K-M estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median cdf estimates for Models 1-4, ordered left to right, top to bottom.}
 \label{fig:fig2}
 \end{figure}
 
