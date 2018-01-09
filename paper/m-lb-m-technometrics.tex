@@ -109,7 +109,7 @@ This paper presents a general framework for statistically modeling reliability f
 \end{itemize}
 
 \subsection{Model considerations}
-Nonparametric methods require relatively few assumptions, but may not be suitable for prediction when extrapolation is required. Moreover, nonparametric estimates made using small samples, or data which are heavily censored may be too noisy to be useful. Appropriate parametric models can make better use of available data. For inference, likelihood-based methods are able to deal with truncated and/or censored data. Furthermore, by assuming a parsimonious representation of the data-generating process, parametric models admit simpler, more intuitive ways to compare populations of interest, borrow strength across groups, and incorporate prior information. 
+Nonparametric methods require relatively few assumptions, but may not be suitable for prediction when extrapolation is required. Moreover, nonparametric estimates made using small samples, or data which are heavily censored may be too noisy to be useful. Appropriate parametric models can make better use of available data. For inference, likelihood-based methods are able to deal with truncated and/or censored data. Furthermore, by assuming a parsimonious representation of the data-generating process, parametric models admit simpler, more intuitive ways to compare populations of interest, borrow strength across sub-populations, and incorporate prior information. 
 
 Often no information is available to identify why a unit failed, even when the failed units are available. Physical failure mode analysis (sometimes referred to as ``autopsy'') can be extremely time consuming and expensive. This presents a dilemma for analysts: the data may indicate multiple failure modes, contraindicating the use of a unimodal parametric distribution. However, without any knowledge of cause of failure, traditional competing risk models are not identifiable. \citet{chan} proposed the Generalized Limited Failure Population (GLFP) model. This model can provide a solution to the problem of unknown cause of failure in the special case where there is evidence of two modes of failure which impact different stages of product life. It avoids non-identifiability by introducing a parameter representing the population proportion defective. When this parameter is zero, the GLFP model reduces to a unimodal distribution. \\
 
@@ -296,15 +296,15 @@ In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP 
 \label{sec:Hierarchical GLFP model}
 \subsection{Conditional likelihood}
 
-In order to describe an entire product population, consisting of different but similar sub-populations, and because of the limited amount of data from many of the sub-populations, we model sub-population-specific parameters hierarchically, borrowing strength across groups.  Let
+In order to describe an entire product population, consisting of different but similar sub-populations, and because of the limited amount of data from many of the sub-populations, we model sub-population-specific parameters hierarchically, borrowing strength across sub-populations.  Let
 \begin{equation}
 y_{ig} \ind \op{GLFP}\left( \pi_g, t_{p_{1}g}, \sigma_{1g}, t_{p_{2}g}, \sigma_{2g} \right),
 \end{equation}
-where $g=1,\ldots,G$ indexes the sub-populations.  The likelihood for the hierarchical GLFP is a function of the sets of parameters $\bm{\theta_g} = (\pi_{g}, t_{p_{1}g}, \sigma_{1g}, t_{p_{2}g}, \sigma_{2g})$, one set for each group, $g$.  Assuming the lifetimes of all units are independent within and across groups, and conditional on the fixed parameters, the likelihood for the data, $i=1,\dots,n_g$,  is given by
+where $g=1,\ldots,G$ indexes the sub-populations.  The likelihood for the hierarchical GLFP is a function of the sets of parameters $\bm{\theta_g} = (\pi_{g}, t_{p_{1}g}, \sigma_{1g}, t_{p_{2}g}, \sigma_{2g})$, one set for each sub-population, $g$.  Assuming the lifetimes of all units are independent within and across sub-populations, and conditional on the fixed parameters, the likelihood for the data, $i=1,\dots,n_g$,  is given by
 \begin{equation*}
 L(\bm{\Theta})= \prod_{g=1}^{G} \prod_{i=1}^{n_{g}} \left[\frac{h(t_{ig};\bm{\theta_g})}{1-H(t_{ig}^L;\bm{\theta_g})}\right]^{1-c_{ig}} \left[ \frac{1-H(t_{ig};\bm{\theta_g})}{1-H(t_{ig}^L;\bm{\theta_g})} \right]^{c_{ig}}
 \end{equation*}
-where $t_{ig}$ is the observed failure or survival time of unit $i$ in group $g$; $t_{ig}^L$ is the left truncation time for unit $i$ in group $g$; and $c_{ig}$ is an indicator if unit $i$ in group $g$ is right censored.  All times are again in hours.
+where $t_{ig}$ is the observed failure or survival time of unit $i$ in sub-population $g$; $t_{ig}^L$ is the left truncation time for unit $i$ in sub-population $g$; and $c_{ig}$ is an indicator if unit $i$ in sub-population $g$ is right censored.  All times are again in hours.
 \subsection{Parameter distributions}
 
 In a hierarchical model, the parameters are modeled as random variables, varying across different sub-populations.  For example
@@ -339,7 +339,7 @@ In principle, we prefer the full model (\ref{eq:hier-model}) because we tend to 
 \paragraph{Model 4} $t_{p_{1}g}= t_{p1},\quad \sigma_{1g}=\sigma_1$
 
 
-The set of model specifications is chosen based data, interpretation of the model, as well as estimation considerations.  Group-model-specific parameters for the the wearout failure mode $(t_{p_{2}g},\sigma_{2g})$, and the proportion defective $(\pi_g)$, are considered as a means to account for heterogeneity across sub-populations in the right tails of the failure distribution.  Going from a common model for all sub-populations and gradually increasing the complexity of the model, Model 4 is the most flexible.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the wearout failure mode to vary by sub-population.
+The set of model specifications is chosen based data, interpretation of the model, as well as estimation considerations.  sub-population-model-specific parameters for the the wearout failure mode $(t_{p_{2}g},\sigma_{2g})$, and the proportion defective $(\pi_g)$, are considered as a means to account for heterogeneity across sub-populations in the right tails of the failure distribution.  Going from a common model for all sub-populations and gradually increasing the complexity of the model, Model 4 is the most flexible.  Model 4 allows for the probability of infant mortality as well as the shape and scale parameters for the wearout failure mode to vary by sub-population.
 
 For all of the nested models, the parameters for the infant mortality failure mode are held in common across sub-populations.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for infant mortality provides a meaningful interpretation and comparison of $\pi_g$ and $\pi_{g'}$ ($g \neq g'$). Also the failure-time distribution of the defective subpopulation (as opposed to the proportion defective) is not of high interest.
 
@@ -412,7 +412,7 @@ As we have discussed, while we prefer to allow all of the GLFP model parameters 
 Figure \ref{fig:fig2} provides a visual comparison for Models 1 through 4 by plotting the pointwise posterior median of the cdf for each drive-model.  The large left panel shows the adjusted K-M estimate.  The smaller plots correspond to Models 1 through 4.  To make the plots comparable, we use an adjustment based on the parametric model (Model 4).  Note that while all the paths for the posterior estimates necessarily pass through the origin, the K-M estimates do not, because, for the K-M estimator, inference is entirely conditional on survival up to left-most left-trunctation time.
 
 %Should we be brief discussing the plot?
-These plots suggest that Model 1 is insufficient to explain the observed data. Model 2 certainly captures more of the heterogeneity observed in the K-M estimates; we observe that the assumption of a common $\sigma_2$ results in very similar progressions in the cdf, which may be too restrictive. Model 3, which allows $\sigma_2$ to vary by group, suggests there is evidence to support variation in this parameter among drive-models. While Model 3 and 4 do display differences, they are relatively subtle.
+These plots suggest that Model 1 is insufficient to explain the observed data. Model 2 certainly captures more of the heterogeneity observed in the K-M estimates; we observe that the assumption of a common $\sigma_2$ results in very similar progressions in the cdf, which may be too restrictive. Model 3, which allows $\sigma_2$ to vary by sub-population, suggests there is evidence to support variation in this parameter among drive-models. While Model 3 and 4 do display differences, they are relatively subtle.
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{heterogeneity-compare}
@@ -464,8 +464,8 @@ Model 1 & -17483.6  \\
 \end{table}
 \end{figure}
 
-\subsection{Results}
-\subsubsection{Model assessment}
+\section{Model Assessment}
+\subsubsection{A simulation-based approach}
 \label{model-assessment}
 Having chosen Model 4 as the best of the candidate models, we would like to assess whether our model provides an adequate description of the observed data. One way to do this is to draw replicate data sets from the posterior predictive distribution. This is a general approach recommended by \cite{gelman1996postpred} for models where no classical goodness-of-fit test is available. In the hierarchical setting, there can be different formulations of the predictive distribution. In the present context, one could predict the lifetime of a new unit of a previously observed drive-model or a new drive-model. We choose to focus on the first of these and apply it to individual drive-models.  There are many possible approaches to the posterior predictive check. For this problem, we chose to consider the posterior predictive distribution of the K-M estimate for each drive-model $g$.
 
@@ -527,8 +527,12 @@ Figure 8 shows a similar pair of plots for Drive-model 43. The data for this Dri
 \label{fig:ex-mod-43}
 \end{figure}
 
-\subsubsection{Drive-model comparisons}
-\label{subsubsec:Drive-model comparisons}
+\section{Comparing Sub-populations}
+\subsection{Comparisons based on model parameters}
+\subsection{Example: Drive-model comparison based on quantiles and proportion defective}
+\subsection{Comparisons based on functionals}
+\subsection{Example: Drive-model comparison based on predictive distribution of new unit}
+
 We consider the problem of ranking drive-models with respect to economical value. From a
 business perspective, it is clear
 that we should prefer the drive-models which will provide more years
@@ -609,7 +613,7 @@ First, we assume the failures occurring from various causes can be approximately
 
 Second, we assume exchangability of units within a population. This assumption is due in part to ignorance about which units are defective but also of potentially important covariates. We do not account for batch effects or varying conditions in the facility which have impacted the observed failure rates. These factors are confounded with drive-model in our analysis. An example of a possible batch effect is noted in Section \ref{model-assessment} and illustrated by Figure \ref{fig:ex-mod-4}. 
 
-Consumers of manufactured goods usually lack the data and expertise to perform a failure analysis to determine the cause of failure.  Moreover, their interest is primarily in the lifetime distribution of a product rather than the specific cause of failure.  The ability to fit marginal models, such as GLFP, allow consumers and manufacturers to accurately model products with bathtub hazard lifetime distributions and make comparisons across different product groups.  Because the Bayesian approach provides full posteriors distributions once a model is fit, the analyst can easily estimate a functional, such as a quantile or depreciation factor, that allow products to be compared using statistics that are meaningful in the context of the data. 
+Consumers of manufactured goods usually lack the data and expertise to perform a failure analysis to determine the cause of failure.  Moreover, their interest is primarily in the lifetime distribution of a product rather than the specific cause of failure.  The ability to fit marginal models, such as GLFP, allow consumers and manufacturers to accurately model products with bathtub hazard lifetime distributions and make comparisons across different product sub-populations.  Because the Bayesian approach provides full posteriors distributions once a model is fit, the analyst can easily estimate a functional, such as a quantile or depreciation factor, that allow products to be compared using statistics that are meaningful in the context of the data. 
 
 While not presented here, another potential application is forecasting the number of future failures over a fixed period of time for a current population of drives. \citet{hmm} proposed a method, based on the Poisson-binomial distribution. It would be straightforward to adapt their approach to work with our method. For details and examples see \citet[Sect.~6]{hmm} and \citet{xu2015assessing}.
 
