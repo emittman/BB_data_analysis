@@ -465,18 +465,19 @@ Model 1 & -17483.6  \\
 \end{figure}
 
 \section{Model Assessment}
-\subsubsection{A simulation-based approach}
+\subsection{A simulation-based approach}
 \label{model-assessment}
-Having chosen Model 4 as the best of the candidate models, we would like to assess whether our model provides an adequate description of the observed data. One way to do this is to draw replicate data sets from the posterior predictive distribution. This is a general approach recommended by \cite{gelman1996postpred} for models where no classical goodness-of-fit test is available. In the hierarchical setting, there can be different formulations of the predictive distribution. In the present context, one could predict the lifetime of a new unit of a previously observed drive-model or a new drive-model. We choose to focus on the first of these and apply it to individual drive-models.  There are many possible approaches to the posterior predictive check. For this problem, we chose to consider the posterior predictive distribution of the K-M estimate for each drive-model $g$.
+Having selected a model, it is good practice to check that the model provides an adequate representation of the data-generating mechanism. One way to do this is to draw replicate data sets from the posterior predictive distribution
+$$p(t_{rep,g}|t) = \int f(t_{\mbox{rep},g}|\theta_g)\; p(\theta_g|t)\;d\theta_g.$$
+This is a general approach recommended by \cite{gelman1996postpred}, which works when no classical goodness-of-fit test is available. When the model is adequate for the data, the predictive distribution of a finite set of data characteristics --- chosen to reflect features relevant to the goals of the analysis --- should not contradict the corresponding characteristics observed in the actualized data.
 
-% Graphical comparisons can be highly informative in revealing limitations of the model. as in our cas a graphical posterior predictive check, wherein replicate data sets are generated from the posterior predictive distribution and compared with the observed data. Because of the rich information gleaned from plotting the data, this method can be very effective at identifying limitations of the model.
+There are many possible approaches to the posterior predictive check. We propose the comparison of K-M estimates for each sub-population derived from replicated data drawn from the posterior predictive distribution to the K-M estimate based on the actualized data. This graphical approach does not provide a test statistic, but provides rich feedback with respect to the fitted model's agreement with the data.
 
-
-Because the variability in the K-M estimator is primarily a function of the number of at-risk units, we want to replicate the pattern of censoring that was observed. That is, for unit $i$ of drive-model $g$,
+Because the variability in the K-M estimator is primarily a function of the number of at-risk units, we want to replicate the pattern of censoring that was observed. That is, for unit $i$ of sub-population $g$,
 $$p(t_{rep,g}) = \int \prod_{i=1}^{n_g}f(t_{new}|t_{g,i}^L,c_{g,i},\theta)\,p(\theta|t)d\theta.$$
 Because we are working with posterior draws, $\theta^{(s)}$, we can draw from this distribution by choosing a draw, $\theta^{(s)}$, at random, then conditionally draw $t_{rep,g}$ from $f(t_{new}|t_{g,i}^L,c_{g,i},\theta^{(s)}).$
 
-An obstacle remains, in that the censoring mechanism itself is not fully observed. Our admittedly simple approach is to assume that failed units would have been the censored had they survived until the latest censoring or failure time for that drive model. We generated 19 replicates for each drive model. This gives a 1/20 chance under the hypothesis of no difference that the K-M estimate based on the observed data would be ``most extreme" relative to those from the replicated data, but not too many so as to produce an overly cluttered plot. Our method for generating replicate data sets, $y_{rep,g}^{(s)}$, $s = 1 \dots 19$, for each drive-model $g=1,\ldots,44$, is as follows:
+An obstacle remains, owing to the fact that the censoring time is unknown for observed failures. Our admittedly simple approach is to assume that failed units would have been the censored had they survived until the latest censoring or failure time for that drive model. Our method for generating replicate data sets, $y_{rep,g}^{(s)}$, $s = 1 \dots R$, for each sub-population $g=1,\ldots,G$, is as follows:
 \begin{enumerate}
 \item Simulate $\tilde{t}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(s)},t_{p1}^{(s)},\sigma_1^{(s)},t_{p_{2}g}^{(s)}, \sigma_{2g}^{(s)})$ where each set of parameters, \\$\left( \pi_{g}^{(s)},t_{p1}^{(s)},\sigma_1^{(s)},t_{p_{2}g}^{(s)}, \sigma_{2g}^{(s)} \right)$, is a random draw from the full posterior distribution.
 \item Repeat step 1 until $\tilde{t}_{rep,g,i} > t_{g,i}^L$.
@@ -487,6 +488,15 @@ Lastly, set $(t_{rep,g,i}^{(s)},c_{rep,g,i}^{(s)}) = \begin{cases}
   (\tilde{t}_{rep,g,i}^{(s)},0), & \mbox{ if }\tilde{t}_{rep,g,i}^{(s)} \le d_{g,i}^{(s)}.
 \end{cases}$
 \end{enumerate}
+
+Having chosen Model 4 as the best of the candidate models, we would like to assess whether our model provides an adequate description of the observed data. In the present context, one could predict the lifetime of a new unit of a previously observed drive-model or a new drive-model. We choose to focus on the first of these and apply it to individual drive-models.  There are many possible approaches to the posterior predictive check. For this problem, we chose to consider the posterior predictive distribution of the K-M estimate for each drive-model $g$.
+
+% Graphical comparisons can be highly informative in revealing limitations of the model. as in our cas a graphical posterior predictive check, wherein replicate data sets are generated from the posterior predictive distribution and compared with the observed data. Because of the rich information gleaned from plotting the data, this method can be very effective at identifying limitations of the model.
+
+
+
+
+
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{ppcheck-sample}
