@@ -47,12 +47,11 @@
 
 \if0\blind
 {
-  \title{\bf A hierarchical failure-time model for heterogenous field data}
-  \author{Eric Mittman\thanks{Department of Statistics, Iowa State University}\\
-    and \\
-    Colin Lewis-Beck\footnotemark[1]\\
-    and \\
-    William Q. Meeker\footnotemark[1]}
+  \title{\bf A Hierarchical Model for Heterogenous Reliability Field Data}
+  \author{Eric Mittman, Colin Lewis-Beck, and William Q. Meeker\\
+  Department of Statistics\\
+  Iowa State University\\
+  Ames, Iowa}
   \maketitle
 } \fi
 
@@ -208,6 +207,8 @@ Taking the derivative of the (marginal) cdf, the density for the GLFP model is
 h(t|\pi, t_{p1},\sigma_1, t_{p2}, \sigma_2) = \pi & f_1(t|t_{p1},\sigma_1)\left(1-F_2(t|t_{p2},\sigma_2)\right) + \\ & f_2(t|t_{p2},\sigma_2)\left(1-\pi F_1(t|t_{p1},\sigma_1\right).
 \end{align*}
 
+Note that the $p$ quantile may be found by setting $p=H(t_p)$ and solving numerically for $t_p$.
+
 \subsection{Censoring and truncation}
 A common feature of lifetime data is right-censoring. In the analysis of reliability field data, it is rare all units are observed until failure. If a unit has not yet failed when the data are analyzed it is considered right-censored.  In other words, right-censoring puts a lower bound on the failure time.
 
@@ -334,10 +335,10 @@ The complete GLFP model requires prior distributions on the hierarchical paramet
 \subsection{Nested models}
 In principle, we prefer the full model (\ref{eq:hier-model}) because we tend to believe that every population has a distribution with a distinct set of parameters. In practice, however, we may consider restrictions to reduce the number of parameters if the data do not support their inclusion.  We considered four models, all based on (\ref{eq:hier-model}), differing by which model parameters are held constant across sub-populations. These are (from most to least restrictive):
 
-\paragraph{Model 1} $\pi_{g} = \pi,\quad t_{p_{1}g} = t_{p1},\quad \sigma_{1g}=\sigma_1,\quad t_{p_{2}g} = t_{p2},\quad \sigma_{2g} = \sigma_2$
-\paragraph{Model 2} $\pi_{g} = \pi,\quad t_{p_{1}g} = t_{p1},\quad \sigma_{1g}=\sigma_1,\quad \sigma_{2g} = \sigma_2$
-\paragraph{Model 3} $\pi_{g} = \pi,\quad  t_{p_{1}g}= t_{p1},\quad \sigma_{1g}=\sigma_1$
-\paragraph{Model 4} $t_{p_{1}g}= t_{p1},\quad \sigma_{1g}=\sigma_1$
+\paragraph{Model 1} $\pi_{g} = \pi,\quad t_{p_{1}g} = t_{p_1},\quad \sigma_{1g}=\sigma_1,\quad t_{p_{2}g} = t_{p_2},\quad \sigma_{2g} = \sigma_2$
+\paragraph{Model 2} $\pi_{g} = \pi,\quad t_{p_{1}g} = t_{p_1},\quad \sigma_{1g}=\sigma_1,\quad \sigma_{2g} = \sigma_2$
+\paragraph{Model 3} $\pi_{g} = \pi,\quad  t_{p_{1}g}= t_{p_1},\quad \sigma_{1g}=\sigma_1$
+\paragraph{Model 4} $t_{p_{1}g}= t_{p_1},\quad \sigma_{1g}=\sigma_1$
 
 
 This set of model specifications is chosen based on the data, interpretation of the model, as well as estimation considerations.  Sub-population-model-specific parameters for the the wearout failure mode $(t_{p_{2}g},\sigma_{2g})$, and the proportion defective $(\pi_g)$, are considered as a means to account for heterogeneity across sub-populations in the right tails of the failure distribution.  Going from a common model for all sub-populations and gradually increasing the complexity of the model, Model 4 is the most flexible.  Model 4 allows for the probability of early failure as well as the shape and scale parameters for the wearout failure mode to vary across sub-populations.
@@ -374,16 +375,16 @@ We now apply this general methodology to the hard drive failure data from Backbl
 \label{sec:Prior distributions}
 Following the recommendations in Section 5.3, we specify the following prior distributions for each of the four nested GLFP models. Different sets of restrictions require different prior distribution specifications, which are assigned as follows:
 
-\paragraph{Model 1} Constrain all drive-models to the same GLFP distribution. For this ``reduced" model we assume the same prior distributions as in Example 1.
+\paragraph{Model 1} Constrain all drive-models to the same GLFP distribution. For this ``reduced" model we assume the same prior distributions as in Section \ref{subsec:ex1}.
 
-\paragraph{Model 2} $t_{p,g}$ varies by drive-model. To help with model identifiably, we tighten the priors on the early failure mode:
+\paragraph{Model 2} $t_{p_{2}g}$ varies by drive-model. To help with model identifiably, we tighten the priors on the early failure mode:
 $$ \pi \sim \op{Logit-normal}\langle 7.0\times 10^{-3},\, 2.6 \times 10^{-1} \rangle,$$
 $$\sigma_1 \sim \op{Lognormal}\langle 1.4 \times 10^{-1},\, 7.1\rangle,$$ 
-$$t_{p1} \sim \op{Lognormal} \langle 2.2 \times 10^1,\, 5.5 \times 10^{4} \rangle.$$
+$$t_{p_1} \sim \op{Lognormal} \langle 2.2 \times 10^1,\, 5.5 \times 10^{4} \rangle.$$
 
-\paragraph{Model 3} $t_{p,g}$ and $\sigma_{2g}$ vary by drive-model. Prior distributions for the constrained parameters are the same as for Model 2.
+\paragraph{Model 3} $t_{p_{2}g}$ and $\sigma_{2g}$ vary by drive-model. Prior distributions for the constrained parameters are the same as for Model 2.
 
-\paragraph{Model 4} $\pi_g$, $t_{p,g}$ and $\sigma_{2g}$ vary by drive-model. Prior distributions for constrained parameters are the same as for Model 2.
+\paragraph{Model 4} $\pi_g$, $t_{p_{2}g}$ and $\sigma_{2g}$ vary by drive-model. Prior distributions for constrained parameters are the same as for Model 2.
 
 
 Where applicable, prior distributions on hyperparameters are as listed below. We use half-Cauchy prior distributions on hierarchical scale parameters. As for the location hyperparameters, we choose weakly informative prior distributions centered around the corresponding prior mean for the non-hierarchical model.
@@ -544,11 +545,13 @@ Figure 8 shows a similar pair of plots for Drive-model 43. The data for this Dri
 
 \section{Comparing Sub-populations}
 \subsection{Comparisons based on model parameters}
-As discussed in Section \ref{sec:Weibull parameterization}, we use a parameterization of the Weibull distribution in terms of a chosen quantile, making prior elicitation straightforward. Posterior sampling immediately gives marginal posterior distributions for these quantiles, which in reliability applications is typically more informative than a measure of central tendency. If the selected model includes varying $t_{p2g}$ across sub-poputations, side-by-side plots of credible intervals provides a way to compare lifetime of non-defective units. Depending on a user's application, a similar plot for the $\pi_g$'s as a comparison tool may be a relevant parameter of interest.
+As discussed in Section \ref{sec:Weibull parameterization}, we use a parameterization of the Weibull distribution in terms of a chosen quantile, making prior elicitation straightforward. Posterior sampling immediately gives marginal posterior distributions for quantiles, which in reliability applications is typically more informative than a measure of central tendency. To compare the unconditional $p$ quantile for each sub-population, plots of posterior credible intervals may be used.
 
+Depending on the set of model restrictions used, simlar plots may be used to compare the $p$ quantiles for non-defective units ($t_{p_{2}g}$) or the proportion defective ($\pi_g$).
 
 \subsection{Example: Drive-model comparison based on quantiles and proportion defective}
-The top panel of Figure 9 shows estimates of $t_{0.10}$ (i.e., the amount of time it takes for 10\% of hard drives to fail, i.e. the quantile corresponding to the $H(t)$ distribution in Section \ref{subsec:GLFP model}), for all drive-models.  In this application 50\% CIs are more meaningful as there is lots of uncertainty in some of the parameters: especially for those with few drives in operation.  Interestingly, the top seven drive-models ranked by MTTF are also the drive-models with the largest $t_{0.10}$.  Another interesting feature to compare is $\pi$, the proportion defective.  The bottom panel of Figure 9 shows the posterior credible intervals of $\pi$ for each drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the plot above.  While for many of the drive-models the ordinal ranking is the same as on the top, there are some drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10}$ or $\pi$.
+The top panel of Figure 9 shows estimates of $t_{0.10}$ (i.e., the amount of time it takes for 10\% of hard drives to fail, i.e. the quantile corresponding to the $H(t)$ distribution in Section \ref{subsec:GLFP model}), for all drive-models.  In this application 50\% CIs were used due to considerable posterior uncertainty in some of the parameters: especially for those with few drives in operation.  %Interestingly, the top seven drive-models ranked by MTTF are also the drive-models with the largest $t_{0.10}$.  
+Another interesting feature to compare is $\pi_g$, the proportion defective.  The bottom panel of Figure 9 shows the posterior credible intervals of $\pi_g$ for each drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the plot above.  While for many of the drive-models the ordinal ranking is the same as on the top, there are some drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10g}$ or $\pi_g$.
 
 \begin{figure}[H]
 \centering
