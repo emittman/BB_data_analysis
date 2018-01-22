@@ -93,7 +93,7 @@ In this paper we present a method for joint estimation of multiple lifetime dist
 
 \section{Introduction}
 \subsection{Motivation}
-Consumers have an interest in accurate assessment of product reliability. Toward this end, there is a need for models that can accomodate common failure patterns and methods which can make the most of available data and properly account for uncertainty. Doing these things well enables good decision-making in matters related to product life, including purchase decisions and contingency planning.
+Consumers have an interest in accurate assessment of product reliability. Toward this end, there usually is a need for models that can accomodate common failure patterns and methods which can make the most of available data and properly account for uncertainty. Doing these things well enables good decision-making in matters related to product life, including purchase decisions and contingency planning.
 %While computationally convenient, simple lifetime models can fail at each of these.
 
 The reliability of many engineered products follows a similar pattern. Relatively high rates of early failure are due to manufacturing defects.  After this ``burn-in'' period, failure rates stabilize after the majority of defective units have failed.  Finally, after prolonged use, rates of failure increase due to wearout.  Ignoring this pattern in failure rates can lead to spurious inferences about a product's reliability and suboptimal decisions. This highlights the importance of choosing a sufficiently flexible model.
@@ -207,10 +207,10 @@ Taking the derivative of the (marginal) cdf, the density for the GLFP model is
 h(t|\pi, t_{p1},\sigma_1, t_{p2}, \sigma_2) = \pi & f_1(t|t_{p1},\sigma_1)\left(1-F_2(t|t_{p2},\sigma_2)\right) + \\ & f_2(t|t_{p2},\sigma_2)\left(1-\pi F_1(t|t_{p1},\sigma_1\right).
 \end{align*}
 
-Note that the $p$ quantile may be found by setting $p=H(t_p)$ and solving numerically for $t_p$.
+\noindent Note that the $p$ quantile of the GLFP model may be found by setting $p=H(t_p)$ and solving numerically for $t_p$.
 
 \subsection{Censoring and truncation}
-A common feature of lifetime data is right-censoring. In the analysis of reliability field data, it is rare all units are observed until failure. If a unit has not yet failed when the data are analyzed it is considered right-censored.  In other words, right-censoring puts a lower bound on the failure time.
+A common feature of lifetime data is right-censoring. In the analysis of reliability field data, it is rare that all units are observed until failure. If a unit has not yet failed when the data are analyzed it is considered right-censored.  In other words, right-censoring puts a lower bound on the failure time.
 
 
 When an observation is left-truncated, it would not have been observed if it had failed prior to a particular time, which we refer to as the left-truncation time.  Left-truncation is a common feature of observational lifetime data, where the factors leading to inclusion in the data set are uncontrolled and/or the population of interest has a history prior to any data collection. Ignoring left truncation can lead to biased estimates. However, dropping left truncated observations should be avoided because it could substantially reduce the total available information.  Therefore, we incorporate both right censoring and left truncation into the likelihood. 
@@ -238,7 +238,7 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
 
 \subsection{Analysis of a single drive-model}
 \label{subsec:ex1}
-To illustrate the GLFP model, we will present an analysis of the drive-model with the most observed failures, Drive-model 14.  The Kaplan-Meier (K-M) estimate plotted below suggests at least two failure modes.  The curve has a slow ramp up in failures till about 10,000 hours (early failures), and increases more rapidly from about 10,000 to 20,000 hours (presumably wearout failures).  Besides our empirical observation, it is well known that computer hard drives have a mixture of early and late failures \citep{chan}.  Therefore, there is both an empirical and a theoretical justification to apply the GLFP model.
+To illustrate the GLFP model, we will present an analysis of the drive-model with the most observed failures, Drive-model 14.  The Kaplan-Meier (K-M) estimate plotted below suggests at least two failure modes.  The curve has a slow ramp up in failures until about 10,000 hours (early failures), and increases more rapidly from about 10,000 to 20,000 hours (presumably wearout failures).  Besides our empirical observation, it is well known that computer hard drives have a mixture of early and late failures \citep{chan}.  Therefore, there is both an empirical and a theoretical justification to apply the GLFP model.
 
 \begin{figure}[H]
 \centering
@@ -369,7 +369,7 @@ The \texttt{R} package, \texttt{loo} \citep{loo}, computes an approximation of (
 
 \section{Model for the Backblaze hard drive data}
 \label{sec:Data analysis}
-We now apply this general methodology to the hard drive failure data from Backblaze.  There are 44 different drive-models in the data set, and significant heterogeneity in the number of observed failures and time observed (Figure 1). The hierarchical GLFP allows us to model the entire drive-model population, borrowing information across drive-models, allowing estimation for those drive-models where little information exists. 
+We now apply this general methodology to the hard drive failure data from Backblaze.  There are 44 different drive-models in the data set, and significant heterogeneity in the number of observed failures, time observed (Figure 1), and the parameter estimates of the underlying GLFP. The hierarchical GLFP allows us to model the entire drive-model population, borrowing information across drive-models, allowing estimation for those drive-models for which little information exists. 
 
 \subsection{Prior distributions}
 \label{sec:Prior distributions}
@@ -539,7 +539,7 @@ Figure 8 shows a similar pair of plots for Drive-model 43. The data for this Dri
 \begin{figure}
 \centering
 \includegraphics[height=.8\textheight]{dm43-shrinkage.png}
-\caption{\footnotesize Top: Event plot for all units of Drive-model 43. Data for all units are left-truncated, being observed conditional on survival beyond 12,000 hours.\hspace{\textwidth}Bottom: The dashed step function correponds to the adjusted K-M estimate (solid line). Due to the heavy left-truncation, the posterior median for Drive-model 43 (dotted line) coincides with the posterior median of the ``global model" (dashed line) until the first left-truncation time.}
+\caption{\footnotesize Top: Event plot for all units of Drive-model 43. Data for all units are left-truncated, being observed conditional on survival beyond 12,000 hours.\hspace{\textwidth}Bottom: The dashed step function correponds to the adjusted K-M estimate (solid line). Due to the heavy left-truncation, the posterior median for Drive-model 43 (dotted line) coincides with the posterior median of the ``global average" (dashed line) until the first left-truncation time.}
 \label{fig:ex-mod-43}
 \end{figure}
 
