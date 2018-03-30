@@ -93,7 +93,7 @@ In this paper we present a method for joint estimation of multiple lifetime dist
 
 \section{Introduction}
 \subsection{Motivation}
-Consumers have an interest in accurate assessment of product reliability. Toward this end, there usually is a need for models that can accomodate common failure patterns and methods which can make the most of available data and properly account for uncertainty. Doing these things well enables good decision-making in matters related to product life, including purchase decisions and contingency planning.
+Consumers have an interest in accurate assessment of product reliability. Toward this end, there usually is a need for models that can accommodate common failure patterns and methods which can make the most of available data and properly account for uncertainty. Doing these things well enables good decision-making in matters related to product life, including purchase decisions and contingency planning.
 %While computationally convenient, simple lifetime models can fail at each of these.
 
 The reliability of many engineered products follows a similar pattern. Relatively high rates of early failure are due to manufacturing defects.  After this ``burn-in'' period, failure rates stabilize after the majority of defective units have failed.  Finally, after prolonged use, rates of failure increase due to wearout.  Ignoring this pattern in failure rates can lead to spurious inferences about a product's reliability and suboptimal decisions. This highlights the importance of choosing a sufficiently flexible model.
@@ -104,6 +104,7 @@ This paper presents a general framework for statistically modeling reliability f
 
 \begin{itemize}
 \item Making purchase decisions from among different suppliers of the components or subsystems.
+\item Making inference about the lifetime distribution of products with few observed failures.
 \item Making predictions for the number of needed replacement components or subsystems for spare part provisioning.
 \end{itemize}
 
@@ -112,7 +113,7 @@ Nonparametric methods require relatively few assumptions, but may not be suitabl
 
 Often no information is available to identify why a unit failed, even when the failed units are available. Physical failure mode analysis (sometimes referred to as ``autopsy'') can be extremely time consuming and expensive. This presents a dilemma for analysts: the data may indicate multiple failure modes, contraindicating the use of a unimodal parametric distribution. However, without any knowledge of cause of failure, traditional competing risk models are not identifiable. \citet{chan} proposed the Generalized Limited Failure Population (GLFP) model. This model can provide a solution to the problem of unknown cause of failure in the special case where there is evidence of two modes of failure which impact different stages of product life. It avoids non-identifiability by introducing a parameter representing the population proportion defective. When this parameter is zero, the GLFP model reduces to a unimodal distribution. \\
 
-The GLFP model has a meaningful parameterization and accommodates lifetime data with both early and wearout failures.  Unfortunately, it can require a lot of data to fit due to the model's complexity. When multiple sources of information are available, partial pooling, accomplished via hierarchical modeling, can reduce the amount of data required to produce stable parameter estimates. When multiple sub-populations are of interest, comparisons based on separate, unrestricted GLFP model fits will be limited to those products with sufficient data. As we will show, hierarchical modeling of the GLFP parameters allows for borrowing of information across sub-populations which imposes ``soft'' constraints on model parameters. This enables estimation of the lifetime distribution for all sub-populations via shrinkage toward a ``pooled" model, with the degree of shrinkage inversely related to the amount of sub-population specific information. We demonstrate the computation of various quantities of interest while comparing reliability across populations using numerical integration over the posterior distribution with samples obtained via Markov Chain Monte Carlo (MCMC).
+The GLFP model has a meaningful parameterization and accommodates lifetime data with both early and wearout failures.  Unfortunately, it can require a lot of data to fit due to the model's complexity.  For example, clothing and electronic manufacturers, as well as pharmaceutical companies, often test products that rarely fail, even under accelerated testing.  With few observed failures, fitting multi-parameter models can be unstable or impossible using standard estimation methods.  When multiple sources of information are available, partial pooling, accomplished via hierarchical modeling, can reduce the amount of data required to produce stable parameter estimates. When multiple sub-populations are of interest, comparisons based on separate, unrestricted GLFP model fits will be limited to those products with sufficient data. As we will show, hierarchical modeling of the GLFP parameters allows for borrowing of information across sub-populations which imposes ``soft'' constraints on model parameters. This enables estimation of the lifetime distribution for all sub-populations via shrinkage toward a ``pooled" model, with the degree of shrinkage inversely related to the amount of sub-population specific information. We demonstrate the computation of various quantities of interest while comparing reliability across populations using numerical integration over the posterior distribution with samples obtained via Markov Chain Monte Carlo (MCMC).
 
 \subsection{Overview}
 The structure of the paper is as follows. Section~\ref{sec:Background} introduces the proposed method, potential applications, and examines previous related work.  Section~\ref{sec:GLFP model} introduces the GLFP model and illustrates its use with a subset of hard drive failure data from the company, Backblaze.  In Section~\ref{sec:Data}, we describe the complete Backblaze Hard Drive data set, which is used throughout as a motivating example. In Section~\ref{sec:Hierarchical GLFP model} we discuss using hierarchical modeling of the GLFP model parameters to extend the GLFP model to multiple sub-populations. Section~\ref{sec:Data analysis} applies the hierarchical GLFP model to the hard drive data. First, we do model selection among four models of increasing complexity, using approximate leave-one-out cross-validation. Next, for the selected model, we assess the model fit using a graphical comparison of replicated data sets generated from the posterior distribution to the observed data. Finally, we present an evaluative comparison of sub-populations taking into account practical considerations related to product lifetime. Section~\ref{sec:Discussion} describes potential applications of our model and limitations for inference implied by the model assumptions.
@@ -346,7 +347,8 @@ This set of model specifications is chosen based on the data, interpretation of 
 For all of the nested models, the parameters for the early failure mode are common across sub-populations.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for early failures provides a meaningful interpretation and comparison of $\pi_g$ and $\pi_{g'}$ ($g \neq g'$). Also the failure-time distribution of the defective subpopulation (as opposed to the proportion defective) is not of high interest.
 
 \subsection{Model selection}
-From the point of view of a consumer or purchaser, the goal of an analysis such as this is may be to rate manufacturers and/or to inform future purchases based on predicted product performance. In this case, we should choose the model that will provide the most accurate prediction for future units of previously observed products. One appropriate criterion for model selection, then, is the log pointwise predictive density (lpd),
+From the point of view of a consumer or purchaser, the goal of an analysis such as this is may be to rate manufacturers and/or to inform future purchases based on predicted product performance. Therefore, we should compare model specifications based on accurate prediction for future units of previously observed products.  Leave-one-out cross-validation (LOO) is a method to estimate out-of-sample predictive accuracy using
+posterior draws from a fitted model.  The log pointwise predictive density (lpd), is one method to quantify predictive accuracy,
 
 \begin{align*}
 \mbox{lpd} &= \sum_{g=1}^G \sum_{i=1}^{n_g} \log[p(t_{new,g,i}|t, t^L, c)] \\
@@ -362,7 +364,7 @@ where $h$ is a density for the true distribution of $t_{new,g,i}$. Although $h$ 
 \widehat{\text{elpd}} = \sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{-(g,i)})].
 \label{loo-est}
 \end{equation}
-The \texttt{R} package, \texttt{loo} \citep{loo}, computes an approximation of (\ref{loo-est}) provided that the observations $t_i$ are conditionally independent. It employs an importance sampling method that uses $S$ saved MCMC draws to compute smoothed importance weights, $w_{i,s}$, approximating $\log [p(t_{g,i}|t_{-(g,i)})]$ with $\sum_{i=1}^S w_{i,s} p(t_{g,i})/\sum_{s=1}^S w_{i,s}$. In addition to providing an estimate of (\ref{elpd}), their method also produces a standard error based on an asymptotic result. For details, refer to \cite{vehtari}.
+The \texttt{R} package, \texttt{loo} \citep{loo}, computes an approximation of (\ref{loo-est}) provided that the observations $t_i$ are conditionally independent. It employs an importance sampling method that uses $S$ saved MCMC draws to compute smoothed importance weights, $w_{i,s}$, approximating $p(t_{g,i}|t_{-(g,i)})$ with $\sum_{s=1}^S w_{i,s} p(t_{g,i})/\sum_{s=1}^S w_{i,s}$. In addition to providing an estimate of (\ref{elpd}), their method also produces a standard error based on an asymptotic result. For details, refer to \cite{vehtari}.
 %When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically. 
 % To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  
 % The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  
@@ -451,17 +453,17 @@ We calculated the difference in expected predictive accuracy for Model 4 versus 
 \begin{figure}
 \begin{table}[H]
 \centering
-\begin{tabular}{rrrrrrr}
+\begin{tabular}{rrrrrrrr}
   \hline
- & $\widehat{\text{elpd}}$ \ & Difference in $\widehat{\text{elpd}}$ \ & SE of the Difference \\ 
+ & $\widehat{\text{elpd}}$ \ & Difference in $\widehat{\text{elpd}}$ \ & SE of the Difference & Effective No. Parameters\\ 
   \hline
-Model 4 & -13309.5 & 40.7 & 11.3 \\ 
-Model 3 & -13350.2 & 458.8 & 31.0  \\ 
-Model 2 & -13809.0 & 3674.6 & 96.2 \\ 
-Model 1 & -17483.6  \\ 
+Model 4 & -13309.5 & 40.7 & 11.3 & 92.5 \\ 
+Model 3 & -13350.2 & 458.8 & 31.0 & 68.8 \\ 
+Model 2 & -13809.0 & 3674.6 & 96.2 & 49.6 \\ 
+Model 1 & -17483.6 &  &  & 4.3 \\
    \hline
 \end{tabular}
-\caption{Expected Log Pointwise Predictive Density (elpd) for each model specification.  Each model is compared to the more parsimonious model below.  The estimated difference of expected leave-one-out prediction errors between the two models, as well as the standard error of the difference, is also presented.}
+\caption{Expected Log Pointwise Predictive Density (elpd) for each model specification.  Each model is compared to the more parsimonious model below.  The estimated difference of expected leave-one-out prediction errors between the two models, the standard error of the difference, and the effective number of parameters in each model, is also presented.}
 \label{table:2}
 \end{table}
 \end{figure}
