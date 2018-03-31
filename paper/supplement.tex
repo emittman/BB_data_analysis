@@ -181,7 +181,7 @@ tau_pi         ~ cauchy(0,1);
 
 \pagebreak
 \section{Posterior predictive graphical checks}
-\item Full set of Figures 5 and 6 for all 44 drive-models.  Numbering in the top left indicates drive-model.  Left: Adjusted K-M estimates of the proportion failing.  The original data (bold line) and 19 ``replicated" data sets from the posterior predictive distribution (dashed lines) are shown.  Right: Posterior median of proportion failing as a function of time for Models 1-4.  Plotted on Weibull probability scales.  The solid step function is the adjusted K-M estimate.  
+Full set of Figures 5 and 6 for all 44 drive-models.  Numbering in the top left indicates drive-model.  Left: Adjusted K-M estimates of the proportion failing.  The original data (bold line) and 19 ``replicated" data sets from the posterior predictive distribution (dashed lines) are shown.  Right: Posterior median of proportion failing as a function of time for Models 1-4.  Plotted on Weibull probability scales.  The solid step function is the adjusted K-M estimate.  
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{ppcheck-v2-1.pdf}
 \end{figure}
@@ -216,5 +216,27 @@ tau_pi         ~ cauchy(0,1);
 \includegraphics[width=\textwidth]{ppcheck-v2-11.pdf}
 \end{figure}
 \clearpage
+
+
+\section{Density Plots for Prior Distributions}
+To better visualize the prior distributions, below are plots of
+the prior densities for Models 1 - 4.
+\begin{figure}[H]
+\center
+\includegraphics[width=\textwidth]{priorsmod1.pdf}
+\caption{Prior Densities for Model 1}
+\end{figure}
+
+\begin{figure}[H]
+\center
+\includegraphics[width=.7\textwidth]{priorsmod2.pdf}
+\caption{Prior Densities for Model 2}
+\end{figure}
+
+\begin{figure}[H]
+\center
+\includegraphics[width=\textwidth]{priorsmod4.pdf}
+\caption{Prior Densities for Models 3 and 4}
+\end{figure}
 
 \end{document}
