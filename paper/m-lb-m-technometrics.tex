@@ -382,7 +382,7 @@ Following the recommendations in Section 5.3, we specify the following prior dis
 \paragraph{Model 2} $t_{p_{2}g}$ varies by drive-model. To help with model identifiably, we tighten the priors on the early failure mode:
 $$ \pi \sim \op{Logit-normal}\langle 7.0\times 10^{-3},\, 2.6 \times 10^{-1} \rangle,$$
 $$\sigma_1 \sim \op{Lognormal}\langle 1.4 \times 10^{-1},\, 7.1\rangle,$$ 
-$$t_{p_1} \sim \op{Lognormal} \langle 2.2 \times 10^1,\, 5.5 \times 10^{4} \rangle.$$
+$$t_{0.5} \sim \op{Lognormal} \langle 2.2 \times 10^1,\, 5.5 \times 10^{4} \rangle.$$
 
 \paragraph{Model 3} $t_{p_{2}g}$ and $\sigma_{2g}$ vary by drive-model. Prior distributions for the constrained parameters are the same as for Model 2.
 
@@ -395,10 +395,10 @@ Where applicable, prior distributions on hyperparameters are as listed below. We
 \begin{align*}
   \eta_{\pi} & \sim \op{Normal}(-3, 1)\\
   \tau_{\pi} & \sim \op{Half-Cauchy}(0, 1)\\
-  \eta_{\sigma ,2} & \sim \op{Normal}(0, 2)\\
-  \tau_{\sigma ,2} & \sim \op{Half-Cauchy}(0, 1)\\
-  \eta_{t_{.2_2},2} & \sim \op{Normal}(9, 2)\\
-  \tau_{t_{.2_2},2} & \sim \op{Half-Cauchy}(0, 1).
+  \eta_{\sigma_2} & \sim \op{Normal}(0, 2)\\
+  \tau_{\sigma_2} & \sim \op{Half-Cauchy}(0, 1)\\
+  \eta_{t_{0.2}} & \sim \op{Normal}(9, 2)\\
+  \tau_{t_{0.2}} & \sim \op{Half-Cauchy}(0, 1).
  \end{align*} 
 
 \subsection{Model fitting}
