@@ -114,7 +114,8 @@ trimKMy <- function(fit, ylimits){
   fit
 }
 
-baseKMplot.multiple <- function(fit_list, xlimits=NULL, ylimits=NULL, color="black", linetype=1, logscale=NULL, prob=TRUE, label="nonparametric", alpha=1){
+baseKMplot.multiple <- function(fit_list, xlimits=NULL, ylimits=NULL, color="black",
+                                linetype=1, logscale=NULL, prob=TRUE, label="nonparametric", alpha=1){
   require(ggplot2)
   classes <- sapply(fit_list, function(li) "myKM" %in% class(li))
   if(!(all(classes))) stop("fits must be outputs from KM.survfit")
@@ -145,7 +146,8 @@ baseKMplot.multiple <- function(fit_list, xlimits=NULL, ylimits=NULL, color="bla
 }
 
 #Make base KMplot
-baseKMplot <- function(fit, xlimits=NULL, ylimits=NULL, color="black", linetype=1, logscale = FALSE, prob=TRUE, label="nonparametric", alpha=1){
+baseKMplot <- function(fit, xlimits=NULL, ylimits=NULL, color="black", linetype=1,
+                       logscale = FALSE, prob=TRUE, label="nonparametric", alpha=1){
   require(ggplot2)
   if(!("myKM" %in% class(fit))) stop("fit must be output from KM.survfit")
   if(!is.null(xlimits)){
@@ -289,7 +291,11 @@ plotFinally <- function(plotList, xbrks, ybrks, years=FALSE, greenwood=FALSE, al
   p <- plotList$base
   
   if(greenwood){
-    p <- p + geom_ribbon(inherit.aes = F, aes(x=t, ymin=lower, ymax=upper, fill=grp), alpha=alpha)
+    df_greenwood <- bind_rows(old=p$data,
+                             new=p$data %>% mutate(lower=lag(lower), upper=lag(upper)),
+                             .id = "source") %>%
+      arrange(t, source)
+    p <- p + geom_ribbon(data=df_greenwood, inherit.aes = F, aes(x=t, ymin=lower, ymax=upper, fill=grp), alpha=alpha)
   }
   
   
