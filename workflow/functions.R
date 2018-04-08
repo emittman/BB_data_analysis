@@ -16,6 +16,7 @@ prepare_data <- function(dm = NULL, lb_fails = 0, lb_late_fails = 0, lb_early_fa
   if(!is.null(dm)){
     if(sum(df$model==dm) == 0) stop("There are no drive models matching the argument")
     df <- filter(df, model == dm)
+    df$model <- as.integer(factor(df$model))
   }
   # return(overview)
   return(df)
