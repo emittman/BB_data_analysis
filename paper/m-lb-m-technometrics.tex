@@ -82,7 +82,7 @@ In this paper we present a method for joint estimation of multiple lifetime dist
 %\end{keyword}
 
 \noindent%
-{\it Keywords:} GLFP, Bathtub hazard, Censored data, Hierarchical models, Bayesian estimation
+{\it Keywords:} GLFP, Bathtub hazard, Censored data, Bayesian estimation, Stan
 \vfill
 
 \newpage
@@ -148,11 +148,12 @@ distributions), the Weibull cdf can also be written as
 where $\Phi_{SEV}(z)=1-\exp[-\exp(z)]$ is the standard smallest extreme value
 distribution cdf and
 $\mu=\log(\alpha)$ and $\sigma=1/\beta$ are, respectively, location
-and scale parameters for the distribution of $\log(T)$. Therefore, the Weibull
+and scale parameters for the distribution of $\log(T)$. In addition to showing the Weibull
 distribution is a member of the log-location-scale family of
-distributions.
+distributions, this step highlights the generalizability of our approach to other distributions 
+that fall into this class.
 
-We will use an alternative parameterization
+Going forward we use an alternative parameterization
 where $\alpha$ is replaced by the $p$ quantile $t_{p}=\alpha \left
 [-\log(1-p)\right ]^{\sigma}$. Replacing $\alpha$ in (1) with the
 $\alpha=t_{p}/[-\log(1-p)]^{\sigma}$ gives
@@ -347,7 +348,7 @@ This set of model specifications is chosen based on the data, interpretation of 
 For all of the nested models, the parameters for the early failure mode are common across sub-populations.  We found that there was often insufficient information to model these parameters hierarchically.  Moreover, assuming a common distribution for early failures provides a meaningful interpretation and comparison of $\pi_g$ and $\pi_{g'}$ ($g \neq g'$). Also the failure-time distribution of the defective subpopulation (as opposed to the proportion defective) is not of high interest.
 
 \subsection{Model selection}
-From the point of view of a consumer or purchaser, the goal of an analysis such as this is may be to rate manufacturers and/or to inform future purchases based on predicted product performance. Therefore, we should compare model specifications based on accurate prediction for future units of previously observed products.  Leave-one-out cross-validation (LOO) is a method to estimate out-of-sample predictive accuracy using
+Bayes factors is a classical apporach to compare alternative model specifications.  However, they can be problematic, especially in high dimensional settings where there is no concensus on how to properly compute the required marginal likelihood \citep{robert2016}. Moreover, from the point of view of a consumer or purchaser, the goal of an analysis such as this is to rate manufacturers and/or to inform future purchases based on predicted product performance. Therefore, we should compare model specifications based on accurate prediction for future units of previously observed products.  Leave-one-out cross-validation (LOO) is a method to estimate out-of-sample predictive accuracy using
 posterior draws from a fitted model.  The log pointwise predictive density (lpd), is one method to quantify predictive accuracy,
 
 \begin{align*}
@@ -364,7 +365,7 @@ where $h$ is a density for the true distribution of $t_{new,g,i}$. Although $h$ 
 \widehat{\text{elpd}} = \sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{-(g,i)})].
 \label{loo-est}
 \end{equation}
-The \texttt{R} package, \texttt{loo} \citep{loo}, computes an approximation of (\ref{loo-est}) provided that the observations $t_i$ are conditionally independent. It employs an importance sampling method that uses $S$ saved MCMC draws to compute smoothed importance weights, $w_{i,s}$, approximating $p(t_{g,i}|t_{-(g,i)})$ with $\sum_{s=1}^S w_{i,s} p(t_{g,i})/\sum_{s=1}^S w_{i,s}$. In addition to providing an estimate of (\ref{elpd}), their method also produces a standard error based on an asymptotic result. For details, refer to \cite{vehtari}.
+The \texttt{R} package, \texttt{loo} \citep{loo}, computes an approximation of (\ref{loo-est}) provided that the observations $t_i$ are conditionally independent. It employs an importance sampling method that uses $S$ saved MCMC draws to compute smoothed importance weights, $w_{i,s}$, approximating $p(t_{g,i}|t_{-(g,i)})$ with $\sum_{s=1}^S w_{i,s} p(t_{g,i})/\sum_{s=1}^S w_{i,s}$. In addition to providing an estimate of (\ref{elpd}), their method also produces a standard error based on an asymptotic result.  A measure of the effective number of parameters is also available using the sum of the posterior variance of the log predictive density for each observation.  For details, refer to \cite{vehtari}.
 %When $n$ is large, the distribution of the elpd is approximately normal and different models can be compared statistically. 
 % To statistically compare the GLFP Models, we estimated the predictive accuracy of the 4 different models using an approximate leave-one-out cross validation (LOO) method.  As outlined in Vehtari et. al, the predictive accuracy from a fitted Bayesian model can be estimated simply with posterior draws of the model parameters rather than re-fitting the model with different data sets \cite{vehtari}.  For each observation, $i$, the log point-wise predictive density is calculated over the full set of posterior samples with data point $i$ removed.  
 % The final expected log point-wise predictive density (elpd) is the sum over all observations (elpd $=\sum{\log p(y_i|y_{-i})}$).  
