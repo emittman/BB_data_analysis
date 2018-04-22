@@ -1,3 +1,6 @@
+library(rstan)
+library(plyr)
+
 setwd("review")
 
 ov <- readRDS("../BB_data/overview.rds")
@@ -60,12 +63,27 @@ pooled_df <- ldply(c(6, 14, 16, 23, 31), function(i){
 })
 
 unpooled_df$n <- ov$n[which(ov$full_id %in% c(6, 14, 16, 23, 31))]
-unpooled_df$model <- "unpooled"
+unpooled_df$f <- ov$f[which(ov$full_id %in% c(6, 14, 16, 23, 31))]
+
+unpooled_df$model <- "individually modeled"
 pooled_df$n <- ov$n[which(ov$full_id %in% c(6, 14, 16, 23, 31))]
-pooled_df$model <- "partially pooled"
+pooled_df$f <- ov$f[which(ov$full_id %in% c(6, 14, 16, 23, 31))]
+pooled_df$model <- "hierarchical model"
 comb <- rbind(unpooled_df, pooled_df)
 comb$set <- factor(comb$set)
 
 library(ggplot2)
-ggplot(comb, aes(x=set, y=median_B10, ymin=lower_B10, ymax=upper_B10, color=model))+
-  geom_pointrange(position=position_dodge(.5)) + theme_bw()
+library(scales)
+ybrks=c(1000,5000,10000,20000,30000,40000,50000)
+p = ggplot(comb, aes(x=set, y=median_B10, ymin=lower_B10, ymax=upper_B10, color=model, linetype=model, shape=model))+
+  geom_pointrange(position=position_dodge(.5), size=1) + theme_bw(base_size=14) +
+  scale_y_continuous(name="0.1 quantile\nThousands of hours", labels = ybrks/1000,
+                     breaks = ybrks)+
+  theme(legend.title=element_blank())+
+  scale_x_discrete("drive-model")
+
+annotate_df <- ddply(comb, .(set), function(x){
+  data.frame(y=max(x$upper_B10)+2500, text=paste(c("r = ",x$f[1]), collapse=""))
+})
+
+p + geom_text(data=annotate_df, inherit.aes = FALSE, aes(x=set, y=y, label=text))
