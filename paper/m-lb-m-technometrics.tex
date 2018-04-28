@@ -473,18 +473,19 @@ Model 1 & -17483.6 &  &  & 4.3 \\
 \subsection{A simulation-based approach}
 \label{model-assessment}
 Having selected a model, it is good practice to check that the model provides an adequate representation of the data-generating mechanism. One way to do this is to draw replicate data sets from the posterior predictive distribution
-$$p(t_{rep,g}|t) = \int \prod_{i=1}^{n_g} f(t|\theta_g)\; p(\theta_g|t)\;d\theta_g,$$
+$$p(t_{rep,g}|t) = \int \prod_{i=1}^{n_g} f(t_{rep,g,i}|\theta_g)\; p(\theta_g|t)\;d\theta_g,$$
 in the case that observations in subpopulation $g$ are exchangable.
 
-This is a general approach recommended by \cite{gelman1996postpred}, which works when no classical goodness-of-fit test is available. When the model is adequate for the data, the predictive distribution of a finite set of data characteristics --- chosen to reflect features relevant to the goals of the analysis --- should not contradict the corresponding characteristics observed in the actualized data.
+This is approach is recommended by \cite{gelman1996postpred} in part because it works well in cases when no classical goodness-of-fit test is available. When the model is adequate for the data, the predictive distribution of a finite set of data characteristics --- chosen to reflect features relevant to the goals of the analysis --- should not contradict the corresponding characteristics observed in the actualized data.
 
 There are many possible approaches to the posterior predictive check. We propose the comparison of K-M estimates for each sub-population derived from replicated data drawn from the posterior predictive distribution to the K-M estimate based on the actualized data. This graphical approach does not provide a test statistic, but provides rich feedback with respect to the fitted model's agreement with the data.
 
 Because the variability in the K-M estimator is primarily a function of the number of at-risk units, we want to replicate the pattern of censoring that was observed. To do this, we sample from a version of the posterior predictive that conditions on the observed truncation and censoring times, i.e. 
-$$p(t_{rep,g}) = \int \prod_{i=1}^{n_g}f(t|t_{g,i}^L,c_{g,i},\theta)\,p(\theta|t)d\theta.$$
-Because we are working with posterior draws, $\theta^{(s)}$, we can draw from this distribution by choosing a draw, $\theta^{(s)}$, at random, then conditionally draw each $t_{rep,g,i}$ from $f(t|t_{g,i}^L,c_{g,i},\theta^{(s)}).$
+$$p(t_{rep,g}|t) = \int \prod_{i=1}^{n_g}f(t_{rep,g,i}|t_{g,i}^L,c_{g,i},\theta_g)\;p(\theta_g|t)\;d\theta_g.$$
 
-An obstacle remains, owing to the fact that the censoring time is unknown for observed failures. Our admittedly simple approach is to assume that failed units would have been the censored had they survived until the latest censoring or failure time for that drive model. Our method for generating replicate data sets, $t_{rep,g}^{(s)}$, $s = 1,\ldots, R$, for each sub-population $g=1,\ldots,G$, is as follows:
+An obstacle remains, owing to the fact that the censoring time is unknown for observed failures. We resolve this by assuming that failed units would have been right censored had they survived until the latest censoring or failure time for that drive model.
+
+Our method for generating replicate data sets, $t_{rep,g}^{(s)}$, $s = 1,\ldots, R$, for each sub-population $g=1,\ldots,G$, is as follows:
 
 For $s=1,\ldots, R$, do:
 
