@@ -32,7 +32,7 @@ normal.priors <- data.frame(param = rep(c("eta_tp2","eta_s2","eta_pi"),each=2),
                             sigma = c(2,4,2,4,1,2))
 
 df_plot_prior <- ddply(normal.priors, .(param,Distribution), function(x){
-  data.frame(param=x$param, Distribution = x$Distribution, value=rnorm(10000, x$mu,x$sigma))
+  data.frame(param=x$param, Distribution = x$Distribution, value=rnorm(100000, x$mu,x$sigma))
 })
 
 df_plot_poster <- ldply(c("original posterior","inflated variance posterior"), function(m){
@@ -42,5 +42,43 @@ df_plot_poster <- ldply(c("original posterior","inflated variance posterior"), f
 })
 df_plot = rbind(df_plot_prior,df_plot_poster)
 df_plot$Distribution <- factor(df_plot$Distribution, levels=c("original prior","inflated variance prior","original posterior","inflated variance posterior"))
-ggplot(df_plot, aes(value)) + geom_density(aes(fill=Distribution, color=Distribution), alpha=.5, lty=2) + facet_wrap(~param, scale="free",ncol=1)+
-  theme_bw(base_size=14) + xlab("")
+
+
+p1 <- filter(df_plot, param == "eta_pi") %>%
+ggplot(aes(value)) + geom_density(aes(fill=Distribution, color=Distribution), alpha=.5, lty=2) + 
+  xlim(c(-6,1))+
+  # facet_wrap(~param, scale="free",ncol=1)+
+  theme_bw(base_size=14) + xlab("") + ylab("") + ggtitle(expression(eta[pi])) +
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.title = element_text(hjust = 0.5)) #+
+#  guides(color="none", fill="none")
+
+p2 <- filter(df_plot, param == "eta_tp2") %>%
+  ggplot(aes(value)) + geom_density(aes(fill=Distribution, color=Distribution), alpha=.5, lty=2) + 
+  xlim(c(6,13))+
+  # facet_wrap(~param, scale="free",ncol=1)+
+  theme_bw(base_size=14) + xlab("") + ylab("") + ggtitle(expression(eta[t[p[2]]])) +
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.title = element_text(hjust = 0.5)) +
+  guides(color="none", fill="none")
+
+p3 <- filter(df_plot, param == "eta_s2") %>%
+  ggplot(aes(value)) + geom_density(aes(fill=Distribution, color=Distribution), alpha=.5, lty=2) + 
+  xlim(c(-4,4))+
+  # facet_wrap(~param, scale="free",ncol=1)+
+  theme_bw(base_size=14) + xlab("") + ylab("") + ggtitle(expression(eta[sigma[2]])) +
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.title = element_text(hjust = 0.5)) +
+  guides(color="none", fill="none")
+
+grobs <- ggplotGrob(p1)$grobs
+legend <- grobs[[which(sapply(grobs, function(x) x$name) == "guide-box")]]
+p1 <- p1 + guides(color="none", fill="none")
+library(cowplot)
+
+pdf(file="paper/fig/double_var.pdf", width=11, height=6)
+plot_grid(p1,p2,p3,legend, ncol=2)
+dev.off()

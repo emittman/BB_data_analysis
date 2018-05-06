@@ -233,5 +233,16 @@ the prior densities for Models 1 - 4.
 \caption{Prior Densities for Models 2 - 4 (top left to bottom right). For $t_{p1 = 0.5}$, $t_{p2 = 0.2g}$, $x$-axis is in thousands of hours.}
 \end{figure}
 
+\section{Sensitivity check}
+To check whether the posterior distribution of the location hyperparameters, $\eta_\pi$, $\eta_{t_{p_2}}$ and $\eta_{\sigma_2}$ in Model 4 was sensitive to our choice of prior distributions for these parameters, we refit Model 4 doubling the scale of the prior distributions, i.e.
+$$\eta_\pi \sim \text{N}(-3,2^2),\; \eta_{t_{p_2}} \sim \text{N}(9,4^2),\; \eta_{\sigma_2} \sim \text{N}(0, 4^2).$$
+Figure \ref{double_var} shows that the posterior was nearly identical with the wider prior distributions. This suggests that the posterior is overwhelmingly driven by the information from the data, rather than from the prior (for either choice of prior.)
+
+\begin{figure}[H]
+\center
+\includegraphics[width=\textwidth]{double_var.pdf}
+\caption{Comparison of prior and posterior for location hyperparameters, $\eta_\pi,\; \eta_{t_{p_2}}$ and $\eta_{\sigma_2}$ under the original priors from Section 6.1 and under a modified prior doubling the scale for these parameters.}
+\label{double_var}
+\end{figure}
 
 \end{document}
