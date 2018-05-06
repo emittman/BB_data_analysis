@@ -86,4 +86,6 @@ annotate_df <- ddply(comb, .(set), function(x){
   data.frame(y=max(x$upper_B10)+2500, text=paste(c("r = ",x$f[1]), collapse=""))
 })
 
+pdf(file="../paper/fig/accuracy_compare.pdf", width=11, height=6)
 p + geom_text(data=annotate_df, inherit.aes = FALSE, aes(x=set, y=y, label=text))
+dev.off()

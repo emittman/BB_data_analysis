@@ -509,7 +509,7 @@ For the hard-drive data, we used the posterior samples obtained in fitting Model
 
 % Graphical comparisons can be highly informative in revealing limitations of the model. as in our cas a graphical posterior predictive check, wherein replicate data sets are generated from the posterior predictive distribution and compared with the observed data. Because of the rich information gleaned from plotting the data, this method can be very effective at identifying limitations of the model.
 
-\begin{figure}[H]
+\begin{figure}
 \includegraphics[width=\textwidth]{ppcheck-sample}
 \caption{Adjusted K-M estimates of the proportion failing for a representative subset of drive-models. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
 \label{fig:post-pred-KM}
@@ -643,7 +643,19 @@ Posterior credible intervals for $L(t_{g,new})$ are shown in the left panel of F
 
 \section{Discussion}
 \label{sec:Discussion}
-This paper offers a new approach to modeling and making inference for the lifetime of consumer products using incomplete field reliability data.  Products with long lifetimes often have few failures and when failures do occur the cause is frequently unknown to the analyst.  The GLFP model provides a framework to accurately model data with evidence of multiple failure modes. Moreover, when there are multiple product populations within the same product class, our hierarchical modeling approach borrows strength across brands with many observed failures to help make inference for those populations with little information.  This can be important when trying to leverage multiple sources of data with various sample sizes and levels of censoring and truncation.  We found that the use of weakly informative priors on the hyperparameters can increase the overall efficiency of the MCMC.  We now address some important model assumptions and their potential for impacting statistical inference. 
+This paper offers a new approach to modeling and making inference for the lifetime of consumer products using incomplete field reliability data.  Products with long lifetimes often have few failures and when failures do occur the cause is frequently unknown to the analyst.  The GLFP model provides a framework to accurately model data with evidence of multiple failure modes. Moreover, when there are multiple product populations within the same product class, our hierarchical modeling approach borrows strength across brands with many observed failures to help make inference for those populations with little information.  This can be important when trying to leverage multiple sources of data with various sample sizes and levels of censoring and truncation.
+
+In the case of the Backblaze data, we observed improved posterior precision for quantities of interest when using our hierarchical model when compared to separate models for lifetime by drive-model. This is illustrated in Figure \ref{improved_accuracy}. In addition, this leveraging information led to well-behaved posterior distributions for sub-populations with few observed failures. For many of these sub-populations, fitting separate GLFP models was unworkable.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.7\textwidth]{accuracy_compare}
+  \caption{Posterior distributions of 0.1 quantiles for a representative subset of drive-models where separate fitting of the GLFP model was successful (unimodal posteriors and passing MCMC convergence diagnostics.) $r$ indicates the number of observed failures. Separate fits use the same priors as Model 4, but have greater uncertainty because there is no borrowing of information across drive-models.}
+  
+\label{improved_accuracy}
+\end{figure}
+
+We now address some important model assumptions and their potential for impacting statistical inference. 
 
 First, we assume the failures occurring from various causes can be approximately assigned to two phases of product life.  In practice, there might be additional phases, clearly supported by the data, making the GLFP model too rigid. This rigidity is illustrated by the right tail of the estimated distribution in Figure \ref{fig1}.
 
