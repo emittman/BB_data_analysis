@@ -67,7 +67,8 @@
 } \fi
 
 \begin{abstract}
-When analyzing field data on consumer products, model-based approaches to inference require a model with sufficient flexibility to account for multiple kinds of failures. The causes of failure, while not interesting to the consumer per se, can lead to various observed lifetime distributions. Because of this, standard lifetime models, such as Weibull or lognormal may be inadequate. Usually cause-of-failure information will not be available to the consumer and thus traditional competing risk analyses cannot be performed.
+When analyzing field data on consumer products, model-based approaches to inference require a model with sufficient flexibility to account for multiple kinds of failures. The causes of failure, while not interesting to the consumer per se, can lead to various observed lifetime distributions.  Because of this, standard lifetime models, such as using a single Weibull or
+lognormal distribution may be inadequate. Usually cause-of-failure information will not be available to the consumer and thus traditional competing risk analyses cannot be performed.
 Furthermore, when the information carried by lifetime data are limited by sample size, censoring, and truncation, estimates can be unstable and suffer from imprecision. These limitations are typical; for example, lifetime data for high-reliability products will naturally tend to be right-censored.
 
 
@@ -131,12 +132,28 @@ The methods presented in this paper
 could employ any of the commonly-used lifetime distributions such as
 the Weibull or lognormal (see Chapters 4 and 5 of
 \cite{meeker} for others) to describe either the early
-(infant mortality) failures or the wearout failures. To simplify the
+(infant mortality) failures or the wearout failures. 
+In this paper
+we use the Weibull distribution to describe both the early and
+wearout failures for the following reasons.
+\begin{itemize}
+\item
+This combination of distributions provides a good fit to the data.
+\item
+Mechanistically, within both of the different kinds of failures there
+are almost certainly several, if not many, different competing
+causes. The actual cause for any particular failed drive
+would be the minimum time of all of these potential causes, suggesting a
+Weibull distribution because of extreme value theory (see page 86  of
+\cite{meeker}) for further discussion of this point.
+\end{itemize}
+
+To simplify the
 presentation and because it adequately describes our example data,
 we will use the Weibull distribution to describe both the early and
 wearout failures. Changing to any other combination of distributions
 in the log-location-scale family of distributions is
-straightforward
+straightforward.
 
 \subsection{Weibull distribution and reparameterization}
 \label{sec:Weibull parameterization}
@@ -205,7 +222,8 @@ Let $F_1,F_2$ be Weibull distributions with parameters $(t_{p1},\sigma_1)$ and $
 The Generalized Limited Failure Population model (GLFP) of \citet{chan} is defined as follows: Let $T \sim \op{GLFP}(\pi, t_{p1},\sigma_1,t_{p2},\sigma_2)$. Then
 $$\Pr(T \le t) = H(t) = 1 - (1-\pi\, F_{1}(t))(1 - F_{2}(t)),\, t>0,\, 0 < \pi < 1.$$
 
-The GLFP model can be understood as a mixture model with a binary latent variable, $\delta_i\ind \op{Bernoulli}(\pi)$. $\delta_i$ is an indicator for whether unit $i$ is defective or not (i.e., susceptible to an early failure). Expressed conditional on~$\delta_i$,
+The GLFP model can be understood as a mixture model with a binary latent variable, $\delta_i\ind \op{Bernoulli}(\pi)$. $\delta_i$ is an indicator for whether unit $i$ is defective or not (i.e., susceptible to an early failure).  Here $F_{1}(t)$ is the cdf for the early failures and $F_{2}(t)$ is
+the cdf for the wearout failures. Expressed conditional on~$\delta_i$,
 \begin{align*}
 P(T\le t | \delta_i=1) =& 1 -(1-F_1(t))(1-F_2(t))\\
 P(T\le t | \delta_i=0) =& F_2(t).
