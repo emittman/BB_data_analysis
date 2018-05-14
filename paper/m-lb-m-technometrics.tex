@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage{amsmath}
-\usepackage{graphicx,psfrag,epsf,float, bm, subcaption, url}
+\usepackage{graphicx,psfrag,epsf,float, bm, subcaption, url, makecell}
 \graphicspath{C:/Users/Colin/Documents/GitHub/BB_data_analysis/paper/fig/}
 \usepackage{enumerate}
 \usepackage{natbib}
@@ -95,7 +95,7 @@ In this paper we present a method for joint estimation of multiple lifetime dist
 \section{Introduction}
 \subsection{Motivation}
 Consumers have an interest in accurate assessment of product reliability. Toward this end, there usually is a need for models that can accommodate common failure patterns and methods which can make the most of available data and properly account for uncertainty. Doing these things well enables good decision-making in matters related to product life, including purchase decisions and contingency planning.
-%While computationally convenient, simple lifetime models can fail at each of these.
+
 
 The reliability of many engineered products follows a similar pattern. Relatively high rates of early failure are due to manufacturing defects.  After this ``burn-in'' period, failure rates stabilize after the majority of defective units have failed.  Finally, after prolonged use, rates of failure increase due to wearout.  Ignoring this pattern in failure rates can lead to spurious inferences about a product's reliability and suboptimal decisions. This highlights the importance of choosing a sufficiently flexible model.
 
@@ -276,7 +276,7 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
 \begin{figure}[H]
   %\includegraphics[width=.9\textwidth]{data-sum.pdf}
   \includegraphics[width=.9\textwidth]{dm-summ-scatter.pdf}
-  \caption{Scatterplot of total observed running time (hundred thousands of hours) versus total number of observed failures.  Each number labels a unique drive-model, numbered between 1 and 44.   Axes are on the log scale.}
+  \caption{\footnotesize Scatterplot of total observed running time (hundred thousands of hours) versus total number of observed failures.  Each number labels a unique drive-model, numbered between 1 and 44.   Axes are on the log scale.}
   \label{drive-scatter}
 \end{figure}
 
@@ -287,7 +287,7 @@ To illustrate the GLFP model, we will present an analysis of the drive-model wit
 \begin{figure}[H]
 \centering
   \includegraphics[width=.6\textwidth]{km14-prob}
-  \caption{K-M estimate for Drive-model 14.  Uncertainty band correspond to pointwise standard errors (using Greenwood's formula.)}
+  \caption{\footnotesize K-M estimate for Drive-model 14.  Uncertainty band correspond to pointwise standard errors (using Greenwood's formula.)}
   \label{fig1}
 \end{figure}
 
@@ -320,7 +320,7 @@ $\pi$ & 0.033 & 0.054 & 0.099 \\
   $t_{0.2,2}$ & $18.0$ & $18.2$ & $18.6$ \\ 
    \hline
 \end{tabular}
-\caption{Posterior 95\% Credible Intervals for the 5 GLFP parameters for Drive-model 14.  The quantiles are in thousands of hours.}
+\caption{\footnotesize Posterior 95\% Credible Intervals for the 5 GLFP parameters for Drive-model 14.  The quantiles are in thousands of hours.}
 \label{table:1}
 \end{table}
 
@@ -333,7 +333,7 @@ In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP 
 \begin{figure}[H]
 \centering
   \includegraphics[width=.8\textwidth]{km14-prob-plus}
-  \caption{The estimated GLFP model for Drive-model 14 plotted on Weibull paper.  The dashed line corresponds to the median of the posterior draws; pointwise 90\% credible bounds are indicated by the smooth region.  The solid line is an adjusted K-M estimate with pointwise 90\% credible bounds in blue.}
+  \caption{\footnotesize The estimated GLFP model for Drive-model 14 plotted on Weibull paper.  The dashed line corresponds to the median of the posterior draws; pointwise 90\% credible bounds are indicated by the smooth region.  The solid line is an adjusted K-M estimate with pointwise 90\% credible bounds in blue.}
   \label{ex1-overlay}
 \end{figure}
 
@@ -462,7 +462,7 @@ These plots suggest that Model 1 is insufficient to explain the observed data. M
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{heterogeneity-compare}
-\caption{Left: Adjusted K-M estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median cdf estimates for Models 1-4, ordered left to right, top to bottom.}
+\caption{\footnotesize Left: Adjusted K-M estimates of the time to failure for each of the drive-models in the Backblaze data. Right: Pointwise posterior median cdf estimates for Models 1-4, ordered left to right, top to bottom.}
 \label{fig:fig2}
 \end{figure}
 
@@ -477,7 +477,7 @@ where $\theta^{(s)}$ is posterior sample $s$ from $p(\theta|y)$.
 \begin{figure}[H]
 {\centering
 \includegraphics[width=\textwidth]{single-drive-4-Models-ex-v2}}
-\caption{Posterior median of the proportion failing as a function of time under Models 1-4 for sample of drive-models, with axes scales as for Weibull probability plotting.  The solid step function is the adjusted K-M estimate.}
+\caption{\footnotesize Posterior median of the proportion failing as a function of time under Models 1-4 for sample of drive-models, with axes scales as for Weibull probability plotting.  The solid step function is the adjusted K-M estimate.}
 \label{fig:mod_comp_leg}
 \end{figure}
 
@@ -497,7 +497,7 @@ We calculated the difference in expected predictive accuracy for Model 4 versus 
 \centering
 \begin{tabular}{rrrrrrrr}
   \hline
- & $\widehat{\text{elpd}}$ \ & Difference in $\widehat{\text{elpd}}$ \ & SE of the Difference & Effective No. Parameters\\ 
+ & $\widehat{\text{elpd}}$ \ & \thead{Estimated Difference \\ in $\widehat{\text{elpd}}$} \ & \thead{Standard Error of \\ the Difference} & \thead{Effective Number of \\ Parameters}\\ 
   \hline
 Model 4 & -13309.5 & 40.7 & 11.3 & 92.5 \\ 
 Model 3 & -13350.2 & 458.8 & 31.0 & 68.8 \\ 
@@ -505,7 +505,7 @@ Model 2 & -13809.0 & 3674.6 & 96.2 & 49.6 \\
 Model 1 & -17483.6 &  &  & 4.3 \\
    \hline
 \end{tabular}
-\caption{Expected log pointwise predictive density (elpd) and related statistics for each model.}
+\caption{\footnotesize Expected log pointwise predictive density (elpd) and related statistics for each model.}
 \label{table:2}
 \end{table}
 \end{figure}
@@ -548,7 +548,7 @@ For the hard-drive data, we used the posterior samples obtained in fitting Model
 
 \begin{figure}
 \includegraphics[width=\textwidth]{ppcheck-sample}
-\caption{Adjusted K-M estimates of the proportion failing for a representative subset of drive-models. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
+\caption{\footnotesize Adjusted K-M estimates of the proportion failing for a representative subset of drive-models. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
 \label{fig:post-pred-KM}
 \end{figure}
 
@@ -599,17 +599,17 @@ The bottom panel of Figure 9 shows the posterior credible intervals for the prop
 \centering
    \begin{subfigure}[b]{0.80\textwidth}
    \includegraphics[width=1\linewidth]{b10new.pdf}
-   \caption{Point estimate and 50\% CI for $t_{0.10}$}
+   \caption{\footnotesize Point estimate and 50\% CI for $t_{0.10}$}
    \label{fig:Ng1} 
 \end{subfigure}
 
 \begin{subfigure}[b]{0.80\textwidth}
    \includegraphics[width=1\linewidth]{pinew.pdf}
-   \caption{Point estimate and 50\% CI for $\pi$}
+   \caption{\footnotesize Point estimate and 50\% CI for $\pi$}
    \label{fig:Ng2}
 \end{subfigure}
 
-\caption{(a) 50\% CI (in years) for $t_{0.10}$ (b) 50\% CI for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of the marginal posterior distribution of $t_{0.10}$.}
+\caption{\footnotesize (a) 50\% CI (in years) for $t_{0.10}$ (b) 50\% CI for $\pi$ plotted on the logit scale.  Both plots are sorted based on the median value of the marginal posterior distribution of $t_{0.10}$.}
 \end{figure}
 
  
@@ -645,7 +645,7 @@ parameters.
 \begin{figure}[H]
   \centering
   \includegraphics[width=.8\textwidth]{dm-eval}
-  \caption{Left: 90\% CI of the posterior predictive distributions for $e^{-0.4 t_{g,new}}$ the depreciated value at failure (VAF) for a new unit for each Drive-model.
+  \caption{\footnotesize Left: 90\% CI of the posterior predictive distributions for $e^{-0.4 t_{g,new}}$ the depreciated value at failure (VAF) for a new unit for each Drive-model.
   Right: A comparison (90\% CI) of the predictive distribution of TTF in hundreds of thousands of hours (top) and VAF (bottom) based on 40\% depreciation for the best 11 drive-models, shows that rankings produced by the two measures are not equivalent.}
   \label{fig5}
 \end{figure}
@@ -660,6 +660,7 @@ price of a hard-drive is the same across drive-models.
 
 The mean time-to-failure (MTTF) for drive-model $d$ can be estimated by
 $$\frac{1}{S} \sum_{s=1}^{S} t_{g,new}^{(s)}.$$
+where $t_{g,new}^{(s)}$ is a draw from the posterior predictive distribution for drive-model $g$. 
 
 While MTTF is often an important metric, due to the
 anticipation of advancements in technology, we can expect that the
@@ -686,7 +687,7 @@ In the case of the Backblaze data, we observed improved posterior precision for 
 \begin{figure}
   \centering
   \includegraphics[width=.7\textwidth]{accuracy_compare}
-  \caption{Posterior distributions of 0.1 quantiles for a representative subset of drive-models where separate fitting of the GLFP model was successful (unimodal posteriors and passing MCMC convergence diagnostics.) $r$ indicates the number of observed failures. Separate fits use the same priors as Model 4, but have greater uncertainty because there is no borrowing of information across drive-models.}
+  \caption{\footnotesize Posterior distributions of 0.1 quantiles for a representative subset of drive-models where separate fitting of the GLFP model was successful (unimodal posteriors and passing MCMC convergence diagnostics.) $r$ indicates the number of observed failures. Separate fits use the same priors as Model 4, but have greater uncertainty because there is no borrowing of information across drive-models.}
   
 \label{improved_accuracy}
 \end{figure}
