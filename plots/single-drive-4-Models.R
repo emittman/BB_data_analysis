@@ -116,10 +116,10 @@ save(plots.prob, file="plots-prob.RData")
 library(cowplot)
 lgnd <- get_legend(plots.prob[[1]] + theme(legend.key.size = unit(1,units = "cm")))
 lgnd_off <- theme(legend.position="none")
-to.save=plot_grid(plot_grid(plots.prob[[2]] + ggtitle("2") + lgnd_off,
-                    plots.prob[[9]] + ggtitle("9") + lgnd_off,
-                    plots.prob[[14]] + ggtitle("14") + lgnd_off,
-                    plots.prob[[40]] + ggtitle("40") + lgnd_off,ncol=2),
+to.save=plot_grid(plot_grid(plots.prob[[2]] + ggtitle("Drive-model 2") + lgnd_off,
+                    plots.prob[[9]] + ggtitle("Drive-model 9") + lgnd_off,
+                    plots.prob[[14]] + ggtitle("Drive-model 14") + lgnd_off,
+                    plots.prob[[40]] + ggtitle("Drive-model 40") + lgnd_off,ncol=2),
           lgnd, rel_widths = c(10,2), nrow=1)
 ggsave("../paper/fig/single-drive-4-Models-ex-v2.pdf", width=12, height=10)
 # plots.prob <- lapply(1:44, function(dm) single_drive.all.4.Models(dm, FALSE))
