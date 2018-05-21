@@ -226,7 +226,7 @@ The GLFP model can be understood as a mixture model with a binary latent variabl
 the cdf for the wearout failures. Expressed conditional on~$\delta_i$,
 \begin{align*}
 P(T\le t | \delta_i=1) &=  1 -(1-F_1(t))(1-F_2(t))\\
-P(T\le t | \delta_i=0) &=  F_2(t)
+P(T\le t | \delta_i=0) &=  F_2(t).
 \end{align*}
 
  
@@ -234,7 +234,7 @@ The parameter $\pi$ represents the proportion of units susceptible to early fail
 
 Taking the derivative of the (marginal) cdf, the density for the GLFP model is
 \begin{align*}
-h(t|\pi, t_{p1},\sigma_1, t_{p2}, \sigma_2) = \pi & f_1(t|t_{p1},\sigma_1)\left(1-F_2(t|t_{p2},\sigma_2)\right) + \\ & f_2(t|t_{p2},\sigma_2)\left(1-\pi F_1(t|t_{p1},\sigma_1\right)
+h(t|\pi, t_{p1},\sigma_1, t_{p2}, \sigma_2) = \pi & f_1(t|t_{p1},\sigma_1)\left(1-F_2(t|t_{p2},\sigma_2)\right) + \\ & f_2(t|t_{p2},\sigma_2)\left(1-\pi F_1(t|t_{p1},\sigma_1\right).
 \end{align*}
 
 \noindent Note that the $p$ quantile of the GLFP model can be found by setting $p=H(t_p)$ and solving numerically for $t_p$.
@@ -299,7 +299,7 @@ When eliciting prior distribution information it is much easier to ask about rec
 $$t_{0.5,1} \sim \op{Lognormal} \langle 1.7,\,7.6\times 10^6 \rangle,\quad
 t_{0.2,2} \sim \op{Lognormal}\langle 8.6, \, 5.6\times 10^7 \rangle$$
 $$\pi \sim \op{Logit-normal}\langle 0.001,\, 0.71 \rangle,\quad
-\sigma_1, \sigma_2 \stackrel{ind.}{\sim} \op{Lognormal}\langle 0.0074 ,\,130 \rangle $$
+\sigma_1, \sigma_2 \stackrel{ind.}{\sim} \op{Lognormal}\langle 0.0074 ,\,130 \rangle. $$
 %\quad \sigma_2 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2  \rangle $$
 
 \noindent These prior distributions put probability mass on a wide range of values for all model parameters --- much larger than we would expect for a typical Weibull distribution.  Thus, these prior distributions are relatively uninformative. 
@@ -372,7 +372,7 @@ t_{p_{1}g} = \exp\left(\mu_{1g} + \sigma_{1g}\,\Phi^{-1}(p_1)\right)  \ind \op{L
 t_{p_{2}g} = \exp\left(\mu_{2g} + \sigma_{2g}\,\Phi^{-1}(p_2)\right)  \ind \op{Lognormal} \left(\eta_{t_{p_2}}, \tau^2_{t_{p_2}}\right)
 \end{equation*}
 \begin{equation*}
-\pi_g \ind \op{Logit-normal}(\eta_\pi, \tau^2_\pi)
+\pi_g \ind \op{Logit-normal}(\eta_\pi, \tau^2_\pi).
 \end{equation*}
 
 As discussed in Section \ref{sec:Weibull parameterization}, we reparameterize the Weibull distribution in terms of a quantile and the shape parameter because observed failure data are often more informative about the lower tail of their respective lifetime distribution (note that if $T$ has a Weibull distribution, $\sigma$ is a shape parameter for the distribution of $T$ and a scale parameter for the distribution of $\log(T)$). We truncate the distribution of $\sigma_{2g}$ at $1$ (indicated by $\text{Tr}(0,1)$ above) restricting the wearout failure mode to have an increasing hazard function (i.e., $\beta_{2g} = 1/\sigma_{2g}>1$). %We choose to model these parameters with log-normal and logit-normal distributions because many populations require strong regularization which the normal, with its exponentially decreasing tails, provides. 
@@ -399,7 +399,7 @@ posterior draws from a fitted model.  Following \cite{vehtari}, the log pointwis
 
 \begin{align*}
 \mbox{lpd} &= \sum_{g=1}^G \sum_{i=1}^{n_g} \log[p(t_{new,g,i}|t, t^L, c)] \\
-&= \sum_{g=1}^G \sum_{i=1}^{n_g} \log \left[ \int p(t_{new,g, i}|\theta) p(\theta|t,t^L,c) d\theta \right]
+&= \sum_{g=1}^G \sum_{i=1}^{n_g} \log \left[ \int p(t_{new,g, i}|\theta) p(\theta|t,t^L,c) d\theta \right].
 \end{align*}
 \noindent Using this criterion, we should choose the model with the highest expected lpd (elpd) for a new data set $\{t_{new,g,i}:g=1,\ldots,G; i=1,\ldots,n_g\}$. Notationally suppressing the conditioning on $t^L$ and $c$,
 \begin{equation}
@@ -408,7 +408,7 @@ posterior draws from a fitted model.  Following \cite{vehtari}, the log pointwis
 \end{equation}
 where $h$ is a density for the true distribution of $t_{new,g,i}$. Although $h$ is unknown, leave-one-out cross-validation provides a robust estimator:
 \begin{equation}
-\widehat{\text{elpd}} = \sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{-(g,i)})]
+\widehat{\text{elpd}} = \sum_{g=1}^G \sum_{i=1}^{n_g} \log [p(t_{g,i}|t_{-(g,i)})].
 \label{loo-est}
 \end{equation}
 The \texttt{R} package, \texttt{loo} \citep{loo}, computes an approximation of (\ref{loo-est}) provided that the observations $t_i$ are conditionally independent. It employs an importance sampling method that uses $S$ saved MCMC draws to compute smoothed importance weights, $w_{i,s}$, approximating $p(t_{g,i}|t_{-(g,i)})$ with $\sum_{s=1}^S w_{i,s} p(t_{g,i})/\sum_{s=1}^S w_{i,s}$. In addition to providing an estimate of (\ref{elpd}), their method also produces a standard error based on an asymptotic result.  A measure of the effective number of parameters is also available using the sum of the posterior variance of the log predictive density for each observation.
@@ -429,7 +429,7 @@ Following the recommendations in Section 5.3, we specify the following prior dis
 \paragraph{Model 2} $t_{p_{2}g}$ varies by drive-model. To help with model identifiably, we tighten the priors on the early failure mode:
 $$ \pi \sim \op{Logit-normal}\langle 0.007,\, 0.26 \rangle,$$
 $$\sigma_1 \sim \op{Lognormal}\langle 0.14,\, 7.1\rangle,$$ 
-$$t_{0.5} \sim \op{Lognormal} \langle 22,\, 5.5 \times 10^{4} \rangle$$
+$$t_{0.5} \sim \op{Lognormal} \langle 22,\, 5.5 \times 10^{4} \rangle.$$
 
 \paragraph{Model 3} $t_{p_{2}g}$ and $\sigma_{2g}$ vary by drive-model. Prior distributions for the constrained parameters are the same as for Model 2.
 
@@ -441,7 +441,7 @@ $$\eta_{\pi} \sim \op{Normal}(-3, 1^2),\quad \tau_{\pi} \sim \op{Half-Cauchy}(0,
 $$\eta_{\sigma_2}  \sim \op{Normal}(0, 2^2),\quad
 \tau_{\sigma_2}  \sim \op{Half-Cauchy}(0, 1)$$
 $$\eta_{t_{0.2}}  \sim \op{Normal}(9, 2^2),\quad
-\tau_{t_{0.2}}  \sim \op{Half-Cauchy}(0, 1)$$
+\tau_{t_{0.2}}  \sim \op{Half-Cauchy}(0, 1).$$
 
 \subsection{Model fitting}
 \label{sec:Model fitting}
@@ -530,13 +530,13 @@ For $s=1,\ldots, R$,
 
 \begin{enumerate}
 \item Sample $r$ uniformly from $\{1,\ldots,S\}$.\\ For $i=1,\ldots,n_g$, do:
-\item Simulate $\tilde{t}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(r)},t_{p1}^{(r)},\sigma_1^{(r)},t_{p_{2}g}^{(r)}, \sigma_{2g}^{(r)})$
+\item Simulate $\tilde{t}_{rep,g,i}^{(s)} \sim \op{GLFP}(\pi_{g}^{(r)},t_{p1}^{(r)},\sigma_1^{(r)},t_{p_{2}g}^{(r)}, \sigma_{2g}^{(r)}).$
 \item Repeat step 2 until $\tilde{t}_{rep,g,i} > t_{g,i}^L$
 \item Set $d_{g,i}^{(s)}= \begin{cases} \max \{t_{g,i}: i \ge 1\}, & \mbox{ if }c_{g,i}=0\\
 t_{g,i}, & \mbox{ if }c_{g, i}=1. \end{cases}$\\
 Lastly, set $(t_{rep,g,i}^{(s)},c_{rep,g,i}^{(s)}) = \begin{cases}
   (d_{g,i}^{(s)},1), & \mbox{ if } \tilde{t}_{rep,g,i}^{(s)}>d_{g,i}^{(s)}\\
-  (\tilde{t}_{rep,g,i}^{(s)},0), & \mbox{ if }\tilde{t}_{rep,g,i}^{(s)} \le d_{g,i}^{(s)}
+  (\tilde{t}_{rep,g,i}^{(s)},0), & \mbox{ if }\tilde{t}_{rep,g,i}^{(s)} \le d_{g,i}^{(s)}.
 \end{cases}$
 \end{enumerate}
 Finally, plot K-M estimates based on the $R$ replicated data sets along with the one based on the observed data on the same axes. Discrepancies between the replicated and actual data can be used to diagnose inadequacies of the model.
@@ -659,7 +659,7 @@ of service. For ease of exposition, we will assume that the purchase
 price of a hard-drive is the same across drive-models.
 
 The mean time-to-failure (MTTF) for drive-model $d$ can be estimated by
-$$\frac{1}{S} \sum_{s=1}^{S} t_{g,new}^{(s)}$$
+$$\frac{1}{S} \sum_{s=1}^{S} t_{g,new}^{(s)}.$$
 where $t_{g,new}^{(s)}$ is a draw from the posterior predictive distribution for drive-model $g$. 
 
 While MTTF is often an important metric, due to the
@@ -671,7 +671,7 @@ balance method'' the rate of depreciation is 40\% per year.
 
 Let $L(t) = e^{-0.4t}$ represent the value at the time of failure
 relative to a new unit. We can rank the drive-models by 
-$$\op{E}(L(t_{g,new})|t))\approx \frac{1}{S} \sum_{s=1}^{S} L(t_{g,new}^{(s)})$$
+$$\op{E}(L(t_{g,new})|t))\approx \frac{1}{S} \sum_{s=1}^{S} L(t_{g,new}^{(s)}).$$
 
 Posterior credible intervals for $L(t_{g,new})$ are shown in the left panel of Figure \ref{fig5}. A zoomed version for the top eight drive-models, as ranked by $\op{E}(L(t_{g,new})|y)$ are shown in the bottom right panel. The panel above shows credible intervals for MTTF. We can see that ranking by MTTF would lead to a different result -- a new Drive-model 8 unit is expected to last the longest, but the possibility of it failing early is higher than for the drive-models ranked highest by our depreciation-aware metric. The top four drive-models (4, 5, 2, 3) are comparable, with a new Drive-model 4 unit expected to depreciate the most. However, given the discrepancy of the model fit for Drive-model 4 (noted in the previous subsection), in the absence of more early life data, we might harbor some lingering concern about possible quality-control issues with this Drive-model.
 
