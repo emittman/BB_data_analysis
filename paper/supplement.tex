@@ -46,11 +46,41 @@
 {\large\bf SUPPLEMENTARY MATERIAL}
 \end{center}
 
-\begin{description}
+{\appendix
+\section{Truncation adjusted Kaplan-Meier estimate of lifetime}
+\label{sec:trunc-adj}
+We first start with a nonparametric estimate of the empirical cdf for each sub-population using the Kaplan-Meier estimator.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $g$, denoted by
+$\widehat{F_g(t)}_{KM}$, is conditional on survival up to
+$t_{g,\text{min}}^L$, the shortest reported running time of all units in
+of sub-population $g$ for which records are available. To produce
+unconditional estimates, we adapt the adjustment method outlined by \citet[Chapter 11]{meeker}.  For each sub-population we select
+$t_{g,\text{min}}^L$, the smallest left truncated time in the sample.
+By sampling from the full posterior distribution, because
+$\Pr(T>t_{g,\text{min}}^L|\theta_g)$ (the probability that a hard drive has
+survived up to $t_{g,\text{min}}^L$) is a function of the model
+parameters, we can easily compute its posterior median,
+$\widehat{A}_{\text{med}} = \widehat{\Pr}(T>t_{g,\text{min}}^L|\theta_g)$. We compute the adjusted estimate by
 
-\item Stan code for Model 4, estimated using the Backblaze data set (also available as a supplementary .csv file).
+$$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\text{med}}\right)\widehat{F_g(t)}_{KM},\; t>t_{g,\text{min}}^L.$$
 
-\end{description}
+While this adjustment may be negligible for sub-populations with little truncation, in our Backblaze example, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
+
+\section{Definition of global average for Model 4}
+\label{global-avg}
+In Section 7, to illustrate the concept of shrinkage in our hierarchical model, we refer to a ``global average" which represents an average GLFP cdf for the entire population, $\op{H}\left(\cdot|\bar{\pi},\mu_1,\sigma_1,\bar{\mu}_2,\bar{\sigma}_2\right)$. Because $\mu_1$ and $\sigma_1$ are common across all sub-populations in our model, these can already be interpreted as ``global." For the parameters that vary across sub-populations, we select values corresponding to the medians of the hierarchical distributions (4) conditional on the hyperparameters. In particular, we set
+$$\bar{\pi}=\op{logit}^{-1}(\eta_{\pi}),\;\bar{\mu}_2=\eta_{t_2} - m_{\sigma_2}\Phi^{-1}(.2) \mbox{ and } \bar{\sigma}_2= m_{\sigma_2}.$$
+Let $J(\cdot|a,b),\;J^{-1}(\cdot|a,b)$ denote the cdf and inverse cdf, respectively, for a lognormal distribution with log-location parameter $a$ and log-scale parameter $b$. Then
+$$m_{\sigma_2}=J^{-1}[0.5 \cdot J(1|\eta_{\sigma_2},\tau_{\sigma_2})|\eta_{\sigma_2}, \tau_{\sigma_2}],$$
+which is the median of a lognormal distribution with parameters $\eta_{\sigma_2}$, and $\tau_{\sigma_2}$, truncated to the interval $(0, 1)$.
+
+We estimate the global average pointwise, using draws from the joint posterior distribution, $H\left(\tilde{t}|\eta_\pi^{(s)}, \mu_1^{(s)}, \sigma_1^{(s)}, \eta_{t_2}^{(s)},\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$, $s=1,2,\ldots,S$. The computation is thus similar to that shown in (7).
+}
+
+%\begin{description}
+
+%\item Stan code for Model 4, estimated using the Backblaze data set (also available as a supplementary .csv file).
+
+%\end{description}
 
 \section{Stan code for Model 4}
 \label{sec:stan-code}
@@ -183,37 +213,37 @@ tau_pi         ~ cauchy(0,1);
 \section{Posterior predictive graphical checks}
 Full set of Figures 5 and 6 for all 44 drive-models.  Numbering in the top left indicates drive-model.  Left: Adjusted K-M estimates of the proportion failing.  The original data (bold line) and 19 ``replicated" data sets from the posterior predictive distribution (dashed lines) are shown.  Right: Posterior median of proportion failing as a function of time for Models 1-4.  Plotted on Weibull probability scales.  The solid step function is the adjusted K-M estimate.  
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-1.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-1.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-2}
+\includegraphics[width=\textwidth]{ppcheck-v3-2}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-3.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-3.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-4.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-4.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-5.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-5.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-6.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-6.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-7.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-7.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-8.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-8.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-9.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-9.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-10.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-10.pdf}
 \end{figure}
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{ppcheck-v2-11.pdf}
+\includegraphics[width=\textwidth]{ppcheck-v3-11.pdf}
 \end{figure}
 \clearpage
 
@@ -301,5 +331,8 @@ HGST HDS5C4040ALE630 &   1 \\
    \hline
 \end{tabular}
 \end{table}
+
+\bibliography{./sample}
+
 
 \end{document}

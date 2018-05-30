@@ -68,7 +68,7 @@
 
 \begin{abstract}
 When analyzing field data on consumer products, model-based approaches to inference require a model with sufficient flexibility to account for multiple kinds of failures. The causes of failure, while not interesting to the consumer per se, can lead to various observed lifetime distributions.  Because of this, standard lifetime models, such as using a single Weibull or
-lognormal distribution may be inadequate. Usually cause-of-failure information will not be available to the consumer and thus traditional competing risk analyses cannot be performed.
+lognormal distribution, may be inadequate. Usually cause-of-failure information will not be available to the consumer and thus traditional competing risk analyses cannot be performed.
 Furthermore, when the information carried by lifetime data are limited by sample size, censoring, and truncation, estimates can be unstable and suffer from imprecision. These limitations are typical; for example, lifetime data for high-reliability products will naturally tend to be right-censored.
 
 
@@ -145,13 +145,12 @@ are almost certainly several, if not many, different competing
 causes. The actual cause for any particular failed drive
 would be the minimum time of all of these potential causes, suggesting a
 Weibull distribution because of extreme value theory (see page 86  of
-\cite{meeker}) for further discussion of this point.
+\cite{meeker} for further discussion of this point.)
 \end{itemize}
 
-To simplify the
-presentation and because it adequately describes our example data,
-we will use the Weibull distribution to describe both the early and
-wearout failures. Changing to any other combination of distributions
+%To simplify the presentation and because it adequately describes our example data, we will use the Weibull distribution to describe both the early and wearout failures.
+
+Changing to any other combination of distributions
 in the log-location-scale family of distributions is
 straightforward.
 
@@ -215,11 +214,12 @@ failing, then choosing $t_{0.05}$ would
 work well.
 \item Bayesian MCMC estimation will be better behaved due to reduced correlation between $t_p$ and $\sigma$ (relative to $\alpha$ and $\sigma$).
 \end{itemize}
+ \cite{gelman2004parameterization} provides a more general discussion of reparameterization and Bayesian inference.
 
 \subsection{Generalized Limited Failure Population model}
 \label{subsec:GLFP model}
-Let $F_1,F_2$ be Weibull distributions with parameters $(t_{p1},\sigma_1)$ and $(t_{p2}, \sigma_2)$, respectively.
-The Generalized Limited Failure Population model (GLFP) of \citet{chan} is defined as follows: Let $T \sim \op{GLFP}(\pi, t_{p1},\sigma_1,t_{p2},\sigma_2)$ Then
+Let $F_1,F_2$ be Weibull distributions with parameters $(t_{p_1},\sigma_1)$ and $(t_{p_2}, \sigma_2)$, respectively.
+The Generalized Limited Failure Population model (GLFP) of \citet{chan} is defined as follows: Let $T \sim \op{GLFP}(\pi, t_{p_1},\sigma_1,t_{p_2},\sigma_2)$ Then
 $$\Pr(T \le t) = H(t) = 1 - (1-\pi\, F_{1}(t))(1 - F_{2}(t)),\, t>0,\, 0 < \pi < 1.$$
 
 The GLFP model can be understood as a mixture model with a binary latent variable, $\delta_i\ind \op{Bernoulli}(\pi)$. $\delta_i$ is an indicator for whether unit $i$ is defective or not (i.e., susceptible to an early failure).  Here $F_{1}(t)$ is the cdf for the early failures and $F_{2}(t)$ is
@@ -234,7 +234,7 @@ The parameter $\pi$ represents the proportion of units susceptible to early fail
 
 Taking the derivative of the (marginal) cdf, the density for the GLFP model is
 \begin{align*}
-h(t|\pi, t_{p1},\sigma_1, t_{p2}, \sigma_2) = \pi & f_1(t|t_{p1},\sigma_1)\left(1-F_2(t|t_{p2},\sigma_2)\right) + \\ & f_2(t|t_{p2},\sigma_2)\left(1-\pi F_1(t|t_{p1},\sigma_1\right).
+h(t|\pi, t_{p_1},\sigma_1, t_{p_2}, \sigma_2) = \pi & f_1(t|t_{p_1},\sigma_1)\left(1-F_2(t|t_{p_2},\sigma_2)\right) + \\ & f_2(t|t_{p_2},\sigma_2)\left(1-\pi F_1(t|t_{p_1},\sigma_1\right).
 \end{align*}
 
 \noindent Note that the $p$ quantile of the GLFP model can be found by setting $p=H(t_p)$ and solving numerically for $t_p$.
@@ -248,7 +248,7 @@ When an observation is left-truncated, it would not have been observed if it had
 
 \subsection{Likelihood}
 \label{subsec:likehood}
-We now give the general form for the likelihood function, taking into account left truncation and right censoring.  Let $t_{i}$ denote the end of the observed lifetime of unit $i$, in hours.  Let $t_i^L$ be the left truncation time, the age of unit $i$ when data reporting commenced. Additionally, let $c_i$ be an indicator for censoring; $c_i=1$ if the failure time is right-censored, $c_1=0$ if the unit failed (at time $t_i$). The likelihood for the GLFP is a function of the parameters $\bm{\theta} = (\pi,t_{p1}, \sigma_1, t_{p2}, \sigma_2)$.  Assuming the lifetimes of all units are independent, the likelihood for the data, $t_1,\ldots,t_n$ is
+We now give the general form for the likelihood function, taking into account left truncation and right censoring.  Let $t_{i}$ denote the end of the observed lifetime of unit $i$, in hours.  Let $t_i^L$ be the left truncation time, the age of unit $i$ when data reporting commenced. Additionally, let $c_i$ be an indicator for censoring; $c_i=1$ if the failure time is right-censored, $c_1=0$ if the unit failed (at time $t_i$). The likelihood for the GLFP is a function of the parameters $\bm{\theta} = (\pi,t_{p_1}, \sigma_1, t_{p_2}, \sigma_2)$.  Assuming the lifetimes of all units are independent, the likelihood for the data, $t_1,\ldots,t_n$ is
 \begin{equation}
 \label{equation:likelihood}
 L(\bm{\theta})= \prod_{i=1}^{n} \left[\frac{h(t_i;\bm{\theta})}{1-H(t_i^L;\bm{\theta})}\right]^{1-c_i} \left[ \frac{1-H(t_i;\bm{\theta})}{1-H(t_i^L;\bm{\theta})} \right]^{c_i}
@@ -282,7 +282,7 @@ As of the first quarter of 2016, Backblaze was collecting and reporting data on 
 
 \subsection{Analysis of a single drive-model}
 \label{subsec:ex1}
-To illustrate the GLFP model, we will present an analysis of the drive-model with the most observed failures, Drive-model 14.  The Kaplan-Meier (K-M) estimate plotted below suggests at least two failure modes.  The curve has a slow ramp up in failures until about 10,000 hours (early failures), and increases more rapidly from about 10,000 to 20,000 hours (presumably wearout failures).  Besides our empirical observation, it is well known that computer hard drives have a mixture of early and late failures \citep{chan}.  Therefore, there is both an empirical and a theoretical justification to use the GLFP model in this application.
+To illustrate the GLFP model, we will first present an analysis of the drive-model with the most observed failures, Drive-model 14.  The Kaplan-Meier (K-M) estimate plotted below suggests at least two failure modes.  The curve has a slow ramp up in failures until about 10,000 hours (early failures), and increases more rapidly from about 10,000 to 20,000 hours (presumably wearout failures).  Besides our empirical observation, it is well known that computer hard drives have a mixture of early and late failures \citep{chan}.  Therefore, there is both an empirical and a theoretical justification to use the GLFP model in this application.
 
 \begin{figure}[H]
 \centering
@@ -292,14 +292,15 @@ To illustrate the GLFP model, we will present an analysis of the drive-model wit
 \end{figure}
 
 
-To estimate the parameters of the GLFP model we use a Bayesian approach, selecting proper, but generally diffuse, prior distributions to improve identification of the model parameters. Having a proper prior distribution also ensures a proper posterior distribution. We reparameterize the component Weibull distributions using the $0.50$ quantile for the early failure mode ($t_{0.5,1}$) and the $0.20$ quantile for the wearout failure mode ($t_{0.2,2}$). \\
+To estimate the parameters of the GLFP model we use a Bayesian approach, selecting proper, but generally diffuse, prior distributions to improve identification of the model parameters. Having a proper prior distribution also ensures a proper posterior distribution. We reparameterize the component Weibull distributions using the $0.50$ quantile for the early failure mode ($t_{p_1=0.5}$) and the $0.20$ quantile for the wearout failure mode ($t_{p_2=0.2}$). \\
 
 When eliciting prior distribution information it is much easier to ask about recognizable characteristics of a distribution instead of the traditional parameters of the distribution.  Following the approach used in \cite[Section 15.2.2]{intervals} we will use diagonal braces ($\langle.,.\rangle$) to refer to $95$ percent central probability intervals, rather than the standard model parameters when specifying prior distributions (See the Supplementary Material for standard density plots of the priors).  Using this convention the prior distributions used in our analyses are
 %$$t_{0.5,1} \sim \op{Lognormal}(8,4), \quad t_{0.2,2} \sim \op{Lognormal}(10,4)$$
-$$t_{0.5,1} \sim \op{Lognormal} \langle 1.7,\,7.6\times 10^6 \rangle,\quad
-t_{0.2,2} \sim \op{Lognormal}\langle 8.6, \, 5.6\times 10^7 \rangle$$
+$$t_{p_1} \sim \op{Lognormal} \langle 1.7,\,7.6\times 10^6 \rangle,\quad
+t_{p_2} \sim \op{Lognormal}\langle 8.6, \, 5.6\times 10^7 \rangle$$
 $$\pi \sim \op{Logit-normal}\langle 0.001,\, 0.71 \rangle,\quad
-\sigma_1, \sigma_2 \stackrel{ind.}{\sim} \op{Lognormal}\langle 0.0074 ,\,130 \rangle. $$
+\sigma_1, \sigma_2 \stackrel{ind.}{\sim} \op{Lognormal}\langle 0.0074 ,\,130 \rangle$$
+where $p_1=0.2$ and $p_2=0.5$.
 %\quad \sigma_2 \sim \op{Lognormal}\langle 7.4 \times 10 ^{-3} ,1.3 \times 10^2  \rangle $$
 
 \noindent These prior distributions put probability mass on a wide range of values for all model parameters --- much larger than we would expect for a typical Weibull distribution.  Thus, these prior distributions are relatively uninformative. 
@@ -316,8 +317,8 @@ Table \ref{table:1} gives the posterior median and 95\% credible intervals for t
 $\pi$ & 0.033 & 0.054 & 0.099 \\ 
  $\beta_1 = 1/\sigma_1 $ & 0.47 & 1.13 & 1.72 \\ 
   $\beta_2 = 1/\sigma_2$ & 4.47 & 4.70 & 4.95 \\ 
-  $t_{0.5,1}$ & $1.03$  & $2.28$ & $3.99$\\ 
-  $t_{0.2,2}$ & $18.0$ & $18.2$ & $18.6$ \\ 
+  $t_{p_1=0.5}$ & $1.03$  & $2.28$ & $3.99$\\ 
+  $t_{p_2=0.2}$ & $18.0$ & $18.2$ & $18.6$ \\ 
    \hline
 \end{tabular}
 \caption{\footnotesize Posterior 95\% Credible Intervals for the 5 GLFP parameters for Drive-model 14.  The quantiles are in thousands of hours.}
@@ -325,10 +326,10 @@ $\pi$ & 0.033 & 0.054 & 0.099 \\
 \end{table}
 
 
-Probability plotting is a simple method to assess and compare the adequacy of members of the log-location-scale family of distributions.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with confidence bands provides a visual assessment of distributional goodness of fit.  We applied this method using the Kaplan-Meier nonparametric estimate of the empirical cdf.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version due to \citet[Chapter 11]{meeker} (see Appendix for a detailed description).   
+Probability plotting is a simple method to assess and compare the adequacy of members of the log-location-scale family of distributions.  After properly transforming the axes of a plot, graphing an empirical estimate of fraction failing as a function of time along with confidence bands provides a visual assessment of distributional goodness of fit.  We applied this method using the Kaplan-Meier nonparametric estimate of the empirical cdf.  With left truncation, however, the standard Kaplan-Meier estimator is biased, so we used an adjusted version due to \citet[Chapter 11]{meeker} (details are given in Appendix A in the Supplementary Materials).   
 
 
-In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP model onto the adjusted K-M estimate with axes on the Weibull probability scale.  The plot also contains 90\% pointwise credible bands associated with each estimate. While the Weibull model is inadequate for these data, the GLFP model fits quite well, as it is able to adequately describe the rapid increase in the empirical cdf between 8000 and 20,000 hours. %The discrepancy around 30,000 suggests that the GLFP may overestimate the proportion failing in the far right tail of the distribution.  While this discrepancy may appear troubling, we suggest that the right tail is of less importance for electronic goods due to obsolescence.
+In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP model onto the adjusted K-M estimate with axes on the Weibull probability scale.  The plot also contains 90\% pointwise credible bands associated with each estimate. While a single Weibull distribution is inadequate to describe these data, the GLFP model fits quite well, as it is able to adequately describe the rapid increase in the empirical cdf between 8000 and 20,000 hours. %The discrepancy around 30,000 suggests that the GLFP may overestimate the proportion failing in the far right tail of the distribution.  While this discrepancy may appear troubling, we suggest that the right tail is of less importance for electronic goods due to obsolescence.
 
 \begin{figure}[H]
 \centering
@@ -340,7 +341,7 @@ In Figure \ref{ex1-overlay}, we overlay the posterior median of the fitted GLFP 
 
 \section{Hierarchical GLFP model}
 \label{sec:Hierarchical GLFP model}
-In order to describe an entire product population, consisting of different but similar sub-populations, and because of the limited amount of data from many of the sub-populations, we model sub-population-specific parameters hierarchically, borrowing strength across sub-populations.
+In order to describe an entire product population consisting of different but similar sub-populations, and because of the limited amount of data from many of the sub-populations, we model sub-population-specific parameters hierarchically, borrowing strength across sub-populations.
 
 \subsection{Conditional likelihood}
 Let
@@ -357,7 +358,7 @@ as explained in Section~\ref{subsec:likehood}.
 
 \subsection{Parameter distributions}
 
-In a hierarchical model, the parameters are modeled as random variables, varying across different sub-populations.  For example
+In a hierarchical model, the parameters are modeled as random variables, varying across different sub-populations.  Although other distributions might be specified in general, for the Backblaze example, we used
 \begin{equation*}
 \sigma_{1g} \ind \op{Lognormal} \left( \eta_{\sigma_1}, \tau^2_{\sigma_1} \right)
 \end{equation*}
@@ -403,7 +404,7 @@ posterior draws from a fitted model.  Following \cite{vehtari}, the log pointwis
 \end{align*}
 \noindent Using this criterion, we should choose the model with the highest expected lpd (elpd) for a new data set $\{t_{new,g,i}:g=1,\ldots,G; i=1,\ldots,n_g\}$. Notationally suppressing the conditioning on $t^L$ and $c$,
 \begin{equation}
-\mbox{elpd} = \op{E}_h \mbox{lpd} = \sum_{g=1}^G \sum_{i=1}^{n_g} \int \log [p(t_{new, g, i}|t)] h(t_{new,g,i}) d t_{new,g,i}
+\mbox{elpd} = \op{E}_h (\mbox{lpd}) = \sum_{g=1}^G \sum_{i=1}^{n_g} \int \log [p(t_{new, g, i}|t)] h(t_{new,g,i}) d t_{new,g,i}
 \label{elpd}
 \end{equation}
 where $h$ is a density for the true distribution of $t_{new,g,i}$. Although $h$ is unknown, leave-one-out cross-validation provides a robust estimator:
@@ -429,7 +430,8 @@ Following the recommendations in Section 5.3, we specify the following prior dis
 \paragraph{Model 2} $t_{p_{2}g}$ varies by drive-model. To help with model identifiably, we tighten the priors on the early failure mode:
 $$ \pi \sim \op{Logit-normal}\langle 0.007,\, 0.26 \rangle,$$
 $$\sigma_1 \sim \op{Lognormal}\langle 0.14,\, 7.1\rangle,$$ 
-$$t_{0.5} \sim \op{Lognormal} \langle 22,\, 5.5 \times 10^{4} \rangle.$$
+$$t_{p_1} \sim \op{Lognormal} \langle 22,\, 5.5 \times 10^{4} \rangle.$$
+where $p_{1}=0.5$.
 
 \paragraph{Model 3} $t_{p_{2}g}$ and $\sigma_{2g}$ vary by drive-model. Prior distributions for the constrained parameters are the same as for Model 2.
 
@@ -440,8 +442,9 @@ Where applicable, prior distributions on hyperparameters are as listed below. We
 $$\eta_{\pi} \sim \op{Normal}(-3, 1^2),\quad \tau_{\pi} \sim \op{Half-Cauchy}(0, 1)$$
 $$\eta_{\sigma_2}  \sim \op{Normal}(0, 2^2),\quad
 \tau_{\sigma_2}  \sim \op{Half-Cauchy}(0, 1)$$
-$$\eta_{t_{0.2}}  \sim \op{Normal}(9, 2^2),\quad
-\tau_{t_{0.2}}  \sim \op{Half-Cauchy}(0, 1).$$
+$$\eta_{t_{p_2}}  \sim \op{Normal}(9, 2^2),\quad
+\tau_{t_{p_2}}  \sim \op{Half-Cauchy}(0, 1)$$
+where$p_{2}=0.2$.
 
 \subsection{Model fitting}
 \label{sec:Model fitting}
@@ -495,14 +498,14 @@ We calculated the difference in expected predictive accuracy for Model 4 versus 
 \begin{figure}
 \begin{table}[H]
 \centering
-\begin{tabular}{rrrrrrrr}
+\begin{tabular}{rrccc}
   \hline
  & $\widehat{\text{elpd}}$ \ & \thead{Estimated Difference \\ in $\widehat{\text{elpd}}$} \ & \thead{Standard Error of \\ the Difference} & \thead{Effective Number of \\ Parameters}\\ 
   \hline
-Model 4 & -13309.5 & 40.7 & 11.3 & 92.5 \\ 
-Model 3 & -13350.2 & 458.8 & 31.0 & 68.8 \\ 
-Model 2 & -13809.0 & 3674.6 & 96.2 & 49.6 \\ 
-Model 1 & -17483.6 &  &  & 4.3 \\
+Model 4 & $-13{,}309.5$ & 40.7 & 11.3 & 92.5 \\ 
+Model 3 & -13{,}350.2 & 458.8 & 31.0 & 68.8 \\ 
+Model 2 & -13{,}809.0 & 3674.6 & 96.2 & 49.6 \\ 
+Model 1 & -17{,}483.6 &  &  & 4.3 \\
    \hline
 \end{tabular}
 \caption{\footnotesize Expected log pointwise predictive density (elpd) and related statistics for each model.}
@@ -547,7 +550,7 @@ For the hard-drive data, we used the posterior samples obtained in fitting Model
 
 
 \begin{figure}
-\includegraphics[width=\textwidth]{ppcheck-sample}
+\includegraphics[width=\textwidth]{ppcheck-sample-v2}
 \caption{\footnotesize Adjusted K-M estimates of the proportion failing for a representative subset of drive-models. Both the original data (\textbf{bold} line) and 19 ``replicated" data sets from the posterior predictive distribution (\textit{dashed} lines) are shown.}
 \label{fig:post-pred-KM}
 \end{figure}
@@ -575,7 +578,7 @@ date of manufacture.
 \label{fig:ex-mod-4}
 \end{figure}
 
-Figure 8 shows a similar pair of plots for Drive-model 43. The data for this Drive-model are heavily truncated; the observed units had run for quite some time before data were made available with the earliest left-truncation time at 12,189 hours. In the bottom half of Figure \ref{fig:ex-mod-43} we contrast the posterior median for drive-model 43 to an average GLFP cdf for the entire population, which we call the ``global average" cdf; a description of the global average cdf is given in Appendix \ref{global-avg}. We can see that the lack of data for this drive-model during early life results in a diffuse posterior centered around the global average cdf until about 10,000 hours when they diverge. Although the posterior is close to the adjusted K-M, it has been shrunk toward the global average cdf.
+Figure 8 shows a similar pair of plots for Drive-model 43. The data for this Drive-model are heavily truncated; the observed units had run for quite some time before data were made available with the earliest left-truncation time at 12,189 hours. In the bottom half of Figure \ref{fig:ex-mod-43} we contrast the posterior median for drive-model 43 to an average GLFP cdf for the entire population, which we call the ``global average" cdf; a description of the global average cdf is given in Appendix B in the Supplementary Materials. We can see that the lack of data for this drive-model during early life results in a diffuse posterior centered around the global average cdf until about 10,000 hours when they diverge. Although the posterior is close to the adjusted K-M, it has been shrunk toward the global average cdf.
 
 
 \begin{figure}
@@ -592,7 +595,7 @@ As discussed in Section \ref{sec:Weibull parameterization}, we use a parameteriz
 Depending on the set of model restrictions used, simlar plots may be used to compare the $p$ quantiles for non-defective units ($t_{p_{2}g}$) or the proportion defective ($\pi_g$).
 
 \subsection{Example: Drive-model comparison based on lower-tail quantiles and proportion defective}
-The top panel of Figure 9 shows estimates of $t_{0.10}$ (i.e., the amount of time it takes for 10\% of hard drives to fail, corresponding to the cdf $H(t)$ in Section \ref{subsec:GLFP model}), for all drive-models.  In this application 50\% CIs were used due to considerable posterior uncertainty in some of the parameters: especially for those with few drives in operation.  %Interestingly, the top seven drive-models ranked by MTTF are also the drive-models with the largest $t_{0.10}$.  
+The top panel of Figure 9 shows estimates of $t_{0.10}$ (i.e., the amount of time it takes for 10\% of hard drives to fail, corresponding to the cdf $H(t)$ in Section \ref{subsec:GLFP model}), for all drive-models.  In this application 50\% CIs were used due to considerable posterior uncertainty in some of the parameters, especially for those with few drives in operation.  %Interestingly, the top seven drive-models ranked by MTTF are also the drive-models with the largest $t_{0.10}$.  
 The bottom panel of Figure 9 shows the posterior credible intervals for the proportion defective, $\pi_g$, for each drive-model.  The plot is again sorted according to $t_{0.10}$ so it can be compared to the top plot.  While for many of the drive-models the ordinal ranking is the same as on the top, there are some drive-model comparisons, for example 23 and 18, that differ in ranking if compared using $t_{0.10g}$ or $\pi_g$.
 
 \begin{figure}[H]
@@ -646,7 +649,7 @@ parameters.
   \centering
   \includegraphics[width=.8\textwidth]{dm-eval}
   \caption{\footnotesize Left: 90\% CI of the posterior predictive distributions for $e^{-0.4 t_{g,new}}$ the depreciated value at failure (VAF) for a new unit for each Drive-model.
-  Right: A comparison (90\% CI) of the predictive distribution of TTF in hundreds of thousands of hours (top) and VAF (bottom) based on 40\% depreciation for the best 11 drive-models, shows that rankings produced by the two measures are not equivalent.}
+  Right: A comparison (90\% CI) of the predictive distribution of TTF in thousands of hours (top) and VAF (bottom) based on 40\% depreciation for the best 11 drive-models, shows that rankings produced by the two measures are not equivalent.}
   \label{fig5}
 \end{figure}
 
@@ -704,48 +707,21 @@ While not presented here, another potential application is forecasting the numbe
 
 \section*{Acknowledgment}    
 The authors express their gratitude to Nick Clark for his helpful comments and suggestions.  We would also like to thank the anonymous referees who provided 
-many useful suggestions that helped improve this paper.
+many useful suggestions that helped improve this paper. Finally, we would like to thank Andy Klein of Backblaze and the Backblaze company for making their hard drive data publicly available.
 
 %Hierarchical modeling can be an effective way to regularize a large number of models fits by borrowing information.  %Because all the data contribute some information about the global parameters, it is often sufficient to use weakly %informative priors on the global parameters, making the resulting shrinkage data dependent.  Analysis using HMC is %accessible to practitioners by Stan. HMC has been shown to be very efficient in effective samples per iteration because %its joint updating scheme.  
 \clearpage
 
-\appendix
-\section{Truncation adjusted Kaplan-Meier estimate of lifetime}
-\label{sec:trunc-adj}
-We first start with a nonparametric estimate of the empirical cdf for each sub-population using the Kaplan-Meier estimator.  With left truncation, however, the standard Kaplan-Meier estimator for drive-model $g$, denoted by
-$\widehat{F_g(t)}_{KM}$, is conditional on survival up to
-$t_{g,\text{min}}^L$, the shortest reported running time of all units in
-of sub-population $g$ for which records are available. To produce
-unconditional estimates, we adapt the adjustment method outlined by \citet[Chapter 11]{meeker}.  For each sub-population we select
-$t_{g,\text{min}}^L$, the smallest left truncated time in the sample.
-By sampling from the full posterior distribution, because
-$\Pr(T>t_{g,\text{min}}^L|\theta_g)$ (the probability that a hard drive has
-survived up to $t_{g,\text{min}}^L$) is a function of the model
-parameters, we can easily compute its posterior median,
-$\widehat{A}_{\text{med}} = \widehat{\Pr}(T>t_{g,\text{min}}^L|\theta_g)$. We compute the adjusted estimate by
 
-$$\widehat{F(t)}_{KMadj} = \widehat{A}_{\text{med}} + \left(1 - \widehat{A}_{\text{med}}\right)\widehat{F_g(t)}_{KM},\; t>t_{g,\text{min}}^L.$$
-
-While this adjustment may be negligible for sub-populations with little truncation, in our Backblaze example, five drive-models receive upward adjustments of greater than 5 percent and the estimated time to failure distribution of one drive-model (30) was adjusted by nearly 16 percent, in part because the shortest truncation time for all observed units was approx. 2.3 years.
-
-\section{Definition of global average for Model 4}
-\label{global-avg}
-In Section \ref{model-assessment}, to illustrate the concept of shrinkage in our hierarchical model, we refer to a ``global average" which represents an average GLFP cdf for the entire population, $\op{H}\left(\cdot|\bar{\pi},\mu_1,\sigma_1,\bar{\mu}_2,\bar{\sigma}_2\right)$. Because $\mu_1$ and $\sigma_1$ are common across all sub-populations in our model, these can already be interpreted as ``global." For the parameters that vary across sub-populations, we select values corresponding to the medians of the hierarchical distributions (\ref{eq:hier-model}) conditional on the hyperparameters. In particular, we set
-$$\bar{\pi}=\op{logit}^{-1}(\eta_{\pi}),\;\bar{\mu}_2=\eta_{t_2} - m_{\sigma_2}\Phi^{-1}(.2) \mbox{ and } \bar{\sigma}_2= m_{\sigma_2}.$$
-Let $J(\cdot|a,b),\;J^{-1}(\cdot|a,b)$ denote the cdf and inverse cdf, respectively, for a lognormal distribution with log-location parameter $a$ and log-scale parameter $b$. Then
-$$m_{\sigma_2}=J^{-1}[0.5 \cdot J(1|\eta_{\sigma_2},\tau_{\sigma_2})|\eta_{\sigma_2}, \tau_{\sigma_2}],$$
-which is the median of a lognormal distribution with parameters $\eta_{\sigma_2}$, and $\tau_{\sigma_2}$, truncated to the interval $(0, 1)$.
-
-We estimate the global average pointwise, using draws from the joint posterior distribution, $H\left(\tilde{t}|\eta_\pi^{(s)}, \mu_1^{(s)}, \sigma_1^{(s)}, \eta_{t_2}^{(s)},\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$, $s=1,2,\ldots,S$. The computation is thus similar to that shown in (\ref{pointwise-medians}).
  % We get this by setting the $\op{GLFP}$ parameters equal to the median of their hierarchical distribution, i.e., $\pi=\op{logit}^{-1}(\eta_{\pi}^{(s)}),\, \mu_1=\mu_1^{(s)},\, \sigma_1=\sigma_1^{(s)},\, \mu_2=\eta_{t_2}^{(s)} - m_{\sigma_2}^{(s)} \Phi_{SEV}^{-1}(.2)$ and $\sigma_2= m_{\sigma_2}^{(s)}$, where $m_{\sigma_2}^{(s)}=F^{-1}[0.5 \cdot F(1;\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)});\eta_{\sigma_2}^{(s)}, \tau_{\sigma_2}^{(s)}]$ is the population median of the $\sigma_{2g}$, conditioning on $\left(\eta_{\sigma_2}^{(s)},\tau_{\sigma_2}^{(s)}\right)$. The curve was estimated using pointwise medians as in Equation \ref{pointwise-medians}.
 
 
-\section{Supplementary Material}
+\section*{Supplementary Material}
 \label{sec:supple}
 
 \begin{description}
 
-\item[Model code and plots] Stan code for Model 4 as well as the complete set of plots similar to Figures 5 and 6 (supplementary.pdf)
+\item[Appendices, stan model code and plots] Description of truncation adjustment to Kaplan Meier estimator, global average, Stan code for Model 4 as well as the complete set of plots similar to Figures 5 and 6 (supplementary.pdf)
 
 \item[Backblaze data set] Lifetime data set for all 44 Backblaze drive-models used in our analysis. (backblaze\_hd\_data.csv)
 
