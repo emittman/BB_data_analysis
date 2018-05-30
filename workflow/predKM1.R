@@ -69,7 +69,7 @@ y_reps <- lapply(1:44, function(dm){
 })
 
 saveRDS(y_reps,"../plots/y_rep.rds")
-
+y_reps <- readRDS("../plots/y_rep.rds")
 get_plotlist <- function(y_reps, dat, xlimits=c(100,100000)){
   plist <- list()
   xaxis <- NULL
@@ -92,7 +92,7 @@ get_plotlist <- function(y_reps, dat, xlimits=c(100,100000)){
       theme_bw(base_size=14) + #theme(#axis.title.y=element_blank(),
                                      #plot.margin = unit(c(0,0,0,0), "cm")
         #) + 
-      ggtitle(as.character(i)) + ylab("Proportion failing")
+      ggtitle(paste(c("Drive-model ", as.character(i)), collapse="")) + ylab("Proportion failing")
   
     if(i==1) legend <- cowplot::get_legend(pnew)
     
@@ -117,7 +117,7 @@ plist <- get_plotlist(y_reps, dat, xlimits=c(100,100000))
 
 # plist <- get_plotlist(all, firstcol = 1+(0:8)*5, lastrow = 41:44)
 library(cowplot)
-pdf("../paper/fig/post-pred-KM-all2.pdf", height=14, width=9)
+pdf("../paper/fig/post-pred-KM-all3.pdf", height=14, width=9)
 plot_grid(plotlist = plist$plots, ncol=5, align="hv")
 dev.off()
 
@@ -140,7 +140,7 @@ for(j in 1:11){
     # plot_grid(plot_grid(plotlist=plist$plots[1:4 + (j-1)*8], ncol=2, align="h"), plist$legend,
                      # nrow=1, rel_widths = c(1,.2))
   # }
-  ggsave(paste("../paper/fig/ppcheck-v2-",j,".pdf",sep=""), width = 8.5, height=11)
+  ggsave(paste("../paper/fig/ppcheck-v3-",j,".pdf",sep=""), width = 8.5*1.7, height=11*1.7)
 }
 
 # set.seed(12122017)
@@ -148,9 +148,9 @@ for(j in 1:11){
 smplID <- c(2,9,14,40)
 smp_plist <- get_plotlist(y_reps, dat = dat, xlimits = c(100,30000))
 plot_grid(plot_grid(plotlist = smp_plist$plots[smplID], ncol=2, align="hv"), plist$legend,
-          nrow=1, rel_widths = c(1,.2))
+          nrow=1, rel_widths = c(1,.15))
 
-ggsave("../paper/fig/ppcheck-sample.pdf", width=11, height=8)
+ggsave("../paper/fig/ppcheck-sample-v2.pdf", width=11, height=8)
 #debug
 # p <- get_plotlist(42)
 # 
