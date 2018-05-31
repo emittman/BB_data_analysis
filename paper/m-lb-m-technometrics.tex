@@ -396,7 +396,7 @@ For all of the nested models, the parameters for the early failure mode are comm
 
 \subsection{Model selection}
 The use of Bayes factors is a classical apporach to compare alternative model specifications.  However, they can be problematic, especially in high dimensional settings where there is no concensus on how to properly compute the required marginal likelihood \citep{robert2016}. Moreover, from the point of view of a consumer or purchaser, the goal of an analysis such as this is to rate manufacturers and/or to inform future purchases based on predicted product performance. Therefore, we should compare model specifications based on accurate prediction for future units of previously observed products.  Leave-one-out cross-validation (LOO) is a method to estimate out-of-sample predictive accuracy using
-posterior draws from a fitted model.  Following \cite{vehtari}, the log pointwise predictive density (lpd), is one method to quantify predictive accuracy,
+posterior draws from a fitted model.  Following \cite{vehtari}, the log pointwise predictive density (lpd) is one method to quantify predictive accuracy,
 
 \begin{align*}
 \mbox{lpd} &= \sum_{g=1}^G \sum_{i=1}^{n_g} \log[p(t_{new,g,i}|t, t^L, c)] \\
@@ -444,7 +444,7 @@ $$\eta_{\sigma_2}  \sim \op{Normal}(0, 2^2),\quad
 \tau_{\sigma_2}  \sim \op{Half-Cauchy}(0, 1)$$
 $$\eta_{t_{p_2}}  \sim \op{Normal}(9, 2^2),\quad
 \tau_{t_{p_2}}  \sim \op{Half-Cauchy}(0, 1)$$
-where$p_{2}=0.2$.
+where $p_{2}=0.2$.
 
 \subsection{Model fitting}
 \label{sec:Model fitting}
